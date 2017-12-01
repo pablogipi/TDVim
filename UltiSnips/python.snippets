@@ -1,0 +1,60 @@
+#
+###########################################################################
+#                            TDVim Snippets for Python
+###########################################################################
+#
+# Support for snippets with Doxygen comments.
+# Date timestamps modified
+#
+
+snippet dxheader "Header with Doxygen support" b
+##  @namespace  ${1:`!v expand('%:t')`}
+#   @brief      ${2:Module Brief Description}
+#
+#   ${3: Module long description}
+#
+#   @file       ${4:`!v expand('%:t')`}.py
+#   @author     ${5:`!v g:snips_author`}
+#   Created:	${6:`!v strftime("%B %d, %Y - %H:%M %p")`}
+#
+#   ${7:Last Change: `!v strftime("%B %d, %Y - %H:%M %p")`.}
+#
+
+$0
+
+endsnippet
+
+snippet dxdef "Function definition with Doxygen support" b
+def ${1:Function Name}(${2:Arguments}):
+    """${3:Brief description}
+
+    ${4:Long description}
+
+    @param $2 ${5:Parameter description}
+    @return ${6:Return description}
+    """
+    ${0:#CODE}
+endsnippet
+
+snippet dxvar "Variable description using Doxygen" b 
+## @var ${1:Variable Name}
+#  ${2:Variable description}
+$1 = ${3:Init variable}
+$0
+endsnippet
+
+snippet sep "Separator comments"
+#
+# ${1:Comment}
+#
+$0
+endsnippet
+
+snippet dxcomment "Multiline comment with Doxygen suppport" 
+## ${1:Comments}
+$0
+endsnippet
+
+snippet dxtodo "Todo line using Doxygen" 
+## @todo ${0:TODO}
+endsnippet

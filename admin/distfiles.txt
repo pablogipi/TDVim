@@ -1,0 +1,6 @@
+../vimrc
+../after
+../autoload
+../doc
+../templates
+../UltiSnips

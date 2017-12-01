@@ -1,0 +1,153 @@
+*tdvim.txt*           TDVim Help           TDVim 2.0
+
+Table Of Contents~
+
+Files                                |tdvim-files| 
+Editing                            |tdvim-editing|
+Window Management                  |tdvim-windows|
+Modes                                |tdvim-modes|
+Development                    |tdvim-development|
+Function Keys                    |tdvim-func-keys|
+Leader Key                          |tdvim-leader|
+
+
+==================================================
+Files                                  *tdvim-files*
+
+- Open File:                      <Ctrl-O>
+- Open File in new tab:           <Ctrl-Alt-O>
+- Open files using Fuzzy Finder:  <F3>
+- Open Recent Files Fuzzy Finder: <Ctrl-Shift-F3>
+- New File:                       <Ctrl-N>
+- New File in tab:                <Ctrl-Alt-N>
+- Save:                           <Ctrl-S> , <leader>w
+- Save All:                       <leader>wa
+- Open File Save As:              <Ctrl-Alt-S>
+- Open a saved session:           <Ctrl-Shift-F1>
+
+==================================================
+Editing                             *tdvim-editing*
+
+- Deleting Word:                  <Ctrl-Backspace>, <Ctrl-Del>
+- Add next line:                  <]-Space>
+- Add previous line:              <[-Space>
+- Enter Align mode in Visual:     <CR>
+- Enter Align mode:               <leader>a
+- Copy:                           <Ctrl-C>
+- Paste:                          <Ctrl-V>
+- Cut:                            <Ctrl-X>
+- Move and select:                <Shift-[Up|Down|Left|Right]>
+- Select to Start or End of Line: <Shift-[Home|End]>  !!
+- Select to Start or End of File: <Ctrl-Shift-[Home|End]>  !!
+- Half Page Jump and Select:      <Shift-[PageUp|PageDown]>  !!
+- Word Selection:                 <Ctrl-Shift-[Left|Right]>
+- Select All:                     <Ctrl-A>
+- Jump Start/End File:            <Ctrl-[PageUp|PageDown]>
+- File History:                   <F9>
+
+==================================================
+Window Management                   *tdvim-windows*
+
+- Maximize Window:               <Space>
+- Change to next windows:        <Ctrl-F4>
+- Increase/decrease window size: <Ctrl-Shift-[Up|Down|Left|Right]>
+- Move around windows:           <Alt-[Up|Down|Left|Right]>
+- Switch between windows:        <leader>p
+- Split window:                  <leader>s
+- Split horzontal window:        <leader>sh
+- Show/Hide menu bar:            <Ctrl-F8>
+- Explorer:                      <F8>
+- Buffers Explorer:              <F3>, <leader>b
+- Switch Previous Buffer:        <Ctrl-F3>
+- Close window:                  <leader>q
+- Close preview window:          <leader>qp
+- Reset windows size:            <leader>=
+
+==================================================
+Modes                                 *tdvim-modes*
+
+- Command Line:           <F2>
+- Command Line Palette:   <Ctrl-F2>
+- Visual Block Selection: <Shift-F2>
+
+==================================================
+Development                     *tdvim-development*
+
+- Move to prev or next indented line:         <[l> , <]l>
+- Move to prev or next level indented line:   <[L> , <]L>
+- Toggle Comment:                             <F5>, <leader>ct
+- Scope current function in tags:             <Ctrl-F4>
+- Yank and Comment:                           Shift:F5, <leader>cy
+- Line Finder:                                <F7>
+- Build:                                      <F11>
+- Prev/Next Error:                            <Shift/Ctrl F11>
+- Errors list:                                <Ctrl-Shift F11>
+- Build Tags:                                 <F12>
+- OmniComplete:                               <Ctrl-x> <Ctrl-o> , <Ctrl-Space>
+- Tags Explorer:                              <Shift-F8>
+- Tasks List:                                 <Shift-F9>, <leader>t
+- Jump to tag:                                <F4>, <]t>
+- Go back from tag stack:                     <[t>
+- Show tags match and jump:                   <[T>
+- Preview tags:                               <S-F4>, <]T>
+- Autocomplete:                               <TAB>
+- Cycle through autocomplete modes:           <Ctrl [,|.]>
+- Expand Snippet:                             <TAB>
+- Show available snippets:                    <Ctrl-B>
+- Forward/Backwards in snippets placeholders: <TAB>, <Shift-TAB>
+
+==================================================
+Function Keys                     *tdvim-func-keys*
+
+- <F1>:                help
+   - <Shift-F1>:       Help for word under the cursor
+   - <Ctrl-Shift-F1>:  Open a saved session
+- <F2>:                Command line mode
+   - <Ctrl-F2>:        Command Line Palette
+   - <Shift-F2>:       visaul block selection`
+- <F3>:                Open buffer`
+   - <Ctrl-Shift-F3>:  Open Recent files
+   - <Shift-F3>:       Open Files
+   - <Ctrl-F3>:        switch previous buffer
+- <F4>:                Tags/Symbol Finder
+   - <Ctrl-F4>:        scope current function in tags
+   - <Shift-F4>:       Preview tag in file. Open in Preview window
+- <F5>:                Toggle line comment
+   - <Shift-F5>:       Yank and comment line
+- <F6>:                Grep word under cursor in file location
+- <F7>:                Line Finder
+   - <Ctrl-Shift-F7>:  changes finder
+   - <Ctrl-F7>:        Goto position of previous change
+   - <Shift-F7>:       Goto position of next change
+- <F8>:                Open file browser
+   - <Ctrl-F8>:        Enable/disable menu bar
+   - <Shift-F8>:       Tags Explorer
+- <F9>:                File History
+   - <Shift-F9>:       Tasks list
+- <F10>:               Not assigned
+- <F11>:               Build
+   - <Ctrl F11>:       Next Error
+   - <Shift F11>:      Prev Error
+   - <Ctrl-Shift F11>: Errors list
+- <F12>:               Build Tags
+
+==================================================
+Leader Key                           *tdvim-leader*
+
+- Save and Save all:                      <leader>w, <leader>wa
+- Enter Align Mode:                       <leader>a
+- Switch between windows:                 <leader>p
+- Split window:                           <leader>s
+- Split horzontal window:                 <leader>sh
+- Show/Hide Menu Bar:                     <leader>m
+- Explorer:                               <leader>e
+- Buffer Explorer:                        <leader>b
+- Find word under cursor in files (grep): <leadef>f
+- Toggle comments:                        <leader>ct
+- Comment and Yank:                       <leader>cy
+- Close window:                           <leader>q
+- Close preview window:                   <leader>qp
+- Reset windows size:                     <leader>=
+- Tasks list:                             <leader>t
+
+vim:tw=78:ts=8:ft=help:norl:

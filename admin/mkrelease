@@ -1,0 +1,72 @@
+#!/bin/bash
+
+#
+# Script to create self extract installer for TDVim
+#
+
+# Check arguments
+if [ -z "$1" ]; then
+    echo "Please provide release version"
+    echo "Usage: mkrelease 0.2"
+    exit 1
+fi
+INSTALLERNAME=TDVim_$1_installer.run
+RELEASESLOC="../releases"
+
+CURDIR=`pwd`
+
+echo "Build installer for release $1"
+sleep 1
+
+echo "Clean build location"
+sleep 1
+#rm -r build/*
+
+echo "Package release files"
+BUILD=build
+#TARFILE=build/TDVim_${1}.tbz2
+RELEASETARFILE=release.tgz
+tar -cvzf $BUILD/$RELEASETARFILE --exclude-vcs -T distfiles.txt
+PLUGINSTARFILE=plugins.tgz
+PLUGINSLOC=/mnt/c/Users/pablo/vimfiles/
+cd $PLUGINSLOC
+tar -cvzf $CURDIR/$BUILD/$PLUGINSTARFILE --exclude-vcs plugged
+cd -
+echo "Copy installer script"
+cp installer $BUILD
+# Pack everything to append to the self extract installer
+cd $BUILD
+tar cf files.tar $RELEASETARFILE $PLUGINSTARFILE installer
+cd $CURDIR
+
+echo "Create self extracting installer"
+
+if [ -e $BUILD/files.tar ]; then
+    # Build installer
+    cat decompress $BUILD/files.tar > $INSTALLERNAME
+    if [ $? -eq 0 ]; then
+        chmod +x $INSTALLERNAME
+        mv $INSTALLERNAME $RELEASESLOC
+    else
+        echo "Error building self extracting installer file"
+    fi
+
+else
+    echo "$BUILD/files.tar does not exist"
+    cd $CURDIR
+    exit 1
+fi
+
+cd $CURDIR
+echo
+echo
+echo "TDVim $1 installer created!!!!"
+echo "Installer: "`pwd $RELEASESLOC/$INSTALLERNAME`/$INSTALLERNAME
+
+exit 0
+
+
+
+
+
+# vim: ft=sh ts=8 ff=unix

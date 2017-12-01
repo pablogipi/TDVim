@@ -1,0 +1,20 @@
+"
+" User setup for TDVim
+"
+
+" Setup GUI
+if has( "gui_running" )
+    colorscheme seoul256
+    set background=dark
+    set guioptions-=m
+    set guioptions-=T
+    call utils#SetFancyUI()
+    "set guifont=Consolas:h11:cANSI:qDRAFT
+    set guifont=DejaVu_Sans_Mono_for_Powerline:h10
+else
+    colorscheme pencil
+    set background=light
+endif
+
+" Personal plugins setup
+let g:NERDTreeHijackNetrw=1

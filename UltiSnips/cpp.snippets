@@ -1,0 +1,214 @@
+#
+###########################################################################
+#                            TDVim Snippets for C++			  #
+###########################################################################
+#
+# Support for snippets with Doxygen comments.
+# Date timestamps modified
+#
+
+snippet hheader "Header for a .h file" b
+/*
+	* NAME:		${1:`!v expand('%:t')`}
+	*
+	* AUTHOR:	    ${2:`!v g:snips_author`}
+	*
+	* COMMENTS:
+	*	${3}
+	*
+	* CREATED:	    ${4:`!v strftime("%B %d, %Y - %H:%M %p")`}
+	*
+	* ${5:LAST CHANGE: `!v strftime("%B %d, %Y - %H:%M %p")`.}
+	*
+ */
+
+// #####   HEADER FILE INCLUDES	    #########################################
+
+// #####   MACROS		    #########################################
+
+// #####   DATA TYPES		    #########################################
+
+// #####   TYPE DEFINITIONS		#####################################
+
+// #####   VARIABLES		#############################################
+
+// #####   FUNCTION DECLARATIONS	    #################################
+
+$0
+endsnippet
+
+snippet dxhheader "Header for a .h file using Doxygen tags" b
+/**
+	* @file		${1:`!v expand('%:t')`}
+	* @brief       ${2:Module brief description}
+	*
+	* @detail      ${3:Detailed description}
+	*
+	* Created:	    ${5:`!v strftime("%B %d, %Y - %H:%M %p")`}
+	*
+	* ${6:Last Change: `!v strftime("%B %d, %Y - %H:%M %p")`.}
+	*
+ */
+
+// #####   HEADER FILE INCLUDES	    #########################################
+
+// #####   MACROS		    #########################################
+
+// #####   DATA TYPES		    #########################################
+
+// #####   TYPE DEFINITIONS		#####################################
+
+// #####   VARIABLES		#############################################
+
+// #####   FUNCTION DECLARATIONS	    #################################
+
+$0
+endsnippet
+
+snippet cheader "Implementation for .h file" b
+/*
+	* NAME:	    ${1:`!v expand('%:t')`}
+	*
+	* AUTHOR:	    ${2:`!v g:snips_author`}
+	*
+	* CREATED:	    ${4:`!v strftime("%B %d, %Y - %H:%M %p")`}
+	*
+	* ${5:LAST CHANGE: `!v strftime("%B %d, %Y - %H:%M %p")`.}
+	*
+ */
+
+#include "$1.h"
+$0
+endsnippet
+
+snippet dxcheader "Implementation for .h file, Doxygen version" b
+/**
+	* @file	    ${1:`!v expand('%:t')`}
+	* @brief       ${2:Module brief description}
+	*
+	* @detail      ${3:Detailed description}
+	*
+	* @author	    ${3:`!v g:snips_author`}
+	*
+	* Created:	    ${4:`!v strftime("%B %d, %Y - %H:%M %p")`}
+	*
+	* ${5:Last Change: `!v strftime("%B %d, %Y - %H:%M %p")`.}
+	*
+ */
+
+#include "$1.h"
+$0
+endsnippet
+
+snippet funcd "Function/method definition" b
+/*
+	* NAME:	${1:function_name}
+	*
+	* PARAMETERS:
+	*
+	* RETURN:	${2:return_type}
+	*
+	* COMMENTS:
+	* ${3:comments}
+	*
+ */
+$2 $1(${4:arguments});
+endsnippet
+
+snippet dxfuncd "Function/method definition, Doxygen version" b
+/**
+	* @brief ${1:Function brief description} 
+	*
+	* ${2:Long description}
+	*
+	* @param ${3:arg1}
+	* @param ${4:arg2}
+	*
+	* @return ${5:Return type}
+ */
+$5 ${6:Function Name} (${7:arguments});
+endsnippet
+
+snippet funci "Function/method implementation" b
+${1:return_type}
+${2:`!v expand('%:t:r')`}::${3:func_name}(${4:arguments})
+{
+    ${0:// CODE}
+}
+endsnippet
+
+snippet dxclass "Class declaration using Doxygen" b
+/** ${2:Class brief explanation}
+	* ${3:Class long explanation}
+ */
+class ${1:Class Name}
+{
+    public:
+	$1 (arguments);
+	virtual ~$1 ();
+	$0
+
+    private:
+	/* data */
+};
+endsnippet
+
+snippet dxvar "Variable description using Doxygen" b 
+/**
+	* @var ${1:Variable Name}
+	* ${2:Variable description}
+ */
+${3:Variable Type} $1 = ${4:Init variable};
+$0
+endsnippet
+
+snippet dxcomment "Multiline comment with Doxygen suppport" 
+/// ${1:Comments}
+$0
+endsnippet
+
+snippet sep "Separator comments"
+//
+// ${1:Comment}
+//
+$0
+endsnippet
+
+snippet dxbbox "Box comments using Doxygen" b
+/////////////////////////////////////////////////
+/// ${1:COMMENTS}
+/////////////////////////////////////////////////
+$0
+endsnippet
+
+snippet dxtodo "Todo line using Doxygen" 
+/**
+	* @todo ${0:TODO}
+ */
+endsnippet
+
+snippet cout "Use cout to print text"
+std::cout << "${0:Text}" << std::endl;
+endsnippet
+
+snippet cerr "Use cerr to print text"
+std::cerr << "${0:Text}" << std::endl;
+endsnippet
+
+snippet todo "TODO comment"
+// TODO: ${0:todothis}
+endsnippet
+
+snippet fixme "Fixme comment"
+// FIXME: ${0:fixthis}
+endsnippet
+
+snippet xxx "XXX comment"
+// XXX: ${0:xxxthis}
+endsnippet
+
+snippet deprecated "DEPRECATED comment"
+// DEPRECATED: ${0:deprecatedthis}
+endsnippet
+
+# vim:ft=snippets:
