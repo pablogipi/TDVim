@@ -42,24 +42,24 @@ Plug 'tomtom/ttodo_vim'
 
 " UI
 " NERD Tree will be loaded on the first invocation of NERDTreeToggle command
-Plug 'scrooloose/nerdtree',          { 'on': 'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree',              { 'on': 'NERDTreeToggle' }
 " CtrlP
-Plug 'kien/ctrlp.vim',               { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
-Plug 'fisadev/vim-ctrlp-cmdpalette', { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
+Plug 'kien/ctrlp.vim',                   { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
+Plug 'fisadev/vim-ctrlp-cmdpalette',     { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
 "Plug 'd11wtq/ctrlp_bdelete.vim', { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
 Plug 'd11wtq/ctrlp_bdelete.vim'
 " Lightline
 Plug 'itchyny/lightline.vim'
 " Tagbar
-Plug 'majutsushi/tagbar',            { 'on':  ['TagbarToggle', 'TagbarCurrentTag']}
+Plug 'majutsushi/tagbar',                { 'on':  ['TagbarToggle', 'TagbarCurrentTag']}
 " Mini Buf Explorer
 "Plug 'fholgado/minibufexpl.vim'
 " Tabline buffers
 Plug 'taohex/lightline-buffer'
 " Gundo
-Plug 'sjl/gundo.vim',                { 'on': 'GundoToggle' }
+Plug 'sjl/gundo.vim',                    { 'on': 'GundoToggle' }
 " Maximizer
-Plug 'szw/vim-maximizer',            { 'on': 'MaximizerToggle' }
+Plug 'szw/vim-maximizer',                { 'on': 'MaximizerToggle' }
 
 " Development
 " Autocomplete
@@ -78,6 +78,9 @@ Plug 'vim-scripts/TaskList.vim',         { 'for': ['cpp', 'c'] }
 Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['cpp', 'c'] }
 " Guten Tags
 Plug 'ludovicchabant/vim-gutentags',     { 'for': ['cpp', 'c', 'vim'] }
+" Autodate
+Plug 'vim-scripts/autodate.vim',         { 'for': ['cpp', 'c', 'vim', 'sh', 'python'] }
+
 
 
 
@@ -193,13 +196,6 @@ set ttyfast
 
 " }}}
 
-" Time/Date settings {{{
-" XXX: this should go into plugins setup
-let g:autodate_format = '%d-%3m-%Y'
-let g:autodate_keyword_pre = 'Last Change:'
-let g:autodate_keyword_post = '\.'
-
-" }}}
 
 " Edit options and Language specific options {{{
 "
@@ -352,6 +348,12 @@ endif
 
 " }}}
 
+" Netrw {{{2
+let g:netrw_banner        = 0
+let g:netrw_sort_sequence = '[\/]$,*'
+"let g:netrw_browse_split  = 4
+" }}}
+
 """""""""""""""""""""""""""
 """"""""""""""""""""""""""" }}}
 
@@ -492,7 +494,6 @@ if has("autocmd")
         autocmd BufEnter * call utils#PreviewWindowSetup()
         " Call TDVim Project
         autocmd BufEnter * call utils#ProjectSettings(expand("<afile>:p:h"), 0)
-            
     augroup END
     " BufLeave
     "augroup tdvimBufLeave
@@ -555,8 +556,6 @@ endif
 let g:session_command_aliases = 1 " Enable vim-session commands aliases
 let g:session_menu            = 0 " Disable vim-session menu
 let g:session_autoload        = 0 " Disable load session on startup
-
-" TODO: he perdido las sesiones supongo que ahora no las encuentra
 
 " lightline
 " use lightline-buffer in lightline
@@ -664,7 +663,17 @@ let g:mucomplete#ultisnips#match_at_start = 0
 " Gutentags
 "let g:gutentags_define_advanced_commands=1
 
+" Netrw
+let g:Netrw_UserMaps= [["u","utils#UserNetrwBrowseUpDir"],
+            \["U","utils#UserNetrwBrowseBackRecentDir"],
+            \["B","utils#UserNetrwBrowseForwardRecentDir"], 
+            \["-","utils#UserNetrwRexplore"]
+            \]
 
+" Autodate
+"let g:autodate_format = '%d-%3m-%Y'
+let g:autodate_format = '%B %d, %Y - %H:%M %p'
+let g:autodate_keyword_pre = '\s\cLast Change:'
 
 " }}}
 "

@@ -130,7 +130,7 @@ cp -b $TARGET/templates/vimrc $HOME/.vimrc
 # }}}
 
 #
-# Setup user TDVIMROOT env var
+# Setup user TDVIMROOT env var {{{
 #
 # TODO: env var TDVIMROOT
 echo
@@ -184,11 +184,10 @@ else
     export TDVIMROOT
 fi
 
+#}}}
+
 echo "-> TDVIMROOT environment variable set to: $TARGET"
 echo "-> TDVim environment variable set for your terminal: $SHELLCFG"
 echo
-
-# TODO: add suport for version number from command line
-
 
 # vim: ft=sh ts=8 ff=unix fdm=marker

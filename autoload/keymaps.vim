@@ -1,7 +1,7 @@
 " File: keymaps.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Keymaps TDVim setup
-" Last Change: June 22, 2012 - 00:48 AM
+" Last Change: 19-Dec-2017.
 "
 
 
@@ -20,7 +20,8 @@
 " - Save: Ctrl-S , <leader>w 
 " - Save All: <leader>wa
 " - Open File Save As: Atrl-Alt-S
-" - Ctrl-Shift-F1: Open a saved session
+" - Open a saved session: Ctrl-Shift-F1
+" - Open Preferences: F10
 "
 " Editing
 " - Deleting Word: Ctrl-Backspace, Ctrl-Del
@@ -56,6 +57,12 @@
 " - Close window: <leader>q
 " - Close preview window: <leader>qp
 " - Reset windows size: <leader>=
+"
+" Explorer (Netrw)
+" - Go up dir: u
+" - Go previous dir: U
+" - Go next in history: B
+" - Go back to file buffer: -
 "
 " Modes:
 " - Command Line: F2
@@ -112,7 +119,7 @@
 "   - Shift-F8: Tags Explorer
 " - F9: File History
 "   - Shift-F9: Tasks list
-" - F10: Not assigned
+" - F10: Open Preferences
 " - F11: Build
 "   - Ctrl F11: Next Error
 "   - Shift F11: Prev Error
@@ -325,21 +332,27 @@ function! keymaps#MainOperations ()
     " }}}
 
     " Fuzzy Finder Open Files -> S-F3 {{{2
-    nnoremap <unique> <silent>          <Plug>TdvimFinder       :CtrlP<CR>
-    inoremap <unique> <silent>          <Plug>TdvimFinder       :CtrlP<CR>i
-    vnoremap <unique> <silent>          <Plug>TdvimFinder       :CtrlP<CR>v
+    "nnoremap <unique> <silent>          <Plug>TdvimFinder       :CtrlP<CR>
+    "inoremap <unique> <silent>          <Plug>TdvimFinder       :CtrlP<CR>i
+    "vnoremap <unique> <silent>          <Plug>TdvimFinder       :CtrlP<CR>v
+    nnoremap <unique>           <Plug>TdvimFinder       :find 
+    inoremap <unique>           <Plug>TdvimFinder       <Esc>:find 
+    vnoremap <unique>           <Plug>TdvimFinder       <Esc>:find 
 
-    nmap <silent> <S-F3>                <Plug>TdvimFinder
-    imap <silent> <S-F3>                <Plug>TdvimFinder
+    nmap  <S-F3>                <Plug>TdvimFinder
+    imap  <S-F3>                <Plug>TdvimFinder
     vmap <silent> <S-F3>                <Plug>TdvimFinder
 
     " }}}
 
     " Fuzzy Finder MRU ->  C-S-F3{{{2
     " Default map to C-S-F3
-    nnoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>
-    inoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>i
-    vnoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>v
+    "nnoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>
+    "inoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>i
+    "vnoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>v
+    nnoremap <unique> <silent>          <Plug>TdvimFinderMru    :browse oldfiles<CR>
+    inoremap <unique> <silent>          <Plug>TdvimFinderMru    <Esc>:browse oldfiles<CR>
+    vnoremap <unique> <silent>          <Plug>TdvimFinderMru    <Esc>:browse oldfiles<CR>
 
     nmap <silent> <C-S-F3>              <Plug>TdvimFinderMru
     imap <silent> <C-S-F3>              <Plug>TdvimFinderMru
@@ -376,6 +389,12 @@ function! keymaps#MainOperations ()
     noremap <unique> <Plug>TdvimOpenSession :SessionOpen  
 
     nmap    <C-S-F1> <Plug>TdvimOpenSession
+    " }}}
+
+    " Open options/preferences {{{2
+    noremap <unique> <Plug>TdvimPreferences :options<CR>
+
+    nmap    <F10> <Plug>TdvimPreferences
     " }}}
 
 
@@ -662,9 +681,12 @@ function! keymaps#WindowManagement()
     " Explorer {{{2
     " Keys to toggle browser window. By default NERD Tree file browser
     " By default mapped to F8
-    nnoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>
-    inoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>i
-    vnoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>v
+    "nnoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>
+    "inoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>i
+    "vnoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>v
+    nnoremap <unique> <silent> <Plug>TdvimExplorer :call utils#ToggleVExplorer()<CR>
+    inoremap <unique> <silent> <Plug>TdvimExplorer :call utils#ToggleVExplorer()<CR>i
+    vnoremap <unique> <silent> <Plug>TdvimExplorer :call utils#ToggleVExplorer()<CR>v
 
     nmap     <silent> <F8>     <Plug>TdvimExplorer
     imap     <silent> <F8>     <Plug>TdvimExplorer
@@ -694,12 +716,12 @@ function! keymaps#WindowManagement()
     " }}}
 
     " Buffers explorer -> F3 {{{2
-    nnoremap <unique> <silent>  <Plug>TdvimBuffers :CtrlPBuffer<CR>
-    inoremap <unique> <silent>  <Plug>TdvimBuffers <Esc>:CtrlPBuffer<CR>i
-    vnoremap <unique> <silent>  <Plug>TdvimBuffers :CtrlPBuffer<CR>v
-    "nnoremap <unique>   <Plug>TdvimBuffers :buffer 
-    "inoremap <unique>   <Plug>TdvimBuffers <Esc>:buffer 
-    "vnoremap <unique>   <Plug>TdvimBuffers <Esc>:buffer 
+    "nnoremap <unique> <silent>  <Plug>TdvimBuffers :CtrlPBuffer<CR>
+    "inoremap <unique> <silent>  <Plug>TdvimBuffers <Esc>:CtrlPBuffer<CR>i
+    "vnoremap <unique> <silent>  <Plug>TdvimBuffers :CtrlPBuffer<CR>v
+    nnoremap <unique>   <Plug>TdvimBuffers :buffer 
+    inoremap <unique>   <Plug>TdvimBuffers <Esc>:buffer 
+    vnoremap <unique>   <Plug>TdvimBuffers <Esc>:buffer 
 
     nmap      <F3>      <Plug>TdvimBuffers
     imap      <F3>      <Plug>TdvimBuffers
@@ -1524,9 +1546,9 @@ function! keymaps#Development()
     " MuComplete {{{2
     " Remap cycling keys to Left/Right rather than <c-h>/<c-j>
     inoremap <silent> <plug>(MUcompleteFwdKey) <C-.>
-    imap     <C-.>  <plug>(MUcompleteCycFwd)
+    imap     <C-.>    <plug>(MUcompleteCycFwd)
     inoremap <silent> <plug>(MUcompleteBwdKey) <C-,>
-    imap     <C-,>   <plug>(MUcompleteCycBwd)
+    imap     <C-,>    <plug>(MUcompleteCycBwd)
     " }}}
 
 endfunction

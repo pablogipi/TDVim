@@ -538,7 +538,6 @@ function! utils#ShowTDVimHelp(  )
     :silent file! TDVim Help
 endfunction
 
-
 " SetupFirstStartup {{{
 function! utils#SetupFirstStartup()
     " If home vin location doesnt exist, 
@@ -571,6 +570,46 @@ function! utils#SetupFirstStartup()
             echomsg "Please restart VIM"
         endif
     endif
+endfunction
+
+" ToggleVExplorer {{{
+" Open/Close Netrw explorer as a side drawer
+function! utils#ToggleVExplorer()
+    if exists("t:expl_buf_num")
+        let expl_win_num = bufwinnr(t:expl_buf_num)
+        if expl_win_num != -1
+            "let cur_win_nr = winnr()
+            let cur_buf =  bufname( winnr() )
+            exec expl_win_num . 'wincmd w'
+            close
+            let cur_win_nr = bufwinnr( cur_buf )
+            exec cur_win_nr . 'wincmd w'
+            unlet t:expl_buf_num
+        else
+            unlet t:expl_buf_num
+        endif
+    else
+        let path = substitute(exists("b:netrw_curdir")? b:netrw_curdir : expand("%:p"), '^\(.*[/\\]\)[^/\\]*$','\1','e')
+        exe "15Lexplore ".path
+        "setlocal winfixwidth
+
+        let t:expl_buf_num = bufnr("%")
+    endif    
+endfunction
+" }}}
+
+" Wrapper functions for netrw keymaps {{{
+function! utils#UserNetrwBrowseUpDir( islocal )
+    call netrw#Call("NetrwBrowseUpDir(" . a:islocal . ")")
+endfunction
+function! utils#UserNetrwBrowseBackRecentDir( islocal )
+    call netrw#Call('NetrwBookHistHandler(4,expand("%"))')
+endfunction
+function! utils#UserNetrwBrowseForwardRecentDir( islocal )
+    call netrw#Call('NetrwBookHistHandler(5,expand("%"))')
+endfunction
+function! utils#UserNetrwRexplore( islocal )
+    call netrw#Call('NetrwRexplore('. a:islocal . ',  "")' )
 endfunction
 " }}}
 

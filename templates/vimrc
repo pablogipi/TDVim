@@ -33,7 +33,8 @@ if exists("$TDVIMROOT")
     " Only load TDVim and VAM if cetain criteria is sathisfied
     if (v:version >= 800 && has('python') )
         "Add TDVim to runtim path
-        let &rtp .= (empty(&rtp)?'':',') . $TDVIMROOT
+        "let &rtp .= (empty(&rtp)?'':',') . $TDVIMROOT
+        let &rtp = $TDVIMROOT . ',' . &rtp
 
         " Load TDVim !!
         let s:loadScriptPath =  $TDVIMROOT . "/vimrc"
