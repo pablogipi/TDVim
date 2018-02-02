@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  2009 Dec 9
+" Last change:  February 01, 2018 - 01:07 AM.
 "
 "
 
@@ -260,6 +260,42 @@ function! utils#LightlineFugitive()
     endif
     return ''
 endfunction
+
+function! utils#LightlineGit()
+    if exists('*gitbranch#name')
+        let branch = gitbranch#name()
+        return branch !=# '' ? ''.branch : ''
+    endif
+    return ''
+endfunction
+
+" LightlineMode {{{2
+" Custom version of original lightline mode function to return
+" mode string.
+" Customizations:
+" - Support preview window
+let s:LightLineModeMap = { 'n': 'NORMAL', 'i': 'INSERT', 'R': 'REPLACE', 'v': 'VISUAL', 'V': 'V-LINE', "\<C-v>": 'V-BLOCK',
+        \     'c': 'COMMAND', 's': 'SELECT', 'S': 'S-LINE', "\<C-s>": 'S-BLOCK', 't': 'TERMINAL'
+        \}
+function! utils#LightlineMode() abort
+    if &previewwindow
+        return 'PREVIEW'
+    else
+        return get(s:LightLineModeMap, mode(), '')
+    endif
+endfunction
+" }}}
+
+" LightlinePreview {{{2
+" Return PREVIEW string or nothing, used in lightline for inactive windows
+function! utils#LightlinePreview() abort
+    if &previewwindow
+        return 'PREVIEW'
+    else
+        return ''
+    endif
+endfunction
+" }}}
 " }}}
 
 " SetFancyUI {{{
@@ -277,10 +313,12 @@ function! utils#SetFancyUI()
             if has_key( g:lightline, 'component_function' )
                 let g:lightline.component_function.readonly = 'utils#LightlineReadonly'
                 let g:lightline.component_function.fugitive = 'utils#LightlineFugitive'
+                let g:lightline.component_function.git = 'utils#LightlineGit'
             else
                 let g:lightline.component_function = {}
                 let g:lightline.component_function.readonly = 'utils#LightlineReadonly'
                 let g:lightline.component_function.fugitive = 'utils#LightlineFugitive'
+                let g:lightline.component_function.git = 'utils#LightlineGit'
             endif
             let g:lightline.separator = { 'left': '', 'right': '' }
             let g:lightline.subseparator = { 'left': '', 'right': '' }    
@@ -498,45 +536,20 @@ function! utils#PreviewWindowSetup()
 endfunction
 " }}}
 
-" LightlineMode {{{
-" Custom version of original lightline mode function to return
-" mode string.
-" Customizations:
-" - Support preview window
-let s:LightLineModeMap = { 'n': 'NORMAL', 'i': 'INSERT', 'R': 'REPLACE', 'v': 'VISUAL', 'V': 'V-LINE', "\<C-v>": 'V-BLOCK',
-        \     'c': 'COMMAND', 's': 'SELECT', 'S': 'S-LINE', "\<C-s>": 'S-BLOCK', 't': 'TERMINAL'
-        \}
-function! utils#LightlineMode() abort
-    if &previewwindow
-        return 'PREVIEW'
-    else
-        return get(s:LightLineModeMap, mode(), '')
-    endif
-endfunction
-" }}}
-
-" LightlinePreview {{{
-" Return PREVIEW string or nothing, used in lightline for inactive windows
-function! utils#LightlinePreview() abort
-    if &previewwindow
-        return 'PREVIEW'
-    else
-        return ''
-    endif
-endfunction
-" }}}
 
 " ShowTDVimHelp {{{
 " Show TDVim help window
 function! utils#ShowTDVimHelp(  )
+    :helpclose
     :botright h tdvim
 
     " Help buffer local maps
     map <silent> <buffer> <Esc> :bdelete<CR>
     map <silent> <buffer> q :bdelete<CR>
 
-    :silent file! TDVim Help
+    ":silent file! TDVim Help
 endfunction
+" }}}
 
 " SetupFirstStartup {{{
 function! utils#SetupFirstStartup()
@@ -571,30 +584,49 @@ function! utils#SetupFirstStartup()
         endif
     endif
 endfunction
+" }}}
 
 " ToggleVExplorer {{{
 " Open/Close Netrw explorer as a side drawer
 function! utils#ToggleVExplorer()
-    if exists("t:expl_buf_num")
-        let expl_win_num = bufwinnr(t:expl_buf_num)
-        if expl_win_num != -1
-            "let cur_win_nr = winnr()
-            let cur_buf =  bufname( winnr() )
-            exec expl_win_num . 'wincmd w'
-            close
-            let cur_win_nr = bufwinnr( cur_buf )
-            exec cur_win_nr . 'wincmd w'
-            unlet t:expl_buf_num
-        else
-            unlet t:expl_buf_num
-        endif
+    let found = 0
+    let curwindow = winnr()
+    let curbuf =  bufname( curwindow )
+    execute curwindow  . 'wincmd t'
+    if getwinvar(0, '&syntax') == 'netrw'
+        let found = 1
+    endif
+    if found
+        close!
+        let curwindow = bufwinnr( curbuf )
+        execute curwindow .'wincmd w'
     else
         let path = substitute(exists("b:netrw_curdir")? b:netrw_curdir : expand("%:p"), '^\(.*[/\\]\)[^/\\]*$','\1','e')
-        exe "15Lexplore ".path
+        exe "20Lexplore ".path
         "setlocal winfixwidth
+        "let t:expl_buf_num = bufnr("%")
+    endif
 
-        let t:expl_buf_num = bufnr("%")
-    endif    
+    "if exists("t:expl_buf_num")
+        "let expl_win_num = bufwinnr(t:expl_buf_num)
+        "if expl_win_num != -1
+            ""let cur_win_nr = winnr()
+            "let cur_buf =  bufname( winnr() )
+            "exec expl_win_num . 'wincmd w'
+            "close
+            "let cur_win_nr = bufwinnr( cur_buf )
+            "exec cur_win_nr . 'wincmd w'
+            "unlet t:expl_buf_num
+        "else
+            "unlet t:expl_buf_num
+        "endif
+    "else
+        "let path = substitute(exists("b:netrw_curdir")? b:netrw_curdir : expand("%:p"), '^\(.*[/\\]\)[^/\\]*$','\1','e')
+        "exe "15Lexplore ".path
+        ""setlocal winfixwidth
+
+        "let t:expl_buf_num = bufnr("%")
+    "endif    
 endfunction
 " }}}
 
@@ -613,3 +645,227 @@ function! utils#UserNetrwRexplore( islocal )
 endfunction
 " }}}
 
+" ClosePreviousWindow {{{
+" Close previous window
+function! utils#ClosePreviousWindow()
+    let prevwindow = winnr('#')
+    if prevwindow > 0
+        execute prevwindow . 'wincmd c'
+    endif
+endfunction
+" }}}
+
+" SearchAndResults {{{
+" Perform a vimgrep search in current buffer and show results in Qicklist
+" windoew
+function! utils#SearchAndResults( pat )
+    execute "vimgrep " . a:pat . " %"
+    cwin
+endfunction
+"}}}
+
+" InsertTimestamp {{{
+" This function will insert a time stamp whatever the mode you are
+" Modes could be two options:
+" 1 - Insert just the time stamp
+" 2 - Insert automatic time stamp using a pattern ready for autodate
+" Insert is how to insert stuff:
+" i - inssert
+" a - append
+function! utils#InsertTimestamp(mode, insert)
+    "let l:stampStr=Strftime2(g:autodate_format)
+    let l:stampStr=strftime(g:autodate_format)
+    if a:mode == 1
+        execute "normal " . a:insert. " " . l:stampStr
+    else
+        execute "normal " . a:insert. " " . g:autodate_keyword_pre . " ."
+        execute "Autodate"
+    endif
+endfu
+"}}}
+
+" GitStatusToggle {{{
+" Open Git status using fugitive's Gstatus in decent window at the bottom
+" Toggle it if needed
+function! utils#GitStatusToggle()
+    " Save current window number to revert.
+    let save_winnr = winnr()
+    let nwin = 1
+    let found = 0
+    while 1
+        let nbuf = winbufnr(nwin)
+        " After all window processed, finish.
+        if nbuf == -1
+            break
+        endif
+        " Detect if window is Gstatus
+        if getbufvar(nbuf, '&filetype') ==# 'gitcommit'
+            execute nwin.'wincmd w'
+            if &previewwindow
+                let found = 1
+                " Correct saved window number if younger window will be closed.
+                if save_winnr >= nwin
+                    let save_winnr = save_winnr - 1
+                endif
+                break
+            endif
+        endif
+        let nwin = nwin + 1
+    endwhile
+    if found
+        close!
+        " Revert selected window.
+        execute save_winnr.'wincmd w'
+    else
+        Gstatus
+        let curwindow = winnr()
+        execute curwindow  . 'wincmd J'
+        resize 20
+        "execute curwindow  . 'wincmd 10+'
+    endif
+endfunction
+" }}}
+
+" GitFileLogToggle {{{
+" Open latest 10 revisions of a file in GIT in quickfix window 
+" Toggle it if needed
+function! utils#GitFileLogToggle()
+    " Save current window number to revert.
+    let found = 0
+    for winnr in range(1, winnr('$'))
+        if getwinvar(winnr, '&syntax') == 'qf'
+            let found = 1
+            break
+        endif
+    endfor
+    if found
+        cclose
+        " Revert selected window.
+        "execute save_winnr.'wincmd w'
+    else
+        " Create log, open quickfix window, move it down and go back to file
+        Glog
+        copen 10
+        let curwindow = winnr()
+        execute curwindow  . 'wincmd J'
+        execute curwindow  . 'wincmd p'
+        e #
+    endif
+endfunction
+" }}}
+
+" GitLogToggle {{{
+" Open latest 10 revisions of a file in GIT in quickfix window 
+" Toggle it if needed
+function! utils#GitLogToggle()
+    let save_winnr = winnr()
+    let found = 0
+    for winnr in range(1, winnr('$'))
+        execute winnr .'wincmd w'
+        let name = bufname( winbufnr( winnr ) )
+        if getwinvar(winnr, '&syntax') == 'git' && name =~# "^fugitive:"
+            let found = 1
+            " Correct saved window number if younger window will be closed.
+            if save_winnr >= winnr
+                let save_winnr = save_winnr - 1
+            endif
+            break
+        endif
+    endfor
+    if found
+        close!
+        " Revert selected window.
+        execute save_winnr.'wincmd w'
+    else
+        let curwindow = winnr()
+        execute curwindow  . 'wincmd s'
+        execute curwindow  . 'wincmd p'
+        "Glog --
+        Glog --
+        let curwindow = winnr()
+        execute curwindow  . 'wincmd J'
+    endif
+endfunction
+" }}}
+
+" GitDiffToggle {{{
+" Make diff of current file with it latest reviion in GITg 
+" Toggle it if needed
+function! utils#GitDiffToggle()
+    let curwindow = winnr()
+    let save_winnr = winnr()
+    let found = 0
+    let diffwins = []
+    let curname = bufname("%")
+    if curname =~# "^fugitive:"
+        let curname = ""
+    endif
+    for winnr in range(1, winnr('$'))
+        execute winnr .'wincmd w'
+        let name = bufname( winbufnr( winnr ) )
+        if getwinvar(winnr, '&diff')
+            let found = 1
+            "diffoff
+            if name =~# "^fugitive:"
+                " Correct saved window number if younger window will be closed.
+                call add( diffwins, winnr )
+                if save_winnr >= winnr
+                    let save_winnr = save_winnr - 1
+                endif
+            elseif !len( curname )
+                let curname = name
+            endif
+            break
+        endif
+    endfor
+    execute curwindow .'wincmd w'
+    if found
+        for win in diffwins
+            execute win .'wincmd w'
+            close!
+        endfor
+        let curwindow = bufwinnr( curname  )
+        execute curwindow .'wincmd w'
+        diffoff
+    else
+        Gdiff
+        let curwindow = bufwinnr( curname  )
+        execute curwindow .'wincmd w'
+    endif
+endfunction
+" }}}
+
+" TabAutocompleteWrapper {{{
+" Function to call to Autocomplete when pressing TAB
+" Or insert a TAB if ther is nothing in front of the cursor
+" From: https://stackoverflow.com/questions/2055417/mapping-tab-to-omicompletion-in-gvim 
+function! utils#TabAutocompleteWrapper( direction)
+    " Make TAB working in popup menu
+    if pumvisible()
+        if "backward" == a:direction
+            return "\<C-P>"
+        else
+            return "\<C-N>"
+        endif
+    endif
+    " Pass a normal TAB if there is no character in front.
+    " Use autocomplete if there is soemthing in front of the cursor
+    let char_before = col('.') - 1
+    if !char_before || getline('.')[char_before - 1] !~ '\k'
+        if "backward" == a:direction
+            return "\<BS>"
+        else
+            return "\<tab>"
+        endif
+    elseif "backward" == a:direction
+        return "\<c-p>"
+    else
+        return "\<c-n>"
+    endif
+endfunction
+" }}}
+
+
+
+
+" vim: ts=8 ft=vim nowrap fdm=marker 

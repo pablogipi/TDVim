@@ -24,6 +24,7 @@ Files                                  *tdvim-files*
 - Save All:                       <leader>wa
 - Open File Save As:              <Ctrl-Alt-S>
 - Open a saved session:           <Ctrl-Shift-F1>
+- Open Preferences:               <F10>
 
 ==================================================
 Editing                             *tdvim-editing*
@@ -43,7 +44,7 @@ Editing                             *tdvim-editing*
 - Word Selection:                 <Ctrl-Shift-[Left|Right]>
 - Select All:                     <Ctrl-A>
 - Jump Start/End File:            <Ctrl-[PageUp|PageDown]>
-- File History:                   <F9>
+- File History:                   <F7>
 
 ==================================================
 Window Management                   *tdvim-windows*
@@ -57,18 +58,26 @@ Window Management                   *tdvim-windows*
 - Split horzontal window:        <leader>sh
 - Show/Hide menu bar:            <Ctrl-F8>
 - Explorer:                      <F8>
+- In Window Explorer:            <->
 - Buffers Explorer:              <F3>, <leader>b
 - Switch Previous Buffer:        <Ctrl-F3>
 - Close window:                  <leader>q
+- Close window:                  <leader>x
 - Close preview window:          <leader>qp
 - Reset windows size:            <leader>=
+
+- Explorer (Netrw)
+  - Go up dir:                   <u>
+  - Go previous dir:             <U>
+  - Go next in history:          <B>
+  - Go back to file buffer:      <->
 
 ==================================================
 Modes                                 *tdvim-modes*
 
-- Command Line:           <F2>
-- Command Line Palette:   <Ctrl-F2>
-- Visual Block Selection: <Shift-F2>
+    - Command Line:           <F2>
+    - Command Line Palette:   <Ctrl-F2>
+    - Visual Block Selection: <Shift-F2>
 
 ==================================================
 Development                     *tdvim-development*
@@ -78,23 +87,27 @@ Development                     *tdvim-development*
 - Toggle Comment:                             <F5>, <leader>ct
 - Scope current function in tags:             <Ctrl-F4>
 - Yank and Comment:                           Shift:F5, <leader>cy
-- Line Finder:                                <F7>
+- Word Finder:                                <F6>
+- Word Finder in files:                       <Shift-F6>
 - Build:                                      <F11>
 - Prev/Next Error:                            <Shift/Ctrl F11>
 - Errors list:                                <Ctrl-Shift F11>
 - Build Tags:                                 <F12>
 - OmniComplete:                               <Ctrl-x> <Ctrl-o> , <Ctrl-Space>
 - Tags Explorer:                              <Shift-F8>
-- Tasks List:                                 <Shift-F9>, <leader>t
+- Tasks List:                                 <Ctrl-Shift-F9>, <leader>t
 - Jump to tag:                                <F4>, <]t>
 - Go back from tag stack:                     <[t>
 - Show tags match and jump:                   <[T>
 - Preview tags:                               <S-F4>, <]T>
 - Autocomplete:                               <TAB>
-- Cycle through autocomplete modes:           <Ctrl [,|.]>
-- Expand Snippet:                             <TAB>
+- Cycle through autocomplete modes:           <Ctrl-m>, <Shift-m>
+- Expand Snippet:                             <Ctrl-t>
 - Show available snippets:                    <Ctrl-B>
 - Forward/Backwards in snippets placeholders: <TAB>, <Shift-TAB>
+- GiT File diff:                              <Ctrl-F7>
+- Git Status:                                 <F9>
+- Git Diff:                                   <Shift-F9>
 
 ==================================================
 Function Keys                     *tdvim-func-keys*
@@ -104,27 +117,31 @@ Function Keys                     *tdvim-func-keys*
    - <Ctrl-Shift-F1>:  Open a saved session
 - <F2>:                Command line mode
    - <Ctrl-F2>:        Command Line Palette
-   - <Shift-F2>:       visaul block selection`
+   - <Shift-F2>:       Visual block selection`
 - <F3>:                Open buffer`
    - <Ctrl-Shift-F3>:  Open Recent files
    - <Shift-F3>:       Open Files
-   - <Ctrl-F3>:        switch previous buffer
+   - <Ctrl-F3>:        Switch previous buffer
 - <F4>:                Tags/Symbol Finder
-   - <Ctrl-F4>:        scope current function in tags
+   - <Ctrl-F4>:        Scope current function in tags
    - <Shift-F4>:       Preview tag in file. Open in Preview window
 - <F5>:                Toggle line comment
    - <Shift-F5>:       Yank and comment line
-- <F6>:                Grep word under cursor in file location
-- <F7>:                Line Finder
-   - <Ctrl-Shift-F7>:  changes finder
-   - <Ctrl-F7>:        Goto position of previous change
-   - <Shift-F7>:       Goto position of next change
+- <F6>:                Search word under cursor in buffer
+   - <Shift-F6>:       Grep word under cursor in all files in location
+   - <Ctrl-F6>:        Goto position of previous change
+   - <Ctrl-Shift-F6>:  Goto position of next change
+- <F7>:                File History
+   - <Ctrl-F7>:        Git File Diff
+   - <Shift-F7>:       File Diff
 - <F8>:                Open file browser
    - <Ctrl-F8>:        Enable/disable menu bar
    - <Shift-F8>:       Tags Explorer
-- <F9>:                File History
-   - <Shift-F9>:       Tasks list
-- <F10>:               Not assigned
+   - <Ctrl-Shift-F8>:  Tasks list
+- <F9>:                Git Status
+   - <Shift-F9>:       Git File Log
+   - <Ctrl-F9>:        Git Log
+- <F10>:               Open Preference
 - <F11>:               Build
    - <Ctrl F11>:       Next Error
    - <Shift F11>:      Prev Error

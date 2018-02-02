@@ -1,0 +1,36 @@
+*** /mnt/c/Users/pablo/vimfiles/plugged/OmniCppComplete/autoload/omni/cpp/complete.vim	2017-11-02 00:48:56.053561000 +0000
+--- complete.vim	2017-09-05 00:22:48.954401400 +0100
+***************
+*** 444,449 ****
+--- 444,450 ----
+  
+  " This function is used for the 'omnifunc' option.
+  function! omni#cpp#complete#Main(findstart, base)
++ 
+      if a:findstart
+          "call omni#common#debug#Start()
+  
+***************
+*** 565,569 ****
+--- 566,586 ----
+  
+      "call omni#common#debug#End()
+  
++     " Post process info output for preview window
++     for i in range( len( s:popupItemResultList ) )
++         let l:infoData = s:popupItemResultList[i]['info']
++         let l:newInfo = substitute(l:infoData, '\/\^ *','','')
++         let l:newInfo = substitute(l:newInfo, '\$\/ *','','')
++         let l:newInfo = substitute(l:newInfo, 'name:','Name:','')
++         let l:newInfo = substitute(l:newInfo, 'cmd:','Definition:','')
++         let l:newInfo = substitute(l:newInfo, 'class:','Class:','')
++         let l:newInfo = substitute(l:newInfo, 'filename:','File:','')
++         let l:newInfo = substitute(l:newInfo, 'kind:','Kind:','')
++         let l:newInfo = substitute(l:newInfo, 'access:','Access:','')
++         let l:newInfo = substitute(l:newInfo, 'typeref: typename:','Type: ','')
++         let l:newInfo = substitute(l:newInfo, 'signature:','Signature:','')
++         let s:popupItemResultList[i]['info'] = l:newInfo 
++     endfor 
++ 
+      return s:popupItemResultList
+  endfunc

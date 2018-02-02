@@ -39,15 +39,16 @@ Plug 'xolox/vim-misc'
 Plug 'xolox/vim-session'
 Plug 'tomtom/tlib_vim'
 Plug 'tomtom/ttodo_vim'
+"Plug 'vim-scripts/HelpClose', { 'on': 'HelpClose' }
+Plug 'vim-scripts/HelpClose'
 
 " UI
 " NERD Tree will be loaded on the first invocation of NERDTreeToggle command
-Plug 'scrooloose/nerdtree',              { 'on': 'NERDTreeToggle' }
+"Plug 'scrooloose/nerdtree',              { 'on': 'NERDTreeToggle' }
 " CtrlP
-Plug 'kien/ctrlp.vim',                   { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
-Plug 'fisadev/vim-ctrlp-cmdpalette',     { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
-"Plug 'd11wtq/ctrlp_bdelete.vim', { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
-Plug 'd11wtq/ctrlp_bdelete.vim'
+"Plug 'kien/ctrlp.vim',                   { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
+"Plug 'fisadev/vim-ctrlp-cmdpalette',     { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
+"Plug 'd11wtq/ctrlp_bdelete.vim'
 " Lightline
 Plug 'itchyny/lightline.vim'
 " Tagbar
@@ -64,32 +65,35 @@ Plug 'szw/vim-maximizer',                { 'on': 'MaximizerToggle' }
 " Development
 " Autocomplete
 "Plug 'ajh17/VimCompletesMe'
-Plug 'lifepillar/vim-mucomplete'
+"Plug 'lifepillar/vim-mucomplete'
 " OmniCppComplete
 Plug 'vim-scripts/OmniCppComplete',      { 'for': ['cpp', 'c'] }
 " FSwitch
 Plug 'derekwyatt/vim-fswitch'
 " Snipmate
-Plug 'SirVer/ultisnips',                 { 'for': ['cpp', 'c'] }
-Plug 'honza/vim-snippets',               { 'for': ['cpp', 'c'] }
+Plug 'SirVer/ultisnips',                 { 'for': ['cpp', 'c', 'python', 'vim'] }
+Plug 'honza/vim-snippets',               { 'for': ['cpp', 'c', 'python', 'vim'] }
 " Task List
-Plug 'vim-scripts/TaskList.vim',         { 'for': ['cpp', 'c'] }
+Plug 'vim-scripts/TaskList.vim',         { 'for': ['cpp', 'c', 'python', 'vim'] }
 " Cpp Enhanced Syntax
 Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['cpp', 'c'] }
 " Guten Tags
 Plug 'ludovicchabant/vim-gutentags',     { 'for': ['cpp', 'c', 'vim'] }
 " Autodate
-Plug 'vim-scripts/autodate.vim',         { 'for': ['cpp', 'c', 'vim', 'sh', 'python'] }
-
-
-
+Plug 'vim-scripts/autodate.vim'
+" Diffchanges
+Plug 'vim-scripts/diffchanges.vim'
+" Fugitive (GIT)
+"Plug 'tpope/vim-fugitive',               { 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit']}
+Plug 'tpope/vim-fugitive',               { 'for': ['cpp', 'c', 'vim', 'python'], 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit'] }
+Plug 'itchyny/vim-gitbranch' 
 
 
 " Editing
 " Nerd Commenter
 Plug 'scrooloose/nerdcommenter'
 " Easy Align
-Plug 'junegunn/vim-easy-align', { 'on': 'LiveEasyAlign' }
+Plug 'junegunn/vim-easy-align',          { 'on': 'LiveEasyAlign' }
 "Plug 'junegunn/vim-easy-align'
 " Surround
 Plug 'tpope/vim-surround'
@@ -98,7 +102,7 @@ Plug 'haya14busa/incsearch.vim'
 " Anzu
 Plug 'osyo-manga/vim-anzu'
 " Ack
-Plug 'mileszs/ack.vim', { 'on': 'Ack' }
+Plug 'mileszs/ack.vim',                  { 'on': 'Ack' }
 " Delimit Mate
 Plug 'Raimondi/delimitMate'
 
@@ -195,7 +199,6 @@ set autochdir
 set ttyfast
 
 " }}}
-
 
 " Edit options and Language specific options {{{
 "
@@ -300,8 +303,18 @@ let &foldnestmax = 3
 
 " Completion {{{
 " Completion options
-"set completeopt=longest,menuone
-set completeopt=menuone,noinsert
+set noshowmode
+set shortmess+=c
+set noinfercase
+set belloff+=ctrlg " If Vim beeps during completion
+set completeopt-=preview
+set completeopt+=menuone
+set completeopt+=noinsert
+"set completeopt+=noselect
+" Protect certain keymaps
+"inoremap <expr> <c-e> mucomplete#popup_exit("\<c-e>")
+"inoremap <expr> <c-y> mucomplete#popup_exit("\<c-y>")
+"inoremap <expr>  <cr> mucomplete#popup_exit("\<cr>")
 
 " Sources for searching in completion mode
 " Only include current buffer and buffer in other windows only
@@ -329,7 +342,8 @@ set pvh=5
 " }}}
 
 " Invisible character {{{2
-set listchars=tab:▸\ ,eol:¬
+"set listchars=tab:▸\ ,eol:¬
+set listchars=tab:>-,eol:¬,space:.,trail:.
 " }}}
 
 " Lines wraping and formatting {{{2
@@ -434,6 +448,7 @@ endif
 " }}}
 
 " Diff mode specific options {{{
+set diffopt=filler,vertical
 
 if &diff
     "	setup for diff mode
@@ -582,10 +597,19 @@ let g:lightline = {
         \ }
 
 "'left': [ [ 'preview', 'filename', 'modified' ], ],
+"let g:lightline.active = {
+            "\ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modified' ] ],
+            "\ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'fileformat', 'fileencoding', 'filetype' ], [ 'git' ] ]
+            "\   }
+let g:lightline.active = {
+            \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modified' ] ],
+            \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git', 'filetype' ] ]
+            \   }
+
 let g:lightline.inactive = {
             \ 'left': [ [ 'preview', 'filename', 'modified' ] ],
             \ 'right': [ [ 'lineinfo' ],
-            \            [ 'percent' ] ] }
+            \            [ 'git', 'percent' ] ] }
 " lightline-buffer
 " Always enable tabline, needed by lightline-bufferline
 set showtabline=2
@@ -621,11 +645,11 @@ let OmniCpp_ShowPrototypeInAbbr = 0
 
 " MuComplete
 let g:mucomplete#chains = {
-      \ 'default': ['file', 'keyp', 'uspl'],
-      \ 'cpp':     ['file', 'ulti', 'omni', 'keyp', 'c-p', 'uspl'],
-      \ 'c':       ['file', 'omni', 'keyp', 'c-p', 'uspl'],
-      \ 'python':  ['file', 'omni', 'keyp', 'c-p', 'uspl'],
-      \ 'vim':     ['file', 'cmd', 'keyp']
+      \ 'default': ['file', 'c-p', 'uspl'],
+      \ 'cpp':     ['file', 'ulti', 'omni', 'c-p'],
+      \ 'c':       ['file', 'omni', 'c-p'],
+      \ 'python':  ['file', 'omni', 'c-p'],
+      \ 'vim':     ['file', 'cmd', 'c-p']
       \ }
 let g:mucomplete#popup_direction = { 'c-p': 1 }
 let g:mucomplete#buffer_relative_paths = 1
@@ -673,14 +697,15 @@ let g:Netrw_UserMaps= [["u","utils#UserNetrwBrowseUpDir"],
 " Autodate
 "let g:autodate_format = '%d-%3m-%Y'
 let g:autodate_format = '%B %d, %Y - %H:%M %p'
-let g:autodate_keyword_pre = '\s\cLast Change:'
+"let g:autodate_keyword_pre = '\s\cLast Change:'
+let g:autodate_keyword_pre = 'Last Change:'
 
 " }}}
 "
 " Global variables {{{
 
 " TDVim version
-let $TDVIMVERSION="0.2alpha"
+let $TDVIMVERSION="0.2"
 
 " }}}
 

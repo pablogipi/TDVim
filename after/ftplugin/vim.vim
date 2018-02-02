@@ -1,7 +1,7 @@
 " File: vim.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: VimL language setup for TDVim
-" Last Change: June 19, 2012 - 02:41 AM
+" Last Change: January 23, 2018 - 00:42 AM.
 "
 
 " Setup for indending
