@@ -46,6 +46,7 @@ if  [[ $res =~ ^[yY]$ ]]; then
 fi
 echo "Installing TDVim in $TARGET  ..."
 tar xzvf $RELEASETARFILE -C $TARGET
+chmod -x+X -R $TARGET
  # }}}
 
 #
@@ -69,6 +70,7 @@ if  [[ $res =~ ^[yY]$ ]]; then
         mkdir -p $HOME/.vim
     fi
     tar xzvf $PLUGINSTARFILE -C $HOME/.vim
+    chmod -x+X -R $HOME/.vim
 fi
 
 # }}}
