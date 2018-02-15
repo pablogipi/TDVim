@@ -31,6 +31,13 @@ let b:vcm_tab_complete = "omni"
 " Keymaps
 "
 " Switch to alternate buffer
-nnoremap  <silent> <buffer> <C-F3>		    :FSHere<CR>
-vnoremap  <silent> <buffer> <C-F3>		    <Esc>:FSHere<CR>
-inoremap  <silent> <buffer> <C-F3>		    <Esc>:FSHere<CR>
+"nnoremap  <silent> <buffer> <C-F3>		    :FSHere<CR>
+"vnoremap  <silent> <buffer> <C-F3>		    <Esc>:FSHere<CR>
+"inoremap  <silent> <buffer> <C-F3>		    <Esc>:FSHere<CR>
+silent unmap <C-F3>
+nmap  <silent> <buffer> <C-F3>		    :FSHere<CR>
+vmap  <silent> <buffer> <C-F3>		    <Esc>:FSHere<CR>
+imap  <silent> <buffer> <C-F3>		    <Esc>:FSHere<CR>
+
+
+echoms "Custom cpp processed"
