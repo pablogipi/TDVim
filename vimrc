@@ -705,7 +705,7 @@ let g:autodate_keyword_pre = 'Last Change:'
 " Global variables {{{
 
 " TDVim version
-let $TDVIMVERSION="0.2.1"
+let $TDVIMVERSION="0.2.2"
 
 " }}}
 

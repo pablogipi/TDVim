@@ -1,7 +1,7 @@
 " File: keymaps.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Keymaps TDVim setup
-" Last Change: March 01, 2018 - 10:20 AM.
+" Last Change: March 01, 2018 - 10:36 AM.
 "
 
 
@@ -76,6 +76,7 @@
 " - Move to prev or next indented line: [l , ]l 
 " - Move to prev or next level indented line: [L , ]L 
 " - Toggle Comment: F5, <leader>ct
+" - Multiline Comment: Ctrl-F5, <leader>cs
 " - Yank and Comment: Shift:F5, <leader>cy
 " - Scope current function in tags: Ctrl-F4
 " - Word Finder: F6
@@ -1301,11 +1302,11 @@ function! keymaps#Development()
     " }}}
 
     " Multiline Comments - F5 {{{2
-    nmap <silent> <C-F5>     <Plug>NERDComSexyComments
-    vmap <silent> <C-F5>     <Plug>NERDComSexyComments
+    nmap <silent> <C-F5>     <Plug>NERDCommenterSexy
+    vmap <silent> <C-F5>     <Plug>NERDCommenterSexy
     imap <silent> <C-F5>     <Esc>\cs
-    nmap <silent> <leader>cs <Plug>NERDComSexyComments
-    vmap <silent> <leader>cs <Plug>NERDComSexyComments
+    nmap <silent> <leader>cs <Plug>NERDCommenterSexy
+    vmap <silent> <leader>cs <Plug>NERDCommenterSexy
     " }}}
 
     " Yank and comment - S-F5 {{{2
