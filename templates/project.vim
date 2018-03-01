@@ -19,3 +19,7 @@ endif
 " Vim project settings
 "if &filetype == "vim"
 "endif
+
+" Add folder to file search paths
+" set path += /apps/myapp/myincludes/*
+

@@ -1,7 +1,7 @@
 " File: keymaps.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Keymaps TDVim setup
-" Last Change: January 23, 2018 - 00:53 AM.
+" Last Change: March 01, 2018 - 10:20 AM.
 "
 
 
@@ -76,8 +76,8 @@
 " - Move to prev or next indented line: [l , ]l 
 " - Move to prev or next level indented line: [L , ]L 
 " - Toggle Comment: F5, <leader>ct
-" - Scope current function in tags: Ctrl-F4
 " - Yank and Comment: Shift:F5, <leader>cy
+" - Scope current function in tags: Ctrl-F4
 " - Word Finder: F6
 " - Word Finder in files: S-F6
 " - Build: F11
@@ -106,6 +106,7 @@
 " Function Keys
 " - F1: help
 "   - Shift-F1: Help for word under the cursor
+"   - Ctrl-F1: Open shortcuts help
 "   - Ctrl-Shift-F1: Open a saved session
 " - F2: Command line mode
 "   - Ctrl-F2: Command Line Palette
@@ -125,7 +126,7 @@
 "   - C-S-F6: Goto position of next change
 " - F7: File History
 "   - Shift-F7: File diff
-"   - Ctrl-F7: GIT file diff TODO
+"   - Ctrl-F7: GIT file diff
 " - F8: Open file browser
 "   - Ctrl-F8: Enable/disable menu bar
 "   - Shift-F8: Tags Explorer
@@ -160,6 +161,7 @@
 " - Close previous window: <leader>qw
 " - Reset windows size: <leader>=
 " - Tasks list: <leader>t
+" - Close buffer without closing window: <leader>x
 "
 
 " Template: {{{
@@ -576,6 +578,7 @@ function! keymaps#WindowManagement()
     "endif
     "}}}
 
+
     " Maximize/restore windows {{{2
     nnoremap <unique> <silent> <Plug>TdvimZoom :MaximizerToggle<CR>
     vnoremap <unique> <silent> <Plug>TdvimZoom :MaximizerToggle<CR>v
@@ -786,7 +789,7 @@ function! keymaps#WindowManagement()
     vmap <silent> <leader>qh <Plug>TdvimCloseHelpWindow
     " }}}
 
-    " Close Help Window {{{2
+    " Close Previous Window {{{2
     nnoremap <unique> <silent> <Plug>TdvimClosePreviousWindow :call utils#ClosePreviousWindow()<CR>
     vnoremap <unique> <silent> <Plug>TdvimClosePreviousWindow <Esc>:call utils#ClosePreviousWindow()<CR>
     inoremap <unique> <silent> <Plug>TdvimClosePreviousWindow <Esc>:call utils#ClosePreviousWindow()<CR>
@@ -1297,6 +1300,14 @@ function! keymaps#Development()
     vmap <silent> <leader>ct <Plug>NERDCommenterToggle
     " }}}
 
+    " Multiline Comments - F5 {{{2
+    nmap <silent> <C-F5>     <Plug>NERDComSexyComments
+    vmap <silent> <C-F5>     <Plug>NERDComSexyComments
+    imap <silent> <C-F5>     <Esc>\cs
+    nmap <silent> <leader>cs <Plug>NERDComSexyComments
+    vmap <silent> <leader>cs <Plug>NERDComSexyComments
+    " }}}
+
     " Yank and comment - S-F5 {{{2
     nmap <silent> <S-F5>     <Plug>NERDCommenterYank
     vmap <silent> <S-F5>     <Plug>NERDCommenterYank
@@ -1606,7 +1617,7 @@ function! keymaps#Help()
     vmap     <silent> <S-F1>   <Plug>TdvimHelpFinder
     " }}}
 
-    " Open Shortcuts reference - C-S-F1 {{{2
+    " Open Shortcuts reference - C-F1 {{{2
     nnoremap <unique> <silent> <Plug>TdvimHelpShortcuts :call utils#ShowTDVimHelp()<CR>
     inoremap <unique> <silent> <Plug>TdvimHelpShortcuts <Esc>:call utils#ShowTDVimHelp()<CR>i
     vnoremap <unique> <silent> <Plug>TdvimHelpShortcuts <Esc>:call utils#ShowTDVimHelp()<CR>v

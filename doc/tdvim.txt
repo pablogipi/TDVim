@@ -85,8 +85,9 @@ Development                     *tdvim-development*
 - Move to prev or next indented line:         <[l> , <]l>
 - Move to prev or next level indented line:   <[L> , <]L>
 - Toggle Comment:                             <F5>, <leader>ct
-- Scope current function in tags:             <Ctrl-F4>
+- Multiline Comment:                          <Ctrl-F5>, <leader>cs
 - Yank and Comment:                           Shift:F5, <leader>cy
+- Scope current function in tags:             <Ctrl-F4>
 - Word Finder:                                <F6>
 - Word Finder in files:                       <Shift-F6>
 - Build:                                      <F11>
@@ -114,6 +115,7 @@ Function Keys                     *tdvim-func-keys*
 
 - <F1>:                help
    - <Shift-F1>:       Help for word under the cursor
+   - <Ctrl-F1>:        Open shortcuts help
    - <Ctrl-Shift-F1>:  Open a saved session
 - <F2>:                Command line mode
    - <Ctrl-F2>:        Command Line Palette

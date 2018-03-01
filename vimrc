@@ -39,8 +39,8 @@ Plug 'xolox/vim-misc'
 Plug 'xolox/vim-session'
 Plug 'tomtom/tlib_vim'
 Plug 'tomtom/ttodo_vim'
-"Plug 'vim-scripts/HelpClose', { 'on': 'HelpClose' }
 Plug 'vim-scripts/HelpClose'
+Plug 'rkitover/vimpager'
 
 " UI
 " NERD Tree will be loaded on the first invocation of NERDTreeToggle command

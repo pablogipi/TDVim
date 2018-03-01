@@ -54,7 +54,8 @@ function! commands#WindowsCommands ()
     " Wrapper for outliner
     "command! -nargs=0 Outliner FoldDigestToggle
     " Delete buffer without deleting window
-    command TdvimBufferDelete bp | sp | bn | bd
+    "command TdvimBufferDelete bp | sp | bn | bd
+    command TdvimBufferDelete bp | sp | bn | bw
 
 endfunction
 " }}}
