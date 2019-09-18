@@ -28,17 +28,17 @@ echo
 #echo "Copying source files ..."
 BUILD=build
 #TARFILE=build/TDVim_${1}.tbz2
-RELEASETARFILE=release.tgz
+RELEASETARFILE=release.tbz2
 mkdir $BUILD/src
 tar cf - --exclude-vcs -T distfiles.txt | tar xf - -C $BUILD/src
 #echo "Convert files to UNIX format"
 find $BUILD/src -type f -print0 | xargs -0 dos2unix -q
 #tar -cvzf $$BUILD/$RELEASETARFILE --exclude-vcs -T distfiles.txt
-tar -cf $BUILD/$RELEASETARFILE $BUILD/src/*
+tar -cjf $BUILD/$RELEASETARFILE $BUILD/src/*
 
 echo "Package plugins ..."
 echo
-PLUGINSTARFILE=plugins.tgz
+PLUGINSTARFILE=plugins.tbz2
 PLUGINSLOC=/mnt/c/Users/pablo/vimfiles/
 mkdir $BUILD/plugged
 cd $PLUGINSLOC
@@ -46,7 +46,7 @@ tar cf - --exclude-vcs plugged | tar xf - -C $CURDIR/$BUILD
 #tar -cvzf $CURDIR/$$BUILD/$PLUGINSTARFILE --exclude-vcs plugged
 cd $CURDIR
 find $BUILD/plugged -type f -print0 | xargs -0 dos2unix -q
-tar -czf $CURDIR/$BUILD/$PLUGINSTARFILE --exclude-vcs $BUILD/plugged
+tar -cjf $CURDIR/$BUILD/$PLUGINSTARFILE --exclude-vcs $BUILD/plugged
 echo "Copy installer script ..."
 echo
 cp installer $BUILD

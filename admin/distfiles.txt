@@ -4,3 +4,4 @@
 ../doc
 ../templates
 ../UltiSnips
+../fonts

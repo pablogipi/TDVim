@@ -20,7 +20,7 @@
 " =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 " Modified version for TDVim {{{1
-" Last Change: 19-Dec-2017.
+" Last Change: November 03, 2018 - 00:59 AM.
 "
 "}}}
 
@@ -528,8 +528,10 @@ endif
 call s:NetrwInit("g:netrw_menu_escape",'.&? \')
 call s:NetrwInit("g:netrw_tmpfile_escape",' &;')
 call s:NetrwInit("s:netrw_map_escape","<|\n\r\\\<C-V>\"")
+"if has("gui_running") && (&enc == 'utf-8' || &enc == 'utf-16' || &enc == 'ucs-4')
+ "let s:treedepthstring= "│ "
 if has("gui_running") && (&enc == 'utf-8' || &enc == 'utf-16' || &enc == 'ucs-4')
- let s:treedepthstring= "│ "
+ let s:treedepthstring= "| "
 else
  let s:treedepthstring= "| "
 endif

@@ -52,6 +52,7 @@ Source: "C:\dev\vim\autoload\*"; DestDir: "{app}\autoload"; Flags: recursesubdir
 Source: "C:\dev\vim\doc\*"; DestDir: "{app}\doc"; Flags: recursesubdirs createallsubdirs
 Source: "C:\dev\vim\templates\*"; DestDir: "{app}\templates"; Flags: recursesubdirs createallsubdirs
 Source: "C:\dev\vim\UltiSnips\*"; DestDir: "{app}\UltiSnips"; Flags: recursesubdirs createallsubdirs
+Source: "C:\dev\vim\fonts\*"; DestDir: "{app}\fonts"; Flags: recursesubdirs createallsubdirs
 Source: "C:\Users\pablo\vimfiles\plugged\*"; DestDir: "{%USERPROFILE}\vimfiles\plugged"; Flags: recursesubdirs createallsubdirs; Tasks: plugins
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

@@ -1,7 +1,7 @@
 " File: keymaps.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Keymaps TDVim setup
-" Last Change: March 01, 2018 - 10:36 AM.
+" Last Change: September 18, 2019 - 01:02 AM.
 "
 
 
@@ -21,7 +21,6 @@
 " - Save All: <leader>wa
 " - Open File Save As: Atrl-Alt-S
 " - Open a saved session: Ctrl-Shift-F1
-" - Open Preferences: F10
 "
 " Editing
 " - Deleting Word: Ctrl-Backspace, Ctrl-Del
@@ -39,7 +38,12 @@
 " - Word Selection: Ctrl-Shift-[Left|Right]
 " - Select All: Ctrl-a
 " - Jump Start/End File: Ctrl-[PageUp|PageDown]
-" - File History: F7
+" - File History: Ctrl-Shift-F4
+"
+" Search
+" - Grep word under cursor in all files in location: F4, <leader>f
+" - Browse changes in file: Ctrl-F4, <leader>fc
+" - Browse lines in file: Shift-F4, <leader>fl
 "
 "
 " Window Management
@@ -52,6 +56,9 @@
 " - Split horzontal window: <leader>sh
 " - Show/Hide menu bar: Ctrl-F8
 " - Explorer: F8
+" - Focus Explorer Window: <leader>e
+" - Focus Current File in Explorer:         <leader>ef
+" - In Buffer Explorer: -
 " - Buffers Explorer: F3, <leader>b
 " - Switch Previous Buffer: Ctrl-F3
 " - Close window: <leader>q
@@ -61,10 +68,10 @@
 " - Close previous window: <leader>qw
 " - Reset windows size: <leader>=
 "
-" Explorer (Netrw)
+" Explorer (NERDTree)
 " - Go up dir: u
 " - Go previous dir: U
-" - Go next in history: B
+" - Open Bookmarks: <Shift-B>
 " - Go back to file buffer: -
 "
 " Modes:
@@ -78,9 +85,8 @@
 " - Toggle Comment: F5, <leader>ct
 " - Multiline Comment: Ctrl-F5, <leader>cs
 " - Yank and Comment: Shift:F5, <leader>cy
-" - Scope current function in tags: Ctrl-F4
-" - Word Finder: F6
-" - Word Finder in files: S-F6
+" - Scope current function in tags: Ctrl-F6
+" - Grep in files: F4
 " - Build: F11
 " - Prev/Next Error: Shift/Ctrl F11
 " - Errors list: Ctrl-Shift F11
@@ -88,21 +94,20 @@
 " - OmniComplete: Ctrl-x Ctrl-o , Ctrl-Space
 " - Tags Explorer: Shift-F8
 " - Tasks List: Ctrl-Shift-F8, <leader>t
-" - Jump to tag: F4, ]t
+" - Jump to tag: F6, ]t
 " - Go back from tag stack: [t
 " - Show tags match and jump: [T
-" - Preview tags: S-F4, ]T
+" - Browse Functions: S-F6, <leader>fu
+" - Preview tags: C-S-F6, ]T
 " - Autocomplete:TAB
 " - Cycle autocompletion methods: Ctrl-m, Shift-m
 " - Expand Snippet: <C-t>
 " - Show available snippets: Ctrl-b
 " - Forward/Backwards in snippets placeholders: TAB, Shift-TAB
-" - File diff: Shift-F7
-" - GiT File diff: Ctrl-F7
 " - Git Status: F9
+" - Git Log: Ctrl-F9
+" - Git File Log: Ctrl-Shift-F9
 " - Git Diff: Shift-F9
-"   FIXME: shortcut for MuComplete to cycle between matching methods cause
-"   issues, test again.
 "
 " Function Keys
 " - F1: help
@@ -116,15 +121,16 @@
 "   - Ctrl-Shift-F3: Open Recent files
 "   - Shift-F3: Open Files
 "   - Ctrl-F3: Switch previous buffer
-" - F4: Tags/Symbol Finder
-"   - Ctrl-F4: Scope current function in tags
-"   - Shift-F4: Preview tag in file. Open in Preview window
+" - F4: Grep word under cursor in all files in location
+"   - C-F4: Browse changes in file
+"   - S-F4: Browse lines
+"   - C-S-F4: File History
 " - F5: Toggle line comment
 "   - Shift-F5: Yank and comment line
-" - F6: Search word under cursor in buffer
-"   - S-F6: Grep word under cursor in all files in location
-"   - C-F6: Goto position of previous change
-"   - C-S-F6: Goto position of next change
+" - F6: Tags/Symbol Finder
+"   - Ctrl-F6: Scope current function in tags
+"   - Shift-F6:Browse Functions.
+"   - Ctrl-Shift-F6: Preview tag in file. Open in Preview window
 " - F7: File History
 "   - Shift-F7: File diff
 "   - Ctrl-F7: GIT file diff
@@ -133,9 +139,9 @@
 "   - Shift-F8: Tags Explorer
 "   - Ctrl-Shift-F8: Tasks list
 " - F9: Git status
-"   - Shift-F9: Git file log
+"   - Shift-F9: Git diff
+"   - Ctrl-Shift-F9: Git file log
 "   - Ctrl-F9: Git log
-" - F10: Open Preferences
 " - F11: Build
 "   - Ctrl F11: Next Error
 "   - Shift F11: Prev Error
@@ -149,10 +155,13 @@
 " - Split window: <leader>s
 " - Split horzontal window: <leader>sh
 " - Show/Hide Menu Bar: <leader>m
-" - Explorer: <leader>e
+" - Focus Explorer: <leader>e
+" - Focus Current File in Explorer:         <leader>ef
 " - Buffer Explorer: <leader>b
-" - Find word under cursor in files (vimgrep): <leadef>f
-" - Find word under cursor in all files in current locaton(Ack): <leadef>ff
+" - Find word under cursor in files (Ack): <leader>f
+" - Navigate changes in current file:       <leader>fc
+" - Navigate lines in current file:       <leader>fl
+" - Browse Functions: <leader>fu
 " - Find word under cursor in all git trackedfiles: <leadef>fg
 " - Toggle comments: <leader>ct
 " - Comment and Yank:<leader>cy
@@ -199,7 +208,7 @@
 "endif
 " }}}
 
-" -- LoadKeymaps -- {{{
+" LoadKeymaps {{{
 " Load Keymaps, call all functions that laods every section keymaps
 function! keymaps#LoadKeymaps()
     call keymaps#TerminalKeycodes()
@@ -353,27 +362,27 @@ function! keymaps#MainOperations ()
     " }}}
 
     " Fuzzy Finder Open Files -> S-F3 {{{2
-    "nnoremap <unique> <silent>          <Plug>TdvimFinder       :CtrlP<CR>
-    "inoremap <unique> <silent>          <Plug>TdvimFinder       :CtrlP<CR>i
-    "vnoremap <unique> <silent>          <Plug>TdvimFinder       :CtrlP<CR>v
-    nnoremap <unique>           <Plug>TdvimFinder       :find 
-    inoremap <unique>           <Plug>TdvimFinder       <Esc>:find 
-    vnoremap <unique>           <Plug>TdvimFinder       <Esc>:find 
+    nnoremap <unique> <silent> <Plug>TdvimFinder :CtrlP<CR>
+    inoremap <unique> <silent> <Plug>TdvimFinder :CtrlP<CR>i
+    vnoremap <unique> <silent> <Plug>TdvimFinder :CtrlP<CR>v
+    "nnoremap <unique>           <Plug>TdvimFinder       :find 
+    "inoremap <unique>           <Plug>TdvimFinder       <Esc>:find 
+    "vnoremap <unique>           <Plug>TdvimFinder       <Esc>:find 
 
-    nmap  <S-F3>                <Plug>TdvimFinder
-    imap  <S-F3>                <Plug>TdvimFinder
-    vmap <silent> <S-F3>                <Plug>TdvimFinder
+    nmap     <S-F3>   <Plug>TdvimFinder
+    imap     <S-F3>   <Plug>TdvimFinder
+    vmap     <silent> <S-F3>   <Plug>TdvimFinder
 
     " }}}
 
     " Fuzzy Finder MRU ->  C-S-F3{{{2
     " Default map to C-S-F3
-    "nnoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>
-    "inoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>i
-    "vnoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>v
-    nnoremap <unique> <silent>          <Plug>TdvimFinderMru    :browse oldfiles<CR>
-    inoremap <unique> <silent>          <Plug>TdvimFinderMru    <Esc>:browse oldfiles<CR>
-    vnoremap <unique> <silent>          <Plug>TdvimFinderMru    <Esc>:browse oldfiles<CR>
+    nnoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>
+    inoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>i
+    vnoremap <unique> <silent>          <Plug>TdvimFinderMru    :CtrlPMRU<CR>v
+    "nnoremap <unique> <silent>          <Plug>TdvimFinderMru    :browse oldfiles<CR>
+    "inoremap <unique> <silent>          <Plug>TdvimFinderMru    <Esc>:browse oldfiles<CR>
+    "vnoremap <unique> <silent>          <Plug>TdvimFinderMru    <Esc>:browse oldfiles<CR>
 
     nmap <silent> <C-S-F3>              <Plug>TdvimFinderMru
     imap <silent> <C-S-F3>              <Plug>TdvimFinderMru
@@ -407,15 +416,15 @@ function! keymaps#MainOperations ()
     " }}}
 
     " Open Saved Session -> C-S-F1 {{{2
-    noremap <unique> <Plug>TdvimOpenSession :SessionOpen  
+    noremap <unique> <Plug>TdvimOpenSession :SLoad  
 
     nmap    <C-S-F1> <Plug>TdvimOpenSession
     " }}}
 
     " Open options/preferences {{{2
-    noremap <unique> <Plug>TdvimPreferences :options<CR>
+    "noremap <unique> <Plug>TdvimPreferences :options<CR>
 
-    nmap    <F10> <Plug>TdvimPreferences
+    "nmap    <F10> <Plug>TdvimPreferences
     " }}}
 
 
@@ -428,6 +437,8 @@ endfunction
 function! keymaps#WindowManagement()
     " Tabs Browsing, close tabs/window {{{2
     " Tabs mappings don't work in terminals
+    "
+
 
     " Open and navigate tabs DEPRECATED{{{3
     " Open new tab with Ctrl-Shift-t, and new tab with file browsing with
@@ -712,26 +723,33 @@ function! keymaps#WindowManagement()
     " Explorer {{{2
     " Keys to toggle browser window. By default NERD Tree file browser
     " By default mapped to F8
-    "nnoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>
-    "inoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>i
-    "vnoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>v
-    nnoremap <unique> <silent> <Plug>TdvimExplorer :call utils#ToggleVExplorer()<CR>
-    inoremap <unique> <silent> <Plug>TdvimExplorer :call utils#ToggleVExplorer()<CR>i
-    vnoremap <unique> <silent> <Plug>TdvimExplorer :call utils#ToggleVExplorer()<CR>v
+    " NERDTree
+    nnoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>
+    inoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>i
+    vnoremap <unique> <silent> <Plug>TdvimExplorer :NERDTreeToggle<CR>v
+    nnoremap <unique> <silent> <Plug>TdvimFocusExplorer :NERDTreeFocus<CR>
+    nnoremap <unique> <silent> <Plug>TdvimFindInExplorer :NERDTreeFind<CR>
+    "netrw
+    "nnoremap <unique> <silent> <Plug>TdvimExplorer :call utils#ToggleVExplorer()<CR>
+    "inoremap <unique> <silent> <Plug>TdvimExplorer :call utils#ToggleVExplorer()<CR>i
+    "vnoremap <unique> <silent> <Plug>TdvimExplorer :call utils#ToggleVExplorer()<CR>v
 
     nmap     <silent> <F8>     <Plug>TdvimExplorer
     imap     <silent> <F8>     <Plug>TdvimExplorer
     vmap     <silent> <F8>     <Plug>TdvimExplorer
+    nmap     <unique> <silent>                    <leader>e <Plug>TdvimFocusExplorer
+    nmap     <unique> <silent>                    <leader>ef <Plug>TdvimFindInExplorer 
     " }}}
 
     " In Window Explorer -> - {{{2
     " Open explorer in current window
     " By default mapped to -
-    "nnoremap <unique> <silent> <Plug>TdvimOpenFileInBuffer :e .<CR>
-    nnoremap <unique> <Plug>TdvimOpenFileInBuffer :Explore<CR>
+    "NERDTree
+    nnoremap <unique> <silent> <Plug>TdvimOpenFileInBuffer :e .<CR>
+    "netrw
+    "nnoremap <unique> <Plug>TdvimOpenFileInBuffer :Explore<CR>
 
     nmap     <unique> <silent>                    -         <Plug>TdvimOpenFileInBuffer
-    nmap     <unique> <silent>                    <leader>e <Plug>TdvimOpenFileInBuffer
     " }}}
 
     " Outliner {{{2
@@ -747,12 +765,12 @@ function! keymaps#WindowManagement()
     " }}}
 
     " Buffers explorer -> F3 {{{2
-    "nnoremap <unique> <silent>  <Plug>TdvimBuffers :CtrlPBuffer<CR>
-    "inoremap <unique> <silent>  <Plug>TdvimBuffers <Esc>:CtrlPBuffer<CR>i
-    "vnoremap <unique> <silent>  <Plug>TdvimBuffers :CtrlPBuffer<CR>v
-    nnoremap <unique>   <Plug>TdvimBuffers :buffer 
-    inoremap <unique>   <Plug>TdvimBuffers <Esc>:buffer 
-    vnoremap <unique>   <Plug>TdvimBuffers <Esc>:buffer 
+    nnoremap <unique> <silent>  <Plug>TdvimBuffers :CtrlPBuffer<CR>
+    inoremap <unique> <silent>  <Plug>TdvimBuffers <Esc>:CtrlPBuffer<CR>i
+    vnoremap <unique> <silent>  <Plug>TdvimBuffers :CtrlPBuffer<CR>v
+    "nnoremap <unique>   <Plug>TdvimBuffers :buffer 
+    "inoremap <unique>   <Plug>TdvimBuffers <Esc>:buffer 
+    "vnoremap <unique>   <Plug>TdvimBuffers <Esc>:buffer 
 
     nmap      <F3>      <Plug>TdvimBuffers
     imap      <F3>      <Plug>TdvimBuffers
@@ -1169,15 +1187,15 @@ function! keymaps#Edit()
     " }}}
     
     " File History {{{2
-    " Default map to F7
+    " Default map to C-S-F4
     nnoremap  <unique> <silent>    <Plug>TdvimHistory  :GundoToggle<CR>
     vnoremap  <unique> <silent>    <Plug>TdvimHistory  <Esc>:GundoToggle<CR>
     inoremap  <unique> <silent>    <Plug>TdvimHistory  <Esc>:GundoToggle<CR>
 
 
-    nmap <silent>    <F7>  <Plug>TdvimHistory
-    vmap <silent>    <F7>  <Plug>TdvimHistory
-    imap <silent>    <F7>  <Plug>TdvimHistory
+    nmap <silent>    <C-S-F4>  <Plug>TdvimHistory
+    vmap <silent>    <C-S-F4>  <Plug>TdvimHistory
+    imap <silent>    <C-S-F4>  <Plug>TdvimHistory
 
     " }}}
 
@@ -1187,51 +1205,72 @@ endfunction
 " TextNavigation {{{
 function! keymaps#TextNavigation()
 
-    " Search - F6{{{2
+    " Search in files- F4{{{2
     " Search word under cursor or selection
-    " Default mapped to F6
-    nnoremap <unique>  <Plug>TdvimSearch :TdvimSearch <C-R><C-W>
-    inoremap <unique>  <Plug>TdvimSearch <Esc>:TdvimSearch  <C-R><C-W>
-    vnoremap <unique>  <Plug>TdvimSearch :TdvimSearch <C-R><C-W>
+    " Default mapped to F4
+    " DEPRECATED
+    "nnoremap <unique>  <Plug>TdvimSearch :TdvimSearch <C-R><C-W>
+    "inoremap <unique>  <Plug>TdvimSearch <Esc>:TdvimSearch  <C-R><C-W>
+    "vnoremap <unique>  <Plug>TdvimSearch :TdvimSearch <C-R><C-W>
 
-    nmap     <F6>      <Plug>TdvimSearch
-    nmap     <leader>f <Plug>TdvimSearch
-    imap     <F6>      <Plug>TdvimSearch
-    vmap     <F6>      <Plug>TdvimSearch
-    vmap     <leader>f <Plug>TdvimSearch
+    "nmap     <F6>      <Plug>TdvimSearch
+    "nmap     <leader>f <Plug>TdvimSearch
+    "imap     <F6>      <Plug>TdvimSearch
+    "vmap     <F6>      <Plug>TdvimSearch
+    "vmap     <leader>f <Plug>TdvimSearch
     " }}}
 
-    " Grep - S-F6{{{2
+    " Grep - F4{{{2
     " Grep word under cursor or selection
-    " Default mapped to S-F6
-    nnoremap <unique>  <Plug>TdvimGrep :Ack <C-R><C-W>
-    inoremap <unique>  <Plug>TdvimGrep <Esc>:Ack <C-R><C-W>
-    vnoremap <unique>  <Plug>TdvimGrep :Ack <C-R><C-W>
+    " Default mapped to F4
+    nnoremap <unique>   <Plug>TdvimGrep :Ack      <C-R><C-W>
+    inoremap <unique>   <Plug>TdvimGrep <Esc>:Ack <C-R><C-W>
+    vnoremap <unique>   <Plug>TdvimGrep :Ack      <C-R><C-W>
 
-    nmap <S-F6>      <Plug>TdvimGrep
-    nmap <leader>ff <Plug>TdvimGrep
-    imap <S-F6>      <Plug>TdvimGrep
-    vmap <S-F6>      <Plug>TdvimGrep
-    vmap <leader>ff <Plug>TdvimGrep
+    nmap     <F4>       <Plug>TdvimGrep
+    nmap     <leader>f <Plug>TdvimGrep
+    imap     <F4>       <Plug>TdvimGrep
+    vmap     <F4>       <Plug>TdvimGrep
+    vmap     <leader>f <Plug>TdvimGrep
     " }}}
 
     " Navigate Changes {{{2
-    " Default mapped to C-F6
-    nnoremap <unique> <silent>          <Plug>TdvimPrevChange   <C-O>
-    inoremap <unique> <silent>          <Plug>TdvimPrevChange   <Esc>g;
-    vnoremap <unique> <silent>          <Plug>TdvimPrevChange   g;
-    nnoremap <unique> <silent>          <Plug>TdvimNextChange   <C-I>
-    inoremap <unique> <silent>          <Plug>TdvimNextChange   <Esc>g,
-    vnoremap <unique> <silent>          <Plug>TdvimNextChange   g,
+    " Default mapped to C-F4
+    "nnoremap <unique> <silent> <Plug>TdvimPrevChange <C-O>
+    "inoremap <unique> <silent> <Plug>TdvimPrevChange <Esc>g;
+    "vnoremap <unique> <silent> <Plug>TdvimPrevChange g;
+    "nnoremap <unique> <silent> <Plug>TdvimNextChange <C-I>
+    "inoremap <unique> <silent> <Plug>TdvimNextChange <Esc>g,
+    "vnoremap <unique> <silent> <Plug>TdvimNextChange g,
+    nnoremap <unique> <silent> <Plug>TdvimChanges    :CtrlPChanges<CR>
+    inoremap <unique> <silent> <Plug>TdvimChanges    <Esc>:CtrlPChanges<CR>
+    vnoremap <unique> <silent> <Plug>TdvimChanges    <Esc>:CtrlPChanges<CR>
 
-    nmap <silent> <C-F6>            <Plug>TdvimPrevChange
-    imap <silent> <C-F6>            <Plug>TdvimPrevChange
-    vmap <silent> <C-F6>            <Plug>TdvimPrevChange
-    nmap <silent> <C-S-F6>            <Plug>TdvimNextChange
-    imap <silent> <C-S-F6>            <Plug>TdvimNextChange
-    vmap <silent> <C-S-F6>            <Plug>TdvimNextChange
+    "nmap <silent> <C-F4>            <Plug>TdvimPrevChange
+    "imap <silent> <C-F4>            <Plug>TdvimPrevChange
+    "vmap <silent> <C-F4>            <Plug>TdvimPrevChange
+    "nmap <silent> <C-S-F4>            <Plug>TdvimNextChange
+    "imap <silent> <C-S-F4>            <Plug>TdvimNextChange
+    "vmap <silent> <C-S-F4>            <Plug>TdvimNextChange
+    nmap <silent>   <C-F4> <Plug>TdvimChanges
+    imap <silent>   <C-F4> <Plug>TdvimChanges
+    vmap <silent>   <C-F4> <Plug>TdvimChanges
+    nmap <leader>fc <Plug>TdvimChanges
+    vmap <leader>fc <Plug>TdvimChanges
     " }}}
 
+    " Navigate Lines {{{2
+    " Default mapped to S-F4
+    nnoremap <unique> <silent> <Plug>TdvimLines    :CtrlPLines<CR>
+    inoremap <unique> <silent> <Plug>TdvimLines    <Esc>:CtrlPLines<CR>
+    vnoremap <unique> <silent> <Plug>TdvimLines    <Esc>:CtrlPLines<CR>
+
+    nmap <silent>   <S-F4> <Plug>TdvimLines
+    imap <silent>   <S-F4> <Plug>TdvimLines
+    vmap <silent>   <S-F4> <Plug>TdvimLines
+    nmap <leader>fl <Plug>TdvimLines
+    vmap <leader>fl <Plug>TdvimLines
+    " }}}
 endfunction
 " }}}
 
@@ -1318,17 +1357,17 @@ function! keymaps#Development()
     " }}}
 
     " Buffer Tags Finder {{{2
-    " Default mapped to F4
-    "nnoremap <unique> <silent>         <Plug>TdvimTagFinder    :CtrlPBufTag<CR>
-    "inoremap <unique> <silent>         <Plug>TdvimTagFinder    <Esc>:CtrlPBufTag<CR>
-    "vnoremap <unique> <silent>         <Plug>TdvimTagFinder    :CtrlPBufTag<CR>
-    nnoremap <unique> <silent> <Plug>TdvimTagFinder :tags
-    inoremap <unique> <silent> <Plug>TdvimTagFinder <Esc>:tags
-    vnoremap <unique> <silent> <Plug>TdvimTagFinder :tags
+    " Default mapped to F6
+    nnoremap <unique> <silent>         <Plug>TdvimTagFinder    :CtrlPBufTag <C-R><C-W><CR>
+    inoremap <unique> <silent>         <Plug>TdvimTagFinder    <Esc>:CtrlPBufTag <C-R><C-W><CR>
+    vnoremap <unique> <silent>         <Plug>TdvimTagFinder    :CtrlPBufTag <C-R><C-W><CR>
+    "nnoremap <unique> <silent> <Plug>TdvimTagFinder :tags
+    "inoremap <unique> <silent> <Plug>TdvimTagFinder <Esc>:tags
+    "vnoremap <unique> <silent> <Plug>TdvimTagFinder :tags
 
-    nmap     <silent> <F4>     <Plug>TdvimTagFinder
-    imap     <silent> <F4>     <Plug>TdvimTagFinder
-    vmap     <silent> <F4>     <Plug>TdvimTagFinder
+    nmap     <silent> <F6>     <Plug>TdvimTagFinder
+    imap     <silent> <F6>     <Plug>TdvimTagFinder
+    vmap     <silent> <F6>     <Plug>TdvimTagFinder
     " }}}
 
     " Tags Explorer - S-F8 {{{2
@@ -1344,9 +1383,9 @@ function! keymaps#Development()
     " Show available snippets DEPRECATED {{{2
     " Default mapped to C-S-F5
     " XXX: not used
-    nnoremap <unique> <silent>          <Plug>TdvimShowSnippets :call UltiSnips_ListSnippets()<CR>
-    inoremap <unique> <silent>          <Plug>TdvimShowSnippets <Esc>:call UltiSnips_ListSnippets()<CR>
-    vnoremap <unique> <silent>          <Plug>TdvimShowSnippets :call UltiSnips_ListSnippets()<CR>
+    "nnoremap <unique> <silent>          <Plug>TdvimShowSnippets :call UltiSnips_ListSnippets()<CR>
+    "inoremap <unique> <silent>          <Plug>TdvimShowSnippets <Esc>:call UltiSnips_ListSnippets()<CR>
+    "vnoremap <unique> <silent>          <Plug>TdvimShowSnippets :call UltiSnips_ListSnippets()<CR>
 
     "if has("win32") || has("win64") 
         "" For windows
@@ -1389,15 +1428,28 @@ function! keymaps#Development()
     "endif
     " }}}
 
-    " Current function scope C-F4 {{{2
-    " Default mapped to C-F4
+    " Current function scope C-F6 {{{2
+    " Default mapped to C-F6
     nnoremap <unique> <silent> <Plug>TdvimCurrentFunction :TagbarCurrentTag<CR>
     inoremap <unique> <silent> <Plug>TdvimCurrentFunction <Esc>:TagbarCurrentTag<CR>
     vnoremap <unique> <silent> <Plug>TdvimCurrentFunction :TagbarCurrentTagt<CR>
 
-    nmap     <silent> <C-F4>   <Plug>TdvimCurrentFunction
-    imap     <silent> <C-F4>   <Plug>TdvimCurrentFunction
-    vmap     <silent> <C-F4>   <Plug>TdvimCurrentFunction
+    nmap     <silent> <C-F6>   <Plug>TdvimCurrentFunction
+    imap     <silent> <C-F6>   <Plug>TdvimCurrentFunction
+    vmap     <silent> <C-F6>   <Plug>TdvimCurrentFunction
+    " }}}
+
+    " Search Functions S-F6 {{{2
+    " Default mapped to S-F6
+    nnoremap <unique> <silent> <Plug>TdvimSearchFunctions :CtrlPFunky <C-R><C-W><CR>
+    inoremap <unique> <silent> <Plug>TdvimSearchFunctions <Esc>:CtrlPFunky <C-R><C-W><CR>
+    vnoremap <unique> <silent> <Plug>TdvimSearchFunctions :CtrlPFunky <C-R><C-W><CR>
+
+    nmap     <silent> <S-F6>   <Plug>TdvimSearchFunctions
+    imap     <silent> <S-F6>   <Plug>TdvimSearchFunctions
+    vmap     <silent> <S-F6>   <Plug>TdvimSearchFunctions
+    nmap     <silent> <leader>fu   <Plug>TdvimSearchFunctions
+    vmap     <silent> <leader>fu   <Plug>TdvimSearchFunctions
     " }}}
 
     " Update Tags - F12 {{{2
@@ -1435,8 +1487,8 @@ function! keymaps#Development()
     imap     <silent> <C-space> <Plug>TdvimOmnicompletion
     "inoremap <unique> <silent>  <Plug>TdvimCompletion <C-p>
     "imap     <silent> <tab> <Plug>TdvimCompletion
-    inoremap <silent> <tab> <c-r>=utils#TabAutocompleteWrapper("forward")<cr>
-    inoremap <silent> <s-tab> <c-r>=utils#TabAutocompleteWrapper("backward")<cr>
+    inoremap <silent> <tab> <c-r>=utils#TabAutocompleteWrapper("backward")<cr>
+    inoremap <silent> <s-tab> <c-r>=utils#TabAutocompleteWrapper("forward")<cr>
 
     "}}}
 
@@ -1448,7 +1500,7 @@ function! keymaps#Development()
     nnoremap <silent> <C-S-F8>  :TaskList<CR>
     vnoremap <silent> <C-S-F8>  <Esc>:TaskList<CR>
     inoremap <silent> <C-S-F8>  <Esc>:TaskList<CR>
-    map      <unique> <Leader>t <Plug>TaskList
+    nnoremap <silent> <Leader>t :<Plug>TaskList<CR>
     "nnoremap <silent> <leader>t   :TaskList<CR>
     "vnoremap <silent> <leader>t   <Esc>:TaskList<CR>
     " }}}
@@ -1467,15 +1519,17 @@ function! keymaps#Development()
     " }}}
 
     " Git Diff  {{{2
-    " Default map to C-F7
+    " Default map to S-F9
     nnoremap  <unique>     <Plug>TdvimGitDiff  :call utils#GitDiffToggle()<CR>
     vnoremap  <unique>     <Plug>TdvimGitDiff  <Esc>:call utils#GitDiffToggle()<CR>
     inoremap  <unique>     <Plug>TdvimGitDiff  <Esc>:call utils#GitDiffToggle()<CR>
 
 
-    nmap     <C-F7>  <Plug>TdvimGitDiff
-    vmap     <C-F7>  <Plug>TdvimGitDiff
-    imap     <C-F7>  <Plug>TdvimGitDiff
+    nmap     <S-F9>  <Plug>TdvimGitDiff
+    vmap     <S-F9>  <Plug>TdvimGitDiff
+    imap     <S-F9>  <Plug>TdvimGitDiff
+    nmap     <leader>gd  <Plug>TdvimGitDiff
+    vmap     <leader>gd  <Plug>TdvimGitDiff
 
     " }}}
 
@@ -1492,11 +1546,13 @@ function! keymaps#Development()
     nmap     <F9>  <Plug>TdvimGitStatus
     vmap     <F9>  <Plug>TdvimGitStatus
     imap     <F9>  <Plug>TdvimGitStatus
+    nmap     <leader>gs  <Plug>TdvimGitStatus
+    vmap     <leader>gs  <Plug>TdvimGitStatus
 
     " }}}
 
-    " Git log  {{{2
-    " Default map to S-F9
+    " Git File Log  {{{2
+    " Default map to C-S-F9
     "nnoremap  <unique>     <Plug>TdvimGitLog  :Glog --<CR>
     "vnoremap  <unique>     <Plug>TdvimGitLog  <Esc>:Glog --<CR>
     "inoremap  <unique>     <Plug>TdvimGitLog  <Esc>:Glog --<CR>
@@ -1504,9 +1560,9 @@ function! keymaps#Development()
     vnoremap  <unique>     <Plug>TdvimGitFileLog  <Esc>:call utils#GitFileLogToggle()<CR>
     inoremap  <unique>     <Plug>TdvimGitFileLog  <Esc>:call utils#GitFileLogToggle()<CR>
 
-    nmap     <S-F9>  <Plug>TdvimGitFileLog
-    vmap     <S-F9>  <Plug>TdvimGitFileLog
-    imap     <S-F9>  <Plug>TdvimGitFileLog
+    nmap     <C-S-F9>  <Plug>TdvimGitFileLog
+    vmap     <C-S-F9>  <Plug>TdvimGitFileLog
+    imap     <C-S-F9>  <Plug>TdvimGitFileLog
 
     " }}}
 
@@ -1522,12 +1578,13 @@ function! keymaps#Development()
     nmap     <C-F9>  <Plug>TdvimGitLog
     vmap     <C-F9>  <Plug>TdvimGitLog
     imap     <C-F9>  <Plug>TdvimGitLog
+    nmap     <leader>gl  <Plug>TdvimGitLog
+    vmap     <leader>gl  <Plug>TdvimGitLog
 
     " }}}
 
     " Git Grep - N/A{{{2
     " Grep word under cursor or selection in all files tracked by Git
-    " Default mapped to S-F6
     nnoremap <unique>   <Plug>TdvimGitGrep :Grep      <C-R><C-W>
     inoremap <unique>   <Plug>TdvimGitGrep <Esc>:Grep <C-R><C-W>
     vnoremap <unique>   <Plug>TdvimGitGrep :Grep      <C-R><C-W>
@@ -1568,15 +1625,15 @@ function! keymaps#Development()
     "inoremap <silent> <C-[>   <ESC>:pop
     " }}}
     
-    " Preview tag S-F4 {{{2
+    " Preview tag S-F6 {{{2
     " Default mapped to S-F4
     nnoremap <unique> <silent> <Plug>TdvimPreviewTag <C-W>}
     inoremap <unique> <silent> <Plug>TdvimPreviewTag <C-O><C-W>}
     vnoremap <unique> <silent> <Plug>TdvimPreviewTag <C-W>}
 
-    nmap     <silent> <S-F4>   <Plug>TdvimPreviewTag
-    imap     <silent> <S-F4>   <Plug>TdvimPreviewTag
-    vmap     <silent> <S-F4>   <Plug>TdvimPreviewTag
+    nmap     <silent> <C-S-F6>   <Plug>TdvimPreviewTag
+    imap     <silent> <C-S-F6>   <Plug>TdvimPreviewTag
+    vmap     <silent> <C-S-F6>   <Plug>TdvimPreviewTag
     nmap     <silent> ]T   <Plug>TdvimPreviewTag
     imap     <silent> ]T   <Plug>TdvimPreviewTag
     vmap     <silent> ]T   <Plug>TdvimPreviewTag
@@ -1635,8 +1692,8 @@ endfunction
 " Remove not needed keymaps, probably set by other plugins?
 function! keymaps#CleanUpKeymaps()
     " Remove unwanted unimpaired mappings:
-    unmap ]t
-    unmap [t
+    silent! unmap ]t
+    silent! unmap [t
 
 endfunction
 " }}}

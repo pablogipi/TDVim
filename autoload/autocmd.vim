@@ -52,8 +52,12 @@ endfunction
 " When entering a buffer
 function! autocmd#BufEnter()
     augroup bufEnter
-        " Set local path to path of current file
+        " Set local path to path of current file"
         autocmd BufEnter * call utils#SetLocalPath()
+        " TODO: add autocommand that calls to function that setups NERDTree
+        " keymaps to close the window
+        autocmd BufEnter NERD_tree_* call utils#SetupNERDTreeBuffer()
+
     augroup END
 endfunction
 " }}}

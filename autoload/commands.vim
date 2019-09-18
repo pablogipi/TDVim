@@ -47,8 +47,8 @@ function! commands#WindowsCommands ()
     " Open a buffer with an embedded shell
     "command! -nargs=? -complete=shellcmd Shell call utils#ShellOpen(<q-args>)
     " Wrapper for browser command.
-    "command! -nargs=0 TdvimFinder NERDTreeToggle
-    command! -nargs=0 TdvimFinder call utils#ToggleVExplorer()
+    command! -nargs=0 TdvimFinder NERDTreeToggle
+    "command! -nargs=0 TdvimFinder call utils#ToggleVExplorer()
     " Wrapper for instpector
     command! -nargs=0 TdvimInspector TagbarToggle
     " Wrapper for outliner

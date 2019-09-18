@@ -31,7 +31,8 @@ filetype plugin indent on
 
 if exists("$TDVIMROOT")	
     " Only load TDVim and VAM if cetain criteria is sathisfied
-    if (v:version >= 800 && has('python') )
+    "if (v:version >= 800 && has('python') )
+    if (v:version >= 800)
         "Add TDVim to runtim path
         execute "set rtp^=" . $TDVIMROOT
         execute "set rtp+=" . $TDVIMROOT . "/after"

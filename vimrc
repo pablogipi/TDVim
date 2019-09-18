@@ -32,23 +32,31 @@ else
     call plug#begin('~/.vim/plugged')
 endif
 
+" 
 " Misc
+" 
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-unimpaired'
 Plug 'xolox/vim-misc'
-Plug 'xolox/vim-session'
+"Plug 'xolox/vim-session'
 Plug 'tomtom/tlib_vim'
-Plug 'tomtom/ttodo_vim'
 Plug 'vim-scripts/HelpClose'
 Plug 'rkitover/vimpager'
 
+" 
 " UI
+" 
 " NERD Tree will be loaded on the first invocation of NERDTreeToggle command
-"Plug 'scrooloose/nerdtree',              { 'on': 'NERDTreeToggle' }
+"Plug 'scrooloose/nerdtree',              { 'on': ['NERDTreeToggle','NERDTreeFocus','NERDTreeOpen','NERDTreeFind'] }
+Plug 'scrooloose/nerdtree'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 " CtrlP
-"Plug 'kien/ctrlp.vim',                   { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
-"Plug 'fisadev/vim-ctrlp-cmdpalette',     { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
-"Plug 'd11wtq/ctrlp_bdelete.vim'
+"ctrlpvim/ctrlp.vim
+Plug 'ctrlpvim/ctrlp.vim'
+"Plug 'ctrlpvim/ctrlp.vim',           { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
+Plug 'fisadev/vim-ctrlp-cmdpalette'
+"Plug 'fisadev/vim-ctrlp-cmdpalette', { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
+Plug 'd11wtq/ctrlp_bdelete.vim'
 " Lightline
 Plug 'itchyny/lightline.vim'
 " Tagbar
@@ -56,13 +64,23 @@ Plug 'majutsushi/tagbar',                { 'on':  ['TagbarToggle', 'TagbarCurren
 " Mini Buf Explorer
 "Plug 'fholgado/minibufexpl.vim'
 " Tabline buffers
-Plug 'taohex/lightline-buffer'
+Plug 'taohexxx/lightline-buffer'
 " Gundo
 Plug 'sjl/gundo.vim',                    { 'on': 'GundoToggle' }
 " Maximizer
 Plug 'szw/vim-maximizer',                { 'on': 'MaximizerToggle' }
+" Startify
+" Only use startify in gvim sessions
+if has("gui_running")
+    Plug 'mhinz/vim-startify'
+endif
 
+" Devicons
+Plug 'ryanoasis/vim-devicons'
+
+" 
 " Development
+" 
 " Autocomplete
 "Plug 'ajh17/VimCompletesMe'
 "Plug 'lifepillar/vim-mucomplete'
@@ -87,9 +105,17 @@ Plug 'vim-scripts/diffchanges.vim'
 "Plug 'tpope/vim-fugitive',               { 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit']}
 Plug 'tpope/vim-fugitive',               { 'for': ['cpp', 'c', 'vim', 'python'], 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit'] }
 Plug 'itchyny/vim-gitbranch' 
+" NERDTree Git
+Plug 'Xuyuanp/nerdtree-git-plugin'
+" TTodo
+"Plug 'tomtom/ttodo_vim'
+"CtrlPFunky
+Plug 'tacahiroy/ctrlp-funky'
 
 
+" 
 " Editing
+" 
 " Nerd Commenter
 Plug 'scrooloose/nerdcommenter'
 " Easy Align
@@ -106,15 +132,27 @@ Plug 'mileszs/ack.vim',                  { 'on': 'Ack' }
 " Delimit Mate
 Plug 'Raimondi/delimitMate'
 
+" 
 " Colors
+" 
 Plug 'altercation/vim-colors-solarized'
 Plug 'junegunn/seoul256.vim'
 Plug 'reedes/vim-colors-pencil'
 Plug 'rakr/vim-one'
+Plug 'joshdick/onedark.vim'
+Plug 'NovaDev94/lightline-onedark'
+Plug 'Rigellute/rigel'
 
 
 " Initialize plugin system
 call plug#end()
+
+" }}}
+
+" Global variables {{{
+
+" TDVim version
+let $TDVIMVERSION="0.2.2"
 
 " }}}
 
@@ -171,6 +209,7 @@ if utils#GetOS() == 3
     set viminfo+=rB:
 endif
 
+
 " Always run mswin at the end
 " Load more conventional editors options, MSWin mode:
 source $VIMRUNTIME/mswin.vim
@@ -181,7 +220,9 @@ set selectmode=""
 
 " Sessions {{{
 " Options for what to save in the sessions file:
-let &sessionoptions='buffers,curdir,folds,tabpages,winsize'
+let &sessionoptions='buffers,curdir,folds,resize,winsize'
+"let &sessionoptions-='help'
+"let &sessionoptions+='resize'
 " View, restore file state options:
 let &viewoptions='cursor,folds,slash,unix'
 " Backup and swap files
@@ -253,6 +294,11 @@ set smartcase
 " Global search by default
 set gdefault
 
+" Better grep
+if executable("ag")
+    set grepprg=ag\ --nogroup\ --nocolor
+endif
+
 
 " }}}
 
@@ -307,6 +353,8 @@ set noshowmode
 set shortmess+=c
 set noinfercase
 set belloff+=ctrlg " If Vim beeps during completion
+set belloff+=cursor " If Vim beeps during scrolling
+set belloff+=all " If Vim beeps during scrolling
 set completeopt-=preview
 set completeopt+=menuone
 set completeopt+=noinsert
@@ -525,6 +573,7 @@ if has("autocmd")
 		    \	if &omnifunc == "" |
 		    \		setlocal omnifunc=syntaxcomplete#Complete |
 		    \	endif
+        autocmd FileType nerdtree call utils#SetupNERDTreeBuffer()
     augroup END
     " SessionLoadPost
     "augroup tdvimSessionLoadPost
@@ -541,6 +590,8 @@ call commands#InitCommands()
 " }}}
 
 " Setup Plugins {{{
+
+" Colors Plugins {{{2
 " One Color Scheme
 let g:one_allow_italics = 1 " I love italic for comments
 " Pencil Color Scheme
@@ -552,12 +603,24 @@ let g:pencil_spell_undercurl = 1    " 0=underline, 1=undercurl (def)
 let g:solarized_termcolors=256 " Terminal colors, 16 (def) or 256.
 " Seoul Color Scheme
 let g:seoul256_srgb = 1
+"}}}
+
+" Devicons:
+let g:webdevicons_enable_ctrlp = 1
 
 " Maximize
 let g:maximizer_set_default_mapping = 0
 
-" NERD Tree
+" NERD Tree {{{2
 let g:NERDTreeHijackNetrw = 1 " Use NERD Tree instead of netrw
+"let g:NERDTreeDisableFileExtensionHighlight = 1
+"let g:NERDTreeDisableExactMatchHighlight = 1
+"let g:NERDTreeDisablePatternMatchHighlight = 1
+let g:NERDTreeFileExtensionHighlightFullName = 1
+let g:NERDTreeExactMatchHighlightFullName = 1
+let g:NERDTreePatternMatchHighlightFullName = 1
+let g:NERDTreeLimitedSyntax = 1
+"}}}
 
 " NERD Commenter
 let g:NERDMenuMode = 0 " Disable menu
@@ -572,7 +635,7 @@ let g:session_command_aliases = 1 " Enable vim-session commands aliases
 let g:session_menu            = 0 " Disable vim-session menu
 let g:session_autoload        = 0 " Disable load session on startup
 
-" lightline
+" Lightline {{{2
 " use lightline-buffer in lightline
 let g:lightline = {
         \ 'tabline': {
@@ -589,6 +652,10 @@ let g:lightline = {
                 \ 'bufferbefore': 'lightline#buffer#bufferbefore',
                 \ 'bufferafter': 'lightline#buffer#bufferafter',
                 \ 'bufferinfo': 'lightline#buffer#bufferinfo',
+                \ 'filetypeicon': 'utils#LightlineDeviconsFiletype',
+                \ 'fileformat': 'utils#LightlineDeviconsFileformat',
+                \ 'modifiedicon': 'utils#LightlineModified',
+                \ 'readonly': 'utils#LightlineReadonly',
                 \ },
         \ 'component': {
                 \ 'mode': '%{utils#LightlineMode()}',
@@ -596,18 +663,19 @@ let g:lightline = {
         \       }, 
         \ }
 
+
 "'left': [ [ 'preview', 'filename', 'modified' ], ],
 "let g:lightline.active = {
             "\ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modified' ] ],
             "\ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'fileformat', 'fileencoding', 'filetype' ], [ 'git' ] ]
             "\   }
 let g:lightline.active = {
-            \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modified' ] ],
+            \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ] ],
             \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git', 'filetype' ] ]
             \   }
 
 let g:lightline.inactive = {
-            \ 'left': [ [ 'preview', 'filename', 'modified' ] ],
+            \ 'left': [ [ 'preview', 'filename', 'modifiedicon' ] ],
             \ 'right': [ [ 'lineinfo' ],
             \            [ 'git', 'percent' ] ] }
 " lightline-buffer
@@ -620,12 +688,14 @@ set guioptions-=e
 let g:lightline_buffer_show_bufnr = 1
 let g:lightline_buffer_rotate     = 0
 let g:lightline_buffer_fname_mod  = ':t'
-let g:lightline_buffer_excludes   = ['vimfiler']
+let g:lightline_buffer_excludes   = ['vimfiler', 'nerdtree', 'tagbar']
 let g:lightline_buffer_maxflen    = 30
 let g:lightline_buffer_maxfextlen = 3
 let g:lightline_buffer_minflen    = 16
 let g:lightline_buffer_minfextlen = 3
 let g:lightline_buffer_reservelen = 20
+
+"}}}
 
 " delimitMate
 " We need this here to avoid problems with delimitMate
@@ -633,7 +703,7 @@ let delimitMate_balance_matchpairs = 1
 let delimitMate_expand_space       = 1
 let delimitMate_expand_cr          = 1
 
-" OmniCppComplete
+" OmniCppComplete {{{2
 let OmniCpp_DefaultNamespaces   = ["std"]
 let OmniCpp_MayCompleteDot      = 0
 let OmniCpp_MayCompleteArrow    = 0
@@ -641,9 +711,9 @@ let OmniCpp_SelectFirstItem     = 1
 let OmniCpp_ShowScopeInAbbr     = 1
 let OmniCpp_ShowPrototypeInAbbr = 0
 
-" VimCompletesMe
+"}}}
 
-" MuComplete
+" MuComplete {{{2
 let g:mucomplete#chains = {
       \ 'default': ['file', 'c-p', 'uspl'],
       \ 'cpp':     ['file', 'ulti', 'omni', 'c-p'],
@@ -654,9 +724,11 @@ let g:mucomplete#chains = {
 let g:mucomplete#popup_direction = { 'c-p': 1 }
 let g:mucomplete#buffer_relative_paths = 1
 
-" CtrlP
-let g:ctrlp_working_path_mode = 'a'
-let g:ctrlp_switch_buffer = 'vht'
+"}}}
+
+" CtrlP {{{2
+let g:ctrlp_working_path_mode = 'rwa'
+let g:ctrlp_switch_buffer = 'Et'
 let g:ctrlp_reuse_window = 'startify\|netrw'
 let g:ctrlp_max_files = 1000
 let g:ctrlp_max_depth = 5
@@ -665,15 +737,43 @@ let g:ctrlp_mruf_max = 100
 let g:ctrlp_mruf_case_sensitive = 1
 let g:ctrlp_custom_ignore = {
             \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-            \ 'file': '\v\.(exe|so|dll|o|swp|swo|lib)$',
+            \ 'file': '\v\.(exe|so|dll|o|swp|swo|lib|~)$',
             \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
             \ }
+
+let g:ctrlp_brief_promp = 1
+let g:ctrlp_match_window = 'min:4,max:15,results:50'
+let g:ctrlp_line_prefix = '⇒ '
+" Cache
+if utils#GetOS() == 3
+    "Windows
+    let g:ctrlp_cache_dir = $HOME . '/vimfiles/cache/ctrlp'
+    let g:ctrlp_funky_cache_dir = $HOME . '/vimfiles/cache/ctrlp_funky'
+else
+    " Anything other OS, assumed UNIX
+    let g:ctrlp_cache_dir = $HOME . '/.vim/cache/ctrlp'
+    let g:ctrlp_funky_cache_dir = $HOME . '/vimfiles/cache/ctrlp_funky'
+endif
+" Custom file seacher
+if executable('ag')
+    if utils#GetOS() == 3
+        "Windows
+        let g:ctrlp_user_command = 'ag -l --nocolor -g "" %s'
+    else
+        " Anything other OS, assumed UNIX
+        let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+    endif
+endif
 " Activate buffer delete extension
 if ( exists('g:loaded_ctrlp') && g:loaded_ctrlp ) 
     call ctrlp_bdelete#init()
 endif
+" CtrlPFunky
+let g:ctrlp_funky_syntax_highlight = 1
+let g:ctrlp_funky_nerdtree_include_files = 1
+"}}}
 
-" UltiSnips
+" UltiSnips {{{ 2
 let g:UltiSnipsExpandTrigger="<C-T>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
@@ -682,12 +782,14 @@ let g:UltiSnipsEditSplit="vertical"
 "let g:UltiSnipsSnippetDirectories=["UltiSnips"]
 let g:mucomplete#ultisnips#match_at_start = 0
 
+"}}}
+
 " Ttodo
 
 " Gutentags
 "let g:gutentags_define_advanced_commands=1
 
-" Netrw
+" Netrw {{{ 2
 let g:Netrw_UserMaps= [["u","utils#UserNetrwBrowseUpDir"],
             \["U","utils#UserNetrwBrowseBackRecentDir"],
             \["B","utils#UserNetrwBrowseForwardRecentDir"], 
@@ -700,12 +802,65 @@ let g:autodate_format = '%B %d, %Y - %H:%M %p'
 "let g:autodate_keyword_pre = '\s\cLast Change:'
 let g:autodate_keyword_pre = 'Last Change:'
 
-" }}}
-"
-" Global variables {{{
+"}}}
 
-" TDVim version
-let $TDVIMVERSION="0.2.2"
+" Startify {{{2
+
+if utils#GetOS() == 3
+    "Windows
+    let g:ctrlp_cache_dir = $HOME . '/vimfiles/cache/ctrlp'
+    let g:startify_session_dir = '~/vimfiles/sessions'
+else
+    " Anything other OS, assumed UNIX
+    let g:startify_session_dir = '~/.vim/session'
+endif
+                                            
+                                            
+" Header
+let g:startify_custom_header = [
+\ ' ______  ____    __  __                     ',
+\ '/\__  _\/\  _`\ /\ \/\ \  __                ',
+\ '\/_/\ \/\ \ \/\ \ \ \ \ \/\_\    ___ ___    ',
+\ '   \ \ \ \ \ \ \ \ \ \ \ \/\ \ /` __  __ \  ',
+\ '    \ \ \ \ \ \_\ \ \ \_/ \ \ \/\ \/\ \/\ \ ',
+\ '     \ \_\ \ \____/\ `\___/\ \_\ \_\ \_\ \_\',
+\ '      \/_/  \/___/  `\/__/  \/_/\/_/\/_/\/_/',
+\ '                                            ',
+\ '                                            ',
+\ "                 Version " . $TDVIMVERSION . "  ",
+\ ]
+"let s:startifyTdvimVer = "Version " . $TDVIMVERSION
+"call add( g:startify_custom_header, s:startifyTdvimVer )
+
+" Enable devicons
+function! StartifyEntryFormat()
+    return 'WebDevIconsGetFileTypeSymbol(absolute_path) ." ". entry_path'
+endfunction
+
+" Empty status line for start window
+autocmd User StartifyReady let &l:stl = "TDVim Version " . $TDVIMVERSION
+
+" Items in startify window
+let g:startify_lists = [
+            \ { 'type': 'files',     'header': ['   MRU']            },
+            \ { 'type': 'sessions',  'header': ['   Sessions']       },
+            \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+            \ { 'type': 'commands',  'header': ['   Commands']       },
+            \ ]
+
+let g:startify_files_number = 5
+
+" Sessions
+let g:startify_change_to_dir = 1
+let g:startify_change_to_vcs_root = 1
+let g:startify_session_sort = 1
+let g:startify_session_number = 10
+let g:startify_session_before_save = [
+            \ 'echo "Cleaning up before saving.."',
+            \ 'silent! NERDTreeTabsClose'
+            \ ]
+
+"}}}
 
 " }}}
 

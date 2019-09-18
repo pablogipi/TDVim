@@ -6,6 +6,7 @@ Files                                |tdvim-files|
 Editing                            |tdvim-editing|
 Window Management                  |tdvim-windows|
 Modes                                |tdvim-modes|
+Search                              |tdvim-search|
 Development                    |tdvim-development|
 Function Keys                    |tdvim-func-keys|
 Leader Key                          |tdvim-leader|
@@ -44,33 +45,40 @@ Editing                             *tdvim-editing*
 - Word Selection:                 <Ctrl-Shift-[Left|Right]>
 - Select All:                     <Ctrl-A>
 - Jump Start/End File:            <Ctrl-[PageUp|PageDown]>
-- File History:                   <F7>
+- File History:                   <Ctrl-Shift-F4>
 
 ==================================================
 Window Management                   *tdvim-windows*
 
-- Maximize Window:               <Space>
-- Change to next windows:        <Ctrl-F4>
-- Increase/decrease window size: <Ctrl-Shift-[Up|Down|Left|Right]>
-- Move around windows:           <Alt-[Up|Down|Left|Right]>
-- Switch between windows:        <leader>p
-- Split window:                  <leader>s
-- Split horzontal window:        <leader>sh
-- Show/Hide menu bar:            <Ctrl-F8>
-- Explorer:                      <F8>
-- In Window Explorer:            <->
-- Buffers Explorer:              <F3>, <leader>b
-- Switch Previous Buffer:        <Ctrl-F3>
-- Close window:                  <leader>q
-- Close window:                  <leader>x
-- Close preview window:          <leader>qp
-- Reset windows size:            <leader>=
+- Maximize Window:                <Space>
+- Increase/decrease window size:  <Ctrl-Shift-[Up|Down|Left|Right]>
+- Move around windows:            <Alt-[Up|Down|Left|Right]>
+- Switch between windows:         <leader>p
+- Split window:                   <leader>s
+- Split horzontal window:         <leader>sh
+- Show/Hide menu bar:             <Ctrl-F8>
+- Explorer:                       <F8>
+- Focus Explorer:                 <leader>e
+- Focus Current File in Explorer: <leader>ef
+- In Window Explorer:             <->
+- Buffers Explorer:               <F3>, <leader>b
+- Switch Previous Buffer:         <Ctrl-F3>
+- Close window:                   <leader>q
+- Close window:                   <leader>x
+- Close preview window:           <leader>qp
+- Reset windows size:             <leader>=
 
-- Explorer (Netrw)
+- Explorer (NERD Tree)
   - Go up dir:                   <u>
-  - Go previous dir:             <U>
-  - Go next in history:          <B>
-  - Go back to file buffer:      <->
+  - Bookmarks:                  <Shift-B>
+  - Go back to file buffer:      <q>
+
+==================================================
+Search                                 *tdvim-search*
+
+- Grep word under cursor in all files: F4, <leader>f
+- Browse changes in file:              Ctrl-F4, <leader>fc
+- Browse lines in file:                Shift-F4, <leader>fl
 
 ==================================================
 Modes                                 *tdvim-modes*
@@ -88,8 +96,8 @@ Development                     *tdvim-development*
 - Multiline Comment:                          <Ctrl-F5>, <leader>cs
 - Yank and Comment:                           Shift:F5, <leader>cy
 - Scope current function in tags:             <Ctrl-F4>
-- Word Finder:                                <F6>
-- Word Finder in files:                       <Shift-F6>
+- Grep:                                       <F4>
+- Browse Changes in File:                     <Ctrl-F4>
 - Build:                                      <F11>
 - Prev/Next Error:                            <Shift/Ctrl F11>
 - Errors list:                                <Ctrl-Shift F11>
@@ -97,18 +105,21 @@ Development                     *tdvim-development*
 - OmniComplete:                               <Ctrl-x> <Ctrl-o> , <Ctrl-Space>
 - Tags Explorer:                              <Shift-F8>
 - Tasks List:                                 <Ctrl-Shift-F9>, <leader>t
-- Jump to tag:                                <F4>, <]t>
+- Jump to tag:                                <F6>, <]t>
+- Scope current function in tags:             <Ctrl-F6>
+- Browse functions:                           <Shift-F6>, <leader>fu
 - Go back from tag stack:                     <[t>
 - Show tags match and jump:                   <[T>
-- Preview tags:                               <S-F4>, <]T>
+- Preview tags:                               <C-S-F6, <]T>
 - Autocomplete:                               <TAB>
 - Cycle through autocomplete modes:           <Ctrl-m>, <Shift-m>
 - Expand Snippet:                             <Ctrl-t>
 - Show available snippets:                    <Ctrl-B>
 - Forward/Backwards in snippets placeholders: <TAB>, <Shift-TAB>
-- GiT File diff:                              <Ctrl-F7>
-- Git Status:                                 <F9>
-- Git Diff:                                   <Shift-F9>
+- GiT File diff:                              <Shift-F9>, <leader>gd
+- Git Status:                                 <F9>, <leader>gs
+- Git Log:                                    <Ctrl-F9>, <leader>gl
+- Git File Log:                               <Ctrl-Shift-F9>
 
 ==================================================
 Function Keys                     *tdvim-func-keys*
@@ -124,26 +135,26 @@ Function Keys                     *tdvim-func-keys*
    - <Ctrl-Shift-F3>:  Open Recent files
    - <Shift-F3>:       Open Files
    - <Ctrl-F3>:        Switch previous buffer
-- <F4>:                Tags/Symbol Finder
-   - <Ctrl-F4>:        Scope current function in tags
-   - <Shift-F4>:       Preview tag in file. Open in Preview window
+- <F4>:                Grep word under cursor in all files in location
+   - <Ctrl-F4>:        Navigate changes
+   - <Shift-F4>:       Navigate lines
+   - <Ctrl-Shift-F4>:  File History
 - <F5>:                Toggle line comment
    - <Shift-F5>:       Yank and comment line
-- <F6>:                Search word under cursor in buffer
-   - <Shift-F6>:       Grep word under cursor in all files in location
-   - <Ctrl-F6>:        Goto position of previous change
-   - <Ctrl-Shift-F6>:  Goto position of next change
-- <F7>:                File History
-   - <Ctrl-F7>:        Git File Diff
-   - <Shift-F7>:       File Diff
+- <F6>:                Tags/Symbol Finder
+   - <Ctrl-F6>:        Scope current function in tags
+   - <Shift-F6>:       Browse functions
+   - <Ctrl-Shift-F6>:  Preview tag in file. Open in Preview window
+- <F7>:                NOT USED
 - <F8>:                Open file browser
    - <Ctrl-F8>:        Enable/disable menu bar
    - <Shift-F8>:       Tags Explorer
    - <Ctrl-Shift-F8>:  Tasks list
 - <F9>:                Git Status
-   - <Shift-F9>:       Git File Log
    - <Ctrl-F9>:        Git Log
-- <F10>:               Open Preference
+   - <Shift-F9>:       Git Diff
+   - <Ctrl-Shift-F9>:  Git File Log
+- <F10>:               NOT USED
 - <F11>:               Build
    - <Ctrl F11>:       Next Error
    - <Shift F11>:      Prev Error
@@ -160,13 +171,20 @@ Leader Key                           *tdvim-leader*
 - Split horzontal window:                 <leader>sh
 - Show/Hide Menu Bar:                     <leader>m
 - Explorer:                               <leader>e
+- Focus Current File in Explorer:         <leader>ef
 - Buffer Explorer:                        <leader>b
 - Find word under cursor in files (grep): <leadef>f
+- Navigate changes in current file:       <leadef>fc
+- Navigate lines in current file:         <leadef>fl
+- Browse Functions:                       <leadef>fu
 - Toggle comments:                        <leader>ct
 - Comment and Yank:                       <leader>cy
 - Close window:                           <leader>q
 - Close preview window:                   <leader>qp
 - Reset windows size:                     <leader>=
 - Tasks list:                             <leader>t
+- GiT File diff:                          <leader>gd
+- Git Status:                             <leader>gs
+- Git Log:                                <leader>gl
 
 vim:tw=78:ts=8:ft=help:norl:

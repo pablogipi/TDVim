@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  February 01, 2018 - 01:07 AM.
+" Last change:  September 17, 2019 - 00:55 AM.
 "
 "
 
@@ -58,7 +58,7 @@ function! utils#SetLocalPath ()
     " Current basename for the buffer
     let baseName = expand("%:p:h")
     if isdirectory(baseName)
-        exe 'lcd ' . fnameescape(baseName)
+        silent exe 'lcd ' . fnameescape(baseName)
     endif
 endfunction
 " }}}
@@ -212,7 +212,7 @@ function! utils#updateStatusLineColors()
         " TODO: get current colorscheme, look for it in the colors in
         " lightline, if it exists, set it
         "if g:colors_name =~# 'wombat\|solarized\|landscape\|jellybeans\|seoul256\|Tomorrow'
-        if g:colors_name =~# 'solarized\|seoul256\|one\|pencil\|gruvbox'
+        if g:colors_name =~# 'solarized\|seoul256\|one\|pencil\|gruvbox|rigel'
             "let g:lightline = { 'colorscheme': substitute(substitute(g:colors_name, '-', '_', 'g'), '256.*', '', '') }
             "let g:lightline.colorscheme = substitute(substitute(g:colors_name, '-', '_', 'g'), '256.*', '', '')
             let g:lightline.colorscheme = g:colors_name
@@ -250,7 +250,15 @@ endfunction
 
 " LightLine utility functions {{{
 function! utils#LightlineReadonly()
-    return &readonly ? '' : ''
+    if &filetype == "help"
+        return ''
+    else
+        return &readonly ? '' : ''
+    endif
+endfunction
+
+function! utils#LightlineModified()
+    return &modified ? '⊚' : ''
 endfunction
 
 function! utils#LightlineFugitive()
@@ -269,6 +277,19 @@ function! utils#LightlineGit()
     return ''
 endfunction
 
+function! utils#LightlineDeviconsFiletype()
+    "return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+    if &filetype == "help"
+        return 'ﬁ'
+    else
+        return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
+    endif
+endfunction
+
+function! utils#LightlineDeviconsFileformat()
+    return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+endfunction
+
 " LightlineMode {{{2
 " Custom version of original lightline mode function to return
 " mode string.
@@ -280,6 +301,10 @@ let s:LightLineModeMap = { 'n': 'NORMAL', 'i': 'INSERT', 'R': 'REPLACE', 'v': 'V
 function! utils#LightlineMode() abort
     if &previewwindow
         return 'PREVIEW'
+    elseif &filetype == "ctrlp"
+        return 'CTRLP'
+    elseif &filetype == "help"
+        return 'HELP'
     else
         return get(s:LightLineModeMap, mode(), '')
     endif
@@ -535,7 +560,6 @@ function! utils#PreviewWindowSetup()
     endif
 endfunction
 " }}}
-
 
 " ShowTDVimHelp {{{
 " Show TDVim help window
@@ -849,7 +873,7 @@ function! utils#TabAutocompleteWrapper( direction)
         endif
     endif
     " Pass a normal TAB if there is no character in front.
-    " Use autocomplete if there is soemthing in front of the cursor
+    " Use autocomplete if there is something in front of the cursor
     let char_before = col('.') - 1
     if !char_before || getline('.')[char_before - 1] !~ '\k'
         if "backward" == a:direction
@@ -865,7 +889,24 @@ function! utils#TabAutocompleteWrapper( direction)
 endfunction
 " }}}
 
+" SetupNERDTreeBuffer {{{
+" Functiom to do some custom setups in a NERDtree buffer when Syntax event
+" is triggered usinh autocommands.
+" Close NERDtree window using - or Esc.
+function! utils#SetupNERDTreeBuffer(  )
+    " Check we are actually in a NERDTree buffer
+    if &syntax !~ "nerdtree"
+        echoerr "We are NOT in a NERDtree buffer!!!: " . curbuf
+        return
+    endif
+    "echomsg "We are in a NERDtree buffer!!!"
+    nmap <buffer> -        :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
+    nmap <buffer> <silent> <Esc> :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
 
+
+
+endfunction
+"}}}
 
 
 " vim: ts=8 ft=vim nowrap fdm=marker 

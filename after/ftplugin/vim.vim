@@ -1,8 +1,11 @@
 " File: vim.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: VimL language setup for TDVim
-" Last Change: January 23, 2018 - 00:42 AM.
+" Last Change: September 06, 2019 - 01:00 AM.
 "
+
+" DEPRECATED: using this file to setup autocommands and events is DEPRECATED.
+" vimrc is used instead.
 
 " Setup for indending
 setlocal smartindent
