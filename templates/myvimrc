@@ -20,4 +20,10 @@ else
 endif
 
 " Personal plugins setup
-let g:NERDTreeHijackNetrw=1
+"let g:NERDTreeHijackNetrw=1
+
+" Debug Gutentags:
+"let g:gutentags_trace = 1
+
+" Enable indent lines preview per file type:
+"let g:indentLine_fileType = ['c', 'cpp', 'python', 'vim']

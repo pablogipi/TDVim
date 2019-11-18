@@ -29,15 +29,13 @@
 syntax on
 filetype plugin indent on
 
-if exists("$TDVIMROOT")	
+if exists("$TDVIMROOT")
     " Only load TDVim and VAM if cetain criteria is sathisfied
     "if (v:version >= 800 && has('python') )
     if (v:version >= 800)
         "Add TDVim to runtim path
         execute "set rtp^=" . $TDVIMROOT
         execute "set rtp+=" . $TDVIMROOT . "/after"
-        
-        
 
         " Load TDVim !!
         let s:loadScriptPath =  $TDVIMROOT . "/vimrc"
@@ -54,4 +52,4 @@ else
     echohl Normal
 endif
 
-" vim: ts=8 ft=vim nowrap fdm=marker ff=unix 
+" vim: ts=8 ft=vim nowrap fdm=marker ff=unix

@@ -1,7 +1,7 @@
 " File: cpp.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: C/C++ language setup for TDVim
-" Last Change: June 19, 2012 - 02:41 AM
+" Last Change: October 30, 2019 - 00:25 AM.
 "
 
 " We want to keep comments within an 80 column limit, but not code.
@@ -13,13 +13,18 @@ setlocal textwidth=80
 let c_comment_strings=1
 
 " Folding
-setlocal foldmethod=indent
+"setlocal foldmethod=indent
+setlocal foldmethod=syntax
 
 " Enable spelling, only used for comments
 set spell
 
 " Enable show information about tags in preview window
 set completeopt+=preview
+
+" iskeyword for C/C++
+setlocal iskeyword=a-z,A-Z,48-57,_
+
 
 " Increment default preview window height
 set previewheight=10

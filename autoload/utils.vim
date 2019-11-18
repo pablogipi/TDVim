@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  September 17, 2019 - 00:55 AM.
+" Last change:  November 18, 2019 - 01:27 AM.
 "
 "
 
@@ -58,7 +58,7 @@ function! utils#SetLocalPath ()
     " Current basename for the buffer
     let baseName = expand("%:p:h")
     if isdirectory(baseName)
-        silent exe 'lcd ' . fnameescape(baseName)
+        silent! exe 'lcd ' . fnameescape(baseName)
     endif
 endfunction
 " }}}
@@ -112,31 +112,6 @@ function! utils#TabCommand(cmd)
     tabnew
     silent put=message
     set nomodified
-endfunction
-"}}}
-
-" ShellOpen {{{
-" This function is awrapper for the Conque terminal functions to integrate it
-" in TDVim.
-" It will automatically split the current window and create a new window with
-" the a terminal created by Conque terminal pluging.
-" It can use the first argument as the shell program. In case the isn't any
-" argument then it will use the SHELL environment variable, if it is not
-" specified then it will try to use /bin/sh .
-function! utils#ShellOpen(...)
-
-    if (a:0 > 0 && a:1 != '')
-        let prog = a:1
-        echo "Paso"
-    elseif exists("$SHELL")
-        let prog = $SHELL
-    else
-        let prog =  '/bin/sh'
-    endif
-
-    " Call to conque terminal:
-    call conque_term#open(prog, ['botright split'])
-
 endfunction
 "}}}
 
@@ -212,10 +187,20 @@ function! utils#updateStatusLineColors()
         " TODO: get current colorscheme, look for it in the colors in
         " lightline, if it exists, set it
         "if g:colors_name =~# 'wombat\|solarized\|landscape\|jellybeans\|seoul256\|Tomorrow'
-        if g:colors_name =~# 'solarized\|seoul256\|one\|pencil\|gruvbox|rigel'
+        if g:colors_name =~# 'solarized\|seoul256\|one\|pencil\|gruvbox\|rigel\|landscape\|onedark'
             "let g:lightline = { 'colorscheme': substitute(substitute(g:colors_name, '-', '_', 'g'), '256.*', '', '') }
             "let g:lightline.colorscheme = substitute(substitute(g:colors_name, '-', '_', 'g'), '256.*', '', '')
-            let g:lightline.colorscheme = g:colors_name
+            if g:colors_name =~# 'pencil'
+                if &background == "dark"
+                    let g:lightline.colorscheme = "pencil_dark"
+                else
+                    let g:lightline.colorscheme = "pencil_light"
+                endif
+                    
+            else
+                let g:lightline.colorscheme = g:colors_name
+            endif
+
             if exists('g:loaded_lightline')
                 call lightline#init()
                 call lightline#colorscheme()
@@ -250,7 +235,7 @@ endfunction
 
 " LightLine utility functions {{{
 function! utils#LightlineReadonly()
-    if &filetype == "help"
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
         return ''
     else
         return &readonly ? '' : ''
@@ -258,7 +243,11 @@ function! utils#LightlineReadonly()
 endfunction
 
 function! utils#LightlineModified()
-    return &modified ? '⊚' : ''
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
+        return ''
+    else
+        return &modified ? '✗' : '✓'
+    endif
 endfunction
 
 function! utils#LightlineFugitive()
@@ -270,7 +259,11 @@ function! utils#LightlineFugitive()
 endfunction
 
 function! utils#LightlineGit()
-    if exists('*gitbranch#name')
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
+        return ''
+    elseif winwidth(0) < 100
+        return ''
+    elseif exists('*gitbranch#name')
         let branch = gitbranch#name()
         return branch !=# '' ? ''.branch : ''
     endif
@@ -281,6 +274,8 @@ function! utils#LightlineDeviconsFiletype()
     "return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
     if &filetype == "help"
         return 'ﬁ'
+    elseif &filetype == "qf"
+        return 'ί'
     else
         return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
     endif
@@ -305,22 +300,113 @@ function! utils#LightlineMode() abort
         return 'CTRLP'
     elseif &filetype == "help"
         return 'HELP'
+    elseif &filetype == "qf"
+        return 'QUICKFIX'
+    elseif &filetype == "tagbar"
+        return 'SYMBOLS'
+    elseif &filetype == "nerdtree"
+        return 'EXPLORER'
+    elseif &filetype == "fugitive"
+        return 'GIT'
     else
         return get(s:LightLineModeMap, mode(), '')
     endif
 endfunction
 " }}}
 
+" LightlineFilename {{{2
+" Custom version of original lightline filename function to return
+" filename string.
+" Customizations:
+" - returne empty string for those filetypes where filename is not needed and
+"   mode is used instead, mostly for plugins vwindows or aux windows like
+"   Quickfix.
+function! utils#LightlineFilename() abort
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
+        return ''
+    endif
+    return expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+endfunction
+" }}}
+
+" LightlineLineInfo {{{2
+" Custom version of original lightline lineinfo function to return
+" lineinfo format string.
+" Customizations:
+" - returne empty string for those filetypes where filename is not needed and
+"   mode is used instead, mostly for plugins vwindows or aux windows like
+"   Quickfix.
+function! utils#LightlineLineInfo() abort
+    if &filetype == "help" || &filetype == "ctrlp" || &filetype == "tagbar" || &filetype == "nerdtree"
+        return ''
+    endif
+    if has ('gui_running')
+        return  '▤ %3l:%-2v'
+    else
+        return  '%3l:%-2v'
+    endif
+endfunction
+" }}}
+
 " LightlinePreview {{{2
 " Return PREVIEW string or nothing, used in lightline for inactive windows
-function! utils#LightlinePreview() abort
+function! utils#LightlinePlugin() abort
     if &previewwindow
         return 'PREVIEW'
+    elseif &filetype == "ctrlp"
+        return 'CTRLP'
+    elseif &filetype == "help"
+        return 'HELP'
+    elseif &filetype == "qf"
+        return 'QUICKFIX'
+    elseif &filetype == "tagbar"
+        return 'SYMBOLS'
+    elseif &filetype == "nerdtree"
+        return 'EXPLORER'
     else
         return ''
     endif
 endfunction
 " }}}
+
+" LightlineCurrentTag {{{2
+function! utils#LightlineCurrentTag() abort
+    if exists("*tagbar#currenttag")
+        if &filetype == "c" || &filetype == "cpp" || &filetype == "vim"  || &filetype == "python"
+            if winwidth(0) > 100
+                return tagbar#currenttag("→%s","", "fs")
+            "else
+                "return tagbar#currenttag("→%s","", "f")
+            endif
+        endif
+    endif
+    return ""
+endfunction
+" }}}
+
+" LightlineCurrentTag {{{2
+function! utils#GetGutentagsGtatus(mods) abort
+    let l:msg = ''
+    if index(a:mods, 'ctags') >= 0
+        let l:msg .= '♨'
+    endif
+    if index(a:mods, 'cscope') >= 0
+        let l:msg .= '♺'
+    endif
+    return l:msg
+endfunction
+
+function! utils#LightlineGutentags() abort
+    if exists("*tagbar#currenttag")
+        if &filetype == "c" || &filetype == "cpp" || &filetype == "vim"  || &filetype == "python"
+            "return gutentags#statusline()
+            return gutentags#statusline_cb(function('utils#GetGutentagsGtatus'))
+        endif
+    endif
+    return ""
+endfunction
+" }}}
+
 " }}}
 
 " SetFancyUI {{{
@@ -330,10 +416,10 @@ function! utils#SetFancyUI()
     if has("gui_running")
         if exists('g:loaded_lightline') && exists('g:lightline')
             if has_key( g:lightline, 'component' )
-                let g:lightline.component.lineinfo = ' %3l:%-2v'
+                let g:lightline.component.lineinfo = '▤ %3l:%-2v'
             else
                 let g:lightline.component = {}
-                let g:lightline.component.lineinfo = ' %3l:%-2v'
+                let g:lightline.component.lineinfo = '▤ %3l:%-2v'
             endif
             if has_key( g:lightline, 'component_function' )
                 let g:lightline.component_function.readonly = 'utils#LightlineReadonly'
@@ -349,16 +435,18 @@ function! utils#SetFancyUI()
             let g:lightline.subseparator = { 'left': '', 'right': '' }    
         endif
         if exists('g:loaded_lightline_buffer')
-            let g:lightline_buffer_logo = "\u233e"
+            "let g:lightline_buffer_logo = "\u233e"
+            let g:lightline_buffer_logo = "》"
             let g:lightline_buffer_readonly_icon = ''
-            let g:lightline_buffer_modified_icon = '✭'
+            let g:lightline_buffer_modified_icon = '✗'
             let g:lightline_buffer_git_icon = ' '
             let g:lightline_buffer_ellipsis_icon = '..'
             let g:lightline_buffer_expand_left_icon = "\u25c4"
             let g:lightline_buffer_expand_right_icon = "\u25ba"
-            let g:lightline_buffer_active_buffer_left_icon = ''
-            let g:lightline_buffer_active_buffer_right_icon = ''
-            let g:lightline_buffer_separator_icon = "\u25b9"
+            let g:lightline_buffer_active_buffer_left_icon = '▌'
+            let g:lightline_buffer_active_buffer_right_icon = '▐'
+            "let g:lightline_buffer_separator_icon = "\u25b9"
+            let g:lightline_buffer_separator_icon = "╱"
         endif
     endif
 endfunction
@@ -468,7 +556,7 @@ function! utils#ProjectSettings( dirname, depth )
         let g:tdvim_project_configname = ["project.vim", "Project.vim"]
     endif
     if !exists( "g:tdvim_project_depth" )
-        let g:tdvim_project_depth = 3
+        let g:tdvim_project_depth = 5
     endif
     if !exists( "g:tdvim_project_detect_git" )
         let g:tdvim_project_detect_git = 1
@@ -501,12 +589,13 @@ function! utils#ProjectSettings( dirname, depth )
 
     " Try to use git
     if g:tdvim_project_detect_git && executable( 'git' )
-        silent let l:projectdir = system( "git rev-parse --show-toplevel" )
-        let l:projectdir = substitute(l:projectdir, "\n", "", "g")
+        silent let l:gitroot = system( "git rev-parse --show-toplevel" )
+        let l:gitroot = substitute(l:gitroot, "\n", "", "g")
         "echomsg "Git dir"
-        if len( l:projectdir ) && l:projectdir !~ "^fatal:"
-            "echomsg l:projectdir
+        if len( l:gitroot ) && l:gitroot !~ "^fatal:"
+            "echomsg l:gitroot
             "echomsg "Try to use git"
+            let l:projectdir = l:gitroot
             let l:gitfound = 1
         "else
             "echomsg "Not GIT repo found"
@@ -876,11 +965,12 @@ function! utils#TabAutocompleteWrapper( direction)
     " Use autocomplete if there is something in front of the cursor
     let char_before = col('.') - 1
     if !char_before || getline('.')[char_before - 1] !~ '\k'
-        if "backward" == a:direction
-            return "\<BS>"
-        else
-            return "\<tab>"
-        endif
+        "if "backward" == a:direction
+            "return "\<BS>"
+        "else
+            "return "\<tab>"
+        "endif
+        return "\<tab>"
     elseif "backward" == a:direction
         return "\<c-p>"
     else
@@ -907,6 +997,223 @@ function! utils#SetupNERDTreeBuffer(  )
 
 endfunction
 "}}}
+
+" CloseAllWindowsByType {{{
+" Close all windows for a given buffertype
+function! utils#CloseAllWindowsByType( buffertype )
+    " For preview window just run pclose and exit:
+    if "preview" ==# a:buffertype
+        pclose
+        return
+    endif
+  " Save current window number to revert.
+  let sel_winnr = winnr()
+  let nwin = 1
+  while 1
+      let nbuf = winbufnr(nwin)
+      " After all window processed, finish.
+      if nbuf == -1
+          break
+      endif
+      " Close window if its buftype is same as buffertype argument.  If not help, go to next window.
+      if getbufvar(nbuf, '&buftype') ==# a:buffertype
+          " Correct saved window number if younger window will be closed.
+          if sel_winnr > nbuf
+              let sel_winnr = sel_winnr - 1
+          endif
+          execute nwin.'wincmd w'
+          " If there is only one help window, quit.
+          if nwin == 1 && winbufnr(2) == -1
+              quit!
+          else
+              close!
+          endif
+      else
+          let nwin = nwin + 1
+      endif
+  endwhile
+  " Revert selected window.
+  "execute save_winnr.'wincmd w' , silent!
+  silent! sel_winnr.'wincmd w'
+endfunction
+" }}}
+
+" JumpToWindowsByType {{{
+" Given a buffer type, jump to it.
+" Used to jump to quickfix, preview or location windows
+" Check against:
+" - Buffer type
+" - File Type
+" - Preview Window
+function! utils#JumpToWindowsByType ( buffertype )
+  " Save current window number to revert.
+  let save_winnr = winnr()
+  let nwin = 1
+  while 1
+      let nbuf = winbufnr(nwin)
+      " After all window processed, finish.
+      if nbuf == -1
+          break
+      endif
+      " Close window if its buftype is same as buffertype argument.  If not help, go to next window.
+      "echo "Look into window " . nwin . ", buffer type: " . getbufvar(nbuf, '&buftype')
+      let cond1 = getbufvar(nbuf, '&buftype') ==# a:buffertype
+      let cond2 = getbufvar(nbuf, '&filetype') ==# a:buffertype
+      let cond3 = "preview" ==# a:buffertype ? getwinvar(nwin, '&previewwindow') : 0
+      if cond1 || cond2 || cond3
+          " Correct saved window number if younger window will be closed.
+          if save_winnr > nbuf
+              let save_winnr = save_winnr - 1
+          endif
+          execute nwin.'wincmd w'
+          break
+      "elseif cond3
+          "" For preview window
+          "let buffervars = getbufvar(nbuf, '&')
+          "echo Vars:
+          "echo buffervars
+          "let cond = getwinvar(nwin, '&previewwindow')
+          "echo "Window condition: " . cond
+          "pclose
+          "break
+      else
+          let nwin = nwin + 1
+      endif
+  endwhile
+endfunction
+" }}}
+
+" TdvimCscope {{{
+" Init Cscope using gtags and setup cscope environemnt in TDVim
+function! utils#TdvimCscope()
+
+    if !executable( 'gtags' ) || !executable( 'global' )
+        echoerr "Couldn't find Gtags tools in the path (gtags and global)"
+    endif
+
+    " Start Cscope using gtags
+    GtagsCscope
+
+    echomsg "TDVim Cscope environment ready"
+
+endfunction
+" }}}
+
+" GtagsCmdWrapper {{{
+" Init Cscope using gtags and setup cscope environemnt in TDVim
+function! utils#GtagsCmdWrapper( cmd )
+  " Save current window number to revert.
+  let save_winnr = winnr()
+  let stx = &syntax
+  let curw = expand( "<cword>" )
+
+  " Execute Gtags command
+  "echomsg "Gtags Command to execute" . a:cmd
+  exec a:cmd
+
+  " Look for the quickfix window
+  let qffound = 0
+  let nwin = 1
+  while 1
+      let nbuf = winbufnr(nwin)
+      " After all window processed, finish.
+      if nbuf == -1
+          break
+      endif
+      if getbufvar(nbuf, '&buftype') ==# "quickfix"
+          let qffound = 1
+          break
+      else
+          let nwin = nwin + 1
+      endif
+  endwhile
+
+  if qffound == 1
+      exec nwin . "wincmd w"
+      " Set syntax
+      " Set seach register for buffer to tag
+      " Set highight to green
+      " Set cursorline
+      " Align to first space`
+      let &syntax = stx
+      let @/= curw
+      set hlsearch        " Highlight search
+      silent! foldopen!   " Disable folds
+      setlocal cursorline " Highlight current line
+      setlocal number     " Set line numbers
+      set modifiable
+      silent! %EasyAlign \ " Align to first space
+      set nomodifiable
+      set ro              " Force Read-Only
+  endif
+
+endfunction
+" }}}
+
+" SetupAuxBuffer {{{
+" Setup common settings for auxiliary windows like quickfix and preview
+" Setups done:
+" Set q and <Esc> as keymaps to close the window
+function! utils#SetupAuxBuffer( )
+
+     "echomsg "Calling setup for qickfix buffer"
+    " Aux buffers local maps
+    map <silent> <buffer> <Esc> :bdelete <bar> wincmd p<CR>
+    map <silent> <buffer> q :bdelete <bar> wincmd p<CR>
+
+endfunction
+" }}}
+
+" AckWrapper {{{
+" Wrapper to call Ack and then setup quickfix window
+function! utils#AckWrapper( ackargs )
+  " Save current window number to revert.
+  let save_winnr = winnr()
+  let stx = &syntax
+  let curw = expand( "<cword>" )
+
+  " Execute Gtags command
+  "echomsg "Gtags Command to execute" . a:cmd
+  let cmd = "Ack! " . a:ackargs
+  exec cmd
+
+  " Look for the quickfix window
+  let qffound = 0
+  let nwin = 1
+  while 1
+      let nbuf = winbufnr(nwin)
+      " After all window processed, finish.
+      if nbuf == -1
+          break
+      endif
+      if getbufvar(nbuf, '&buftype') ==# "quickfix"
+          let qffound = 1
+          break
+      else
+          let nwin = nwin + 1
+      endif
+  endwhile
+
+  if qffound == 1
+      exec nwin . "wincmd w"
+      " Set syntax
+      " Set seach register for buffer to tag
+      " Set highight to green
+      " Set cursorline
+      " Align to first space`
+      silent! foldopen!   " Disable folds
+      setlocal cursorline " Highlight current line
+      setlocal number     " Set line numbers
+      set modifiable
+      set noro              
+      "silent! EasyAlign *| " Align to first space
+      %EasyAlign*| " Align to all |
+      set nomodifiable
+      set ro              " Force Read-Only
+  endif
+
+endfunction
+" }}}
 
 
 " vim: ts=8 ft=vim nowrap fdm=marker 

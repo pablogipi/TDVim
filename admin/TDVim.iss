@@ -45,14 +45,15 @@ VersionInfoProductVersion={#MyAppVersion}DisableWelcomePage=no
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "C:\dev\vim\vimrc"; DestDir: "{app}"; Flags:
-Source: "C:\dev\vim\admin\SetupUserVimrc.bat"; DestDir: "{app}\admin"; Flags:
+Source: "C:\dev\vim\vimrc"; DestDir: "{app}"
+Source: "C:\dev\vim\admin\SetupUserVimrc.bat"; DestDir: "{app}\admin"
 Source: "C:\dev\vim\after\*"; DestDir: "{app}\after"; Flags: recursesubdirs createallsubdirs
 Source: "C:\dev\vim\autoload\*"; DestDir: "{app}\autoload"; Flags: recursesubdirs createallsubdirs
 Source: "C:\dev\vim\doc\*"; DestDir: "{app}\doc"; Flags: recursesubdirs createallsubdirs
 Source: "C:\dev\vim\templates\*"; DestDir: "{app}\templates"; Flags: recursesubdirs createallsubdirs
 Source: "C:\dev\vim\UltiSnips\*"; DestDir: "{app}\UltiSnips"; Flags: recursesubdirs createallsubdirs
 Source: "C:\dev\vim\fonts\*"; DestDir: "{app}\fonts"; Flags: recursesubdirs createallsubdirs
+Source: "C:\dev\vim\plugin\*"; DestDir: "{app}\plugin"; Flags: recursesubdirs createallsubdirs
 Source: "C:\Users\pablo\vimfiles\plugged\*"; DestDir: "{%USERPROFILE}\vimfiles\plugged"; Flags: recursesubdirs createallsubdirs; Tasks: plugins
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -70,7 +71,6 @@ Source: "C:\Users\pablo\vimfiles\plugged\*"; DestDir: "{%USERPROFILE}\vimfiles\p
 ; - Check that installed plugins are a proper git repo -> DONE
 ; - If at start time there is no plugged location then ask to run :PlugInstall
 
-
 [Icons]
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
@@ -85,3 +85,6 @@ SetupWindowTitle=%1 Installation
 
 [Tasks]
 Name: "plugins"; Description: "Plug-Ins used by TDVim"; Flags: unchecked checkedonce
+
+[Dirs]
+Name: "{app}\plugin\fzf\"

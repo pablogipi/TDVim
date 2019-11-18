@@ -1,7 +1,12 @@
 plugged
 Session.vim
 *.swp
+*.swo
 *~
 admin/build
 tags*
+*.tags
+GPATH
+GRTAGS
+GTAGS
 releases

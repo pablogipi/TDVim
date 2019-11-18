@@ -9,7 +9,7 @@
 " Sections:
 " - Plugins
 " - Init settings
-" - Terminal Settings 
+" - Terminal Settings
 " - Search settings
 " - Keyboard mappings
 " - Interface settings
@@ -19,7 +19,7 @@
 " - Diff mode specific options
 " - Autocommands
 " - Custom commands
-" - Global variables  
+" - Global variables
 "
 
 " Vim Plug - Load plugins {{{
@@ -32,9 +32,8 @@ else
     call plug#begin('~/.vim/plugged')
 endif
 
-" 
-" Misc
-" 
+" Misc {{{2
+"
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-unimpaired'
 Plug 'xolox/vim-misc'
@@ -42,25 +41,37 @@ Plug 'xolox/vim-misc'
 Plug 'tomtom/tlib_vim'
 Plug 'vim-scripts/HelpClose'
 Plug 'rkitover/vimpager'
+"Plug 'tpope/vim-dispatch'
+" }}}
 
-" 
-" UI
-" 
+
+" Fuzzy Search Pluging {{{2
+" CtrlP
+"ctrlpvim/ctrlp.vim
+"Plug 'ctrlpvim/ctrlp.vim'
+"Plug 'ctrlpvim/ctrlp.vim',           { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
+"Plug 'fisadev/vim-ctrlp-cmdpalette'
+"Plug 'fisadev/vim-ctrlp-cmdpalette', { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
+"Plug 'd11wtq/ctrlp_bdelete.vim'
+" FzF
+"Plug 'junegunn/fzf.vim'
+" LeaderF
+Plug 'Yggdroot/LeaderF'
+"}}}
+
+
+" UI {{{2
+"
 " NERD Tree will be loaded on the first invocation of NERDTreeToggle command
 "Plug 'scrooloose/nerdtree',              { 'on': ['NERDTreeToggle','NERDTreeFocus','NERDTreeOpen','NERDTreeFind'] }
 Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-" CtrlP
-"ctrlpvim/ctrlp.vim
-Plug 'ctrlpvim/ctrlp.vim'
-"Plug 'ctrlpvim/ctrlp.vim',           { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
-Plug 'fisadev/vim-ctrlp-cmdpalette'
-"Plug 'fisadev/vim-ctrlp-cmdpalette', { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
-Plug 'd11wtq/ctrlp_bdelete.vim'
+
+
 " Lightline
 Plug 'itchyny/lightline.vim'
 " Tagbar
-Plug 'majutsushi/tagbar',                { 'on':  ['TagbarToggle', 'TagbarCurrentTag']}
+Plug 'majutsushi/tagbar',                { 'on':  ['TagbarToggle', 'TagbarCurrentTag'], 'for': ['cpp', 'c', 'python', 'vim'] }
 " Mini Buf Explorer
 "Plug 'fholgado/minibufexpl.vim'
 " Tabline buffers
@@ -78,48 +89,82 @@ endif
 " Devicons
 Plug 'ryanoasis/vim-devicons'
 
-" 
-" Development
-" 
+" Vimade
+"Plug 'TaDaa/vimade'
+
+
+" }}}
+
+" Development {{{2
+"
 " Autocomplete
 "Plug 'ajh17/VimCompletesMe'
 "Plug 'lifepillar/vim-mucomplete'
-" OmniCppComplete
-Plug 'vim-scripts/OmniCppComplete',      { 'for': ['cpp', 'c'] }
 " FSwitch
 Plug 'derekwyatt/vim-fswitch'
-" Snipmate
-Plug 'SirVer/ultisnips',                 { 'for': ['cpp', 'c', 'python', 'vim'] }
-Plug 'honza/vim-snippets',               { 'for': ['cpp', 'c', 'python', 'vim'] }
-" Task List
-Plug 'vim-scripts/TaskList.vim',         { 'for': ['cpp', 'c', 'python', 'vim'] }
-" Cpp Enhanced Syntax
-Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['cpp', 'c'] }
 " Guten Tags
-Plug 'ludovicchabant/vim-gutentags',     { 'for': ['cpp', 'c', 'vim'] }
+Plug 'ludovicchabant/vim-gutentags',     { 'for': ['cpp', 'c', 'vim', 'python'] }
 " Autodate
 Plug 'vim-scripts/autodate.vim'
 " Diffchanges
 Plug 'vim-scripts/diffchanges.vim'
+" Ultisnips
+Plug 'SirVer/ultisnips',                 { 'for': ['cpp', 'c', 'python', 'vim'] }
+Plug 'honza/vim-snippets',               { 'for': ['cpp', 'c', 'python', 'vim'] }
+" TTodo
+"Plug 'tomtom/ttodo_vim'
+" Task List
+"Plug 'vim-scripts/TaskList.vim',         { 'for': ['cpp', 'c', 'python', 'vim'] }
+" Tagma Tasks
+Plug 'JessicaKMcIntosh/TagmaTasks',         { 'for': ['cpp', 'c', 'python', 'vim'] }
+
+" C/C++ {{{3
+" Cpp Enhanced Syntax
+Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['cpp', 'c'] }
+" OmniCppComplete
+Plug 'vim-scripts/OmniCppComplete',      { 'for': ['cpp', 'c'] }
+" }}}
+
+" GIT {{{3
 " Fugitive (GIT)
 "Plug 'tpope/vim-fugitive',               { 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit']}
 Plug 'tpope/vim-fugitive',               { 'for': ['cpp', 'c', 'vim', 'python'], 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit'] }
-Plug 'itchyny/vim-gitbranch' 
+Plug 'itchyny/vim-gitbranch'
 " NERDTree Git
 Plug 'Xuyuanp/nerdtree-git-plugin'
-" TTodo
-"Plug 'tomtom/ttodo_vim'
+" Git Gutter
+Plug 'airblade/vim-gitgutter'
 "CtrlPFunky
-Plug 'tacahiroy/ctrlp-funky'
+"Plug 'tacahiroy/ctrlp-funky'
+"}}}
+"
+" Python {{{3
+" SimplyFold
+Plug 'tmhedberg/SimpylFold', { 'for': ['python'] }
+" Indent Python
+Plug 'vim-scripts/indentpython.vim', { 'for': ['python'] }
+" Jedi
+Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
+" Python mode
+"Plug 'python-mode/python-mode',  { 'for': 'python', 'branch': 'develop' }
+" PyLint
+"Plug 'congma/pylint.vim', { 'for': ['python'] }
+" Flake8
+Plug 'nvie/vim-flake8', { 'for': ['python'] }
+" Pymotions
+Plug 'jeetsukumaran/vim-pythonsense', { 'for': ['python'] }
 
+" }}}
 
-" 
-" Editing
-" 
+" }}}
+
+" Editing {{{2
+"
 " Nerd Commenter
 Plug 'scrooloose/nerdcommenter'
 " Easy Align
-Plug 'junegunn/vim-easy-align',          { 'on': 'LiveEasyAlign' }
+"Plug 'junegunn/vim-easy-align',          { 'on': [ 'LiveEasyAlign', 'EasyAlign' ] }
+Plug 'junegunn/vim-easy-align'
 "Plug 'junegunn/vim-easy-align'
 " Surround
 Plug 'tpope/vim-surround'
@@ -128,21 +173,32 @@ Plug 'haya14busa/incsearch.vim'
 " Anzu
 Plug 'osyo-manga/vim-anzu'
 " Ack
-Plug 'mileszs/ack.vim',                  { 'on': 'Ack' }
+"Plug 'mileszs/ack.vim',                  { 'on': 'Ack' }
+" Grepper
+Plug 'mhinz/vim-grepper',                  { 'on': 'Grepper' }
 " Delimit Mate
 Plug 'Raimondi/delimitMate'
+" Rainbow parentheses
+Plug 'luochen1990/rainbow'
+" Show Indent Lines
+Plug 'Yggdroot/indentLine'
 
-" 
-" Colors
-" 
+" }}}
+
+
+" Colors {{{2
+"
 Plug 'altercation/vim-colors-solarized'
 Plug 'junegunn/seoul256.vim'
 Plug 'reedes/vim-colors-pencil'
-Plug 'rakr/vim-one'
+Plug 'yami-beta/lightline-pencil.vim'
 Plug 'joshdick/onedark.vim'
 Plug 'NovaDev94/lightline-onedark'
 Plug 'Rigellute/rigel'
+Plug 'itchyny/landscape.vim'
+Plug 'morhetz/gruvbox'
 
+" }}}
 
 " Initialize plugin system
 call plug#end()
@@ -152,7 +208,7 @@ call plug#end()
 " Global variables {{{
 
 " TDVim version
-let $TDVIMVERSION="0.2.2"
+let $TDVIMVERSION="0.2.9"
 
 " }}}
 
@@ -170,12 +226,22 @@ set nocompatible
 " Allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 
-" Do not keep a backup file, use versions instead
+" Do not keep a backup file for VMS
 if has("vms")
-    set nobackup		
+    set nobackup
+else
+    set backup                               " keep a backup file
 endif
+" Backup and swap files
+let vimbackuppath = $HOME . '/.vim/tmp'
+if utils#GetOS() == 3
+    "Windows
+    let vimbackuppath = $HOME . '/vimfiles/tmp'
+endif
+let &backupdir = vimbackuppath . '//,.'
+let &directory = vimbackuppath . '//,.'
+silent call mkdir (vimbackuppath , 'p')
 
-set backup                               " keep a backup file
 set history=50                           " keep 50 lines of command line history
 set ruler                                " show the cursor position all the time
 set showcmd                              " display incomplete commands
@@ -183,13 +249,13 @@ set wildmode=full                        " Complete the next full match
 " Ignores patterns in autocomplete
 if utils#GetOS() == 1
     "Linux
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.swp,*.bak
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.swp,*.bak,*~
 elseif utils#GetOS() == 2
     "Mac
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.swp,*.bak
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.swp,*.bak,*~
 elseif utils#GetOS() == 3
     "Windows
-    set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*,*.swp,*.bak
+    set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*,*.swp,*.bak,*~
 endif
 
 " Check terminals colors, if is not a 256 color terminal make a warning
@@ -209,12 +275,17 @@ if utils#GetOS() == 3
     set viminfo+=rB:
 endif
 
-
 " Always run mswin at the end
 " Load more conventional editors options, MSWin mode:
 source $VIMRUNTIME/mswin.vim
 " Fix mswin, it enters in select mode rather than visual.
 set selectmode=""
+
+" Auto change directory
+set autochdir
+
+" Use OS clipboard:
+set clipboard^=unnamed,unnamedplus
 
 " }}}
 
@@ -225,15 +296,7 @@ let &sessionoptions='buffers,curdir,folds,resize,winsize'
 "let &sessionoptions+='resize'
 " View, restore file state options:
 let &viewoptions='cursor,folds,slash,unix'
-" Backup and swap files
-let tmpdir = "$TMPDIR/vim"
-let &backupdir = tmpdir . "//" . ",."
-let &directory = tmpdir . "//" . ",."
 
-" }}}
-
-" Auto change directory {{{
-set autochdir
 " }}}
 
 " Terminal settings {{{
@@ -282,7 +345,7 @@ set foldtext=utils#NeatFoldText()
 " Search settings {{{
 
 " Do incremental searching
-set incsearch		
+set incsearch
 
 " Switch on search pattern highlighting.
 set hlsearch
@@ -296,7 +359,7 @@ set gdefault
 
 " Better grep
 if executable("ag")
-    set grepprg=ag\ --nogroup\ --nocolor
+    set grepprg=ag\ --nogroup\ --nocolor\ --vimgrep
 endif
 
 
@@ -425,7 +488,7 @@ if has("gui_running")
     set mousemodel=popup	" Enable popup menu using mouse
 
     " Set GUI font and general options
-    if has('gui_gtk2')
+    if has('gui_gtk2') || has('gui_gtk3')
         set gfn=DejaVu\ Sans\ Mono\ 10
         "set guioptions = "agimrLtT"
         set guioptions += "aAgimrLt"
@@ -452,6 +515,9 @@ if has("gui_running")
     else
         " system not detected
     endif
+
+    " Better updatetime for GUI
+    set updatetime=1000
 
 
 endif
@@ -482,7 +548,7 @@ let maplocalleader = ","
 if has('unix')
     " unix-like platform (including Cygwin)
     "Setup for MacVim
-    if has('gui_macvim') 
+    if has('gui_macvim')
         "set macmeta
     endif
 
@@ -516,6 +582,9 @@ if has("autocmd")
     augroup tdvimMisc
         " Update status line colors when color scheme chages
         autocmd ColorScheme * call utils#updateStatusLineColors()
+        " Highlight type for extra white spaces at the end of a line
+        autocmd ColorScheme * highlight ExtraWhitespace ctermbg=lightred guibg=lightred
+        autocmd Syntax python,cpp,c,sh,csh,vim highlight ExtraWhitespace ctermbg=lightred guibg=lightred
     augroup END
     " Checks for first start
     augroup tdvimFirstStartUp
@@ -540,18 +609,21 @@ if has("autocmd")
                     \ endif
         " Change local path to the folder containing the current buffer:
         autocmd BufRead * call utils#SetLocalPath()
+        autocmd BufRead quickfix call utils#SetupAuxBuffer()
+        " Show bad spaces at the end of code lines:
+        au BufRead,BufNewFile *.py,*.pyw,*.c,*.cpp,*.vim,*.h match ExtraWhitespace  /\s\+$/
     augroup END
     " BufEnter
     augroup tdvimBufEnter
         " Set local path to path of current file
         autocmd BufEnter * call utils#SetLocalPath()
         " Set preview window syntax
-        "autocmd BufEnter * 
-            "\if &previewwindow | 
+        "autocmd BufEnter *
+            "\if &previewwindow |
             "\   set filetype=passwd |
             "\   endif
-        "autocmd BufEnter * 
-            "\if &previewwindow | 
+        "autocmd BufEnter *
+            "\if &previewwindow |
             "\   call utils#PreviewWindowSetup() |
             "\   endif
         autocmd BufEnter * call utils#PreviewWindowSetup()
@@ -567,7 +639,15 @@ if has("autocmd")
     " BufWinLeave
     "augroup tdvimBufWinLeave
     "augroup END
-    " FileTypes
+    " BufAdd
+    "augroup tdvimBufAdd
+        " Setup quickfix and preview windows keymaps
+        "autocmd BufAdd  * if &buftype == 'quickfix' | echo 'winenter' | endif
+        "autocmd BufAdd  * echomsg "Adding buffer " . &buftype
+        "autocmd BufAdd qf call utils#SetupAuxBuffer()
+    "augroup END
+     "FileTypes
+     "
     augroup tdvimFileTypes
 	autocmd Filetype *
 		    \	if &omnifunc == "" |
@@ -578,6 +658,12 @@ if has("autocmd")
     " SessionLoadPost
     "augroup tdvimSessionLoadPost
     "augroup END
+    " Gutentags
+    augroup GutentagsStatusLineRefresher
+        autocmd!
+        autocmd User GutentagsUpdating call lightline#update()
+        autocmd User GutentagsUpdated call lightline#update()
+    augroup END
 
 else
     set autoindent		" always set autoindenting on
@@ -608,10 +694,10 @@ let g:seoul256_srgb = 1
 " Devicons:
 let g:webdevicons_enable_ctrlp = 1
 
-" Maximize
+" Maximize:
 let g:maximizer_set_default_mapping = 0
 
-" NERD Tree {{{2
+" NERD Tree: {{{2
 let g:NERDTreeHijackNetrw = 1 " Use NERD Tree instead of netrw
 "let g:NERDTreeDisableFileExtensionHighlight = 1
 "let g:NERDTreeDisableExactMatchHighlight = 1
@@ -620,22 +706,30 @@ let g:NERDTreeFileExtensionHighlightFullName = 1
 let g:NERDTreeExactMatchHighlightFullName = 1
 let g:NERDTreePatternMatchHighlightFullName = 1
 let g:NERDTreeLimitedSyntax = 1
+let NERDTreeIgnore=['\.swo$', '\.swp$','\.pyc$', '\.o$','\~$']
 "}}}
 
-" NERD Commenter
+" NERD Commenter:
 let g:NERDMenuMode = 0 " Disable menu
 
-" Ack
+" Ack:
 if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
+  "let g:ackprg = 'ag --vimgrep --ignore={"*~", "*.swp", "*.diff"}'
+  "let g:ackprg = 'ag --vimgrep --ignore *~ --ignore *.swp --ignore *.diff'
+  "echomsg "Set ag as executable"
+  let g:ackprg = 'ag --vimgrep --ignore *~ --ignore *.swp --ignore *.diff --ignore tags  --ignore *.tags '
 endif
+let g:ackhighlight = 1
+let g:ack_autofold_results = 1
+"let g:ack_use_dispatch = 1
+let g:ackpreview = 1
 
-" Session
+" Session:
 let g:session_command_aliases = 1 " Enable vim-session commands aliases
 let g:session_menu            = 0 " Disable vim-session menu
 let g:session_autoload        = 0 " Disable load session on startup
 
-" Lightline {{{2
+" Lightline: {{{2
 " use lightline-buffer in lightline
 let g:lightline = {
         \ 'tabline': {
@@ -656,26 +750,32 @@ let g:lightline = {
                 \ 'fileformat': 'utils#LightlineDeviconsFileformat',
                 \ 'modifiedicon': 'utils#LightlineModified',
                 \ 'readonly': 'utils#LightlineReadonly',
+                \ 'tag': 'utils#LightlineCurrentTag',
+                \ 'tagsgen': 'utils#LightlineGutentags',
                 \ },
         \ 'component': {
+                \ 'filename': '%{utils#LightlineFilename()}',
                 \ 'mode': '%{utils#LightlineMode()}',
-                \ 'preview': '%{utils#LightlinePreview()}',
-        \       }, 
+                \ 'plugin': '%{utils#LightlinePlugin()}',
+        \       },
         \ }
 
+                "\ 'lineinfo': '%{utils#LightlineLineInfo()}',
 
-"'left': [ [ 'preview', 'filename', 'modified' ], ],
-"let g:lightline.active = {
-            "\ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modified' ] ],
-            "\ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'fileformat', 'fileencoding', 'filetype' ], [ 'git' ] ]
-            "\   }
-let g:lightline.active = {
-            \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ] ],
-            \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git', 'filetype' ] ]
-            \   }
+if has ('gui_running')
+    let g:lightline.active = {
+                \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'tag', 'tagsgen' ] ],
+                \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git' ] ]
+                \   }
+else
+    let g:lightline.active = {
+                \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modifiedicon' ], [ 'tag', 'tagsgen' ] ],
+                \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git', 'filetype' ] ]
+                \   }
+endif
 
 let g:lightline.inactive = {
-            \ 'left': [ [ 'preview', 'filename', 'modifiedicon' ] ],
+            \ 'left': [ [ 'plugin', 'filename', 'modifiedicon' ] ],
             \ 'right': [ [ 'lineinfo' ],
             \            [ 'git', 'percent' ] ] }
 " lightline-buffer
@@ -694,16 +794,17 @@ let g:lightline_buffer_maxfextlen = 3
 let g:lightline_buffer_minflen    = 16
 let g:lightline_buffer_minfextlen = 3
 let g:lightline_buffer_reservelen = 20
+let g:lightline#bufferline#enable_devicons = 1
 
 "}}}
 
-" delimitMate
+" delimitMate:
 " We need this here to avoid problems with delimitMate
 let delimitMate_balance_matchpairs = 1
 let delimitMate_expand_space       = 1
 let delimitMate_expand_cr          = 1
 
-" OmniCppComplete {{{2
+" OmniCppComplete: {{{2
 let OmniCpp_DefaultNamespaces   = ["std"]
 let OmniCpp_MayCompleteDot      = 0
 let OmniCpp_MayCompleteArrow    = 0
@@ -713,7 +814,7 @@ let OmniCpp_ShowPrototypeInAbbr = 0
 
 "}}}
 
-" MuComplete {{{2
+" MuComplete: {{{2
 let g:mucomplete#chains = {
       \ 'default': ['file', 'c-p', 'uspl'],
       \ 'cpp':     ['file', 'ulti', 'omni', 'c-p'],
@@ -726,7 +827,7 @@ let g:mucomplete#buffer_relative_paths = 1
 
 "}}}
 
-" CtrlP {{{2
+" CtrlP: {{{2
 let g:ctrlp_working_path_mode = 'rwa'
 let g:ctrlp_switch_buffer = 'Et'
 let g:ctrlp_reuse_window = 'startify\|netrw'
@@ -765,7 +866,7 @@ if executable('ag')
     endif
 endif
 " Activate buffer delete extension
-if ( exists('g:loaded_ctrlp') && g:loaded_ctrlp ) 
+if ( exists('g:loaded_ctrlp') && g:loaded_ctrlp )
     call ctrlp_bdelete#init()
 endif
 " CtrlPFunky
@@ -773,7 +874,13 @@ let g:ctrlp_funky_syntax_highlight = 1
 let g:ctrlp_funky_nerdtree_include_files = 1
 "}}}
 
-" UltiSnips {{{ 2
+" LeaderF:
+" Move up in normal mode for File
+let g:Lf_NormalMap = { "File":   [["u", ':LeaderfFile ..<CR>']] }
+let g:Lf_GtagsSkipUnreadable = 1
+let g:Lf_WorkingDirectoryMode = 'Ac'
+
+" UltiSnips: {{{ 2
 let g:UltiSnipsExpandTrigger="<C-T>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
@@ -784,15 +891,33 @@ let g:mucomplete#ultisnips#match_at_start = 0
 
 "}}}
 
-" Ttodo
+" Gutentags:
+if executable( 'gtags-cscope' )
+    let g:gutentags_modules = [ 'ctags', 'gtags_cscope' ]
+else
+    let g:gutentags_modules = [ 'ctags' ]
+endif
 
-" Gutentags
-"let g:gutentags_define_advanced_commands=1
+let g:gutentags_define_advanced_commands=1
+let g:gutentags_ctags_extra_args = [ '-R', '--sort=1', '--c++-kinds=+plAU', '--python-kinds=-iz', '--tag-relative=yes', '--fields=+aimnSZ', '--extras=+q']
+"let g:gutentags_trace = 1
 
-" Netrw {{{ 2
+" Gtags:
+let Gtags_No_Auto_Jump = 1
+let Gtags_Close_When_Single = 0
+
+" Tagbar:
+let g:tagbar_map_showproto = "<Tab>"
+let g:tagbar_sort = 1
+if has("gui_running")
+    let g:tagbar_iconchars = ['▶', '∇']
+endif
+let g:tagbar_previewwin_pos = "botright"
+
+" Netrw: {{{ 2
 let g:Netrw_UserMaps= [["u","utils#UserNetrwBrowseUpDir"],
             \["U","utils#UserNetrwBrowseBackRecentDir"],
-            \["B","utils#UserNetrwBrowseForwardRecentDir"], 
+            \["B","utils#UserNetrwBrowseForwardRecentDir"],
             \["-","utils#UserNetrwRexplore"]
             \]
 
@@ -804,18 +929,17 @@ let g:autodate_keyword_pre = 'Last Change:'
 
 "}}}
 
-" Startify {{{2
+" Startify: {{{2
 
 if utils#GetOS() == 3
     "Windows
-    let g:ctrlp_cache_dir = $HOME . '/vimfiles/cache/ctrlp'
     let g:startify_session_dir = '~/vimfiles/sessions'
 else
     " Anything other OS, assumed UNIX
-    let g:startify_session_dir = '~/.vim/session'
+    let g:startify_session_dir = '~/.vim/sessions'
 endif
-                                            
-                                            
+
+
 " Header
 let g:startify_custom_header = [
 \ ' ______  ____    __  __                     ',
@@ -848,6 +972,11 @@ let g:startify_lists = [
             \ { 'type': 'commands',  'header': ['   Commands']       },
             \ ]
 
+let g:startify_commands = [
+            \ {'f': ['Explorer', 'NERDTreeToggle']},
+            \ {'t': ['Terminal', 'terminal']},
+            \ ]
+
 let g:startify_files_number = 5
 
 " Sessions
@@ -855,12 +984,121 @@ let g:startify_change_to_dir = 1
 let g:startify_change_to_vcs_root = 1
 let g:startify_session_sort = 1
 let g:startify_session_number = 10
+let g:startify_session_persistence = 1
 let g:startify_session_before_save = [
             \ 'echo "Cleaning up before saving.."',
-            \ 'silent! NERDTreeTabsClose'
+            \ 'silent! NERDTreeTabsClose',
+            \ 'silent! cclose',
+            \ 'silent! call utils#CloseAllWindowsByType( "quickfix" )',
+            \ 'silent! call utils#CloseAllWindowsByType( "preview" )',
+            \ 'silent! call utils#CloseAllWindowsByType( "help" )'
             \ ]
 
 "}}}
+
+" FZF: {{{2
+"let g:fzf_colors =
+            "\ { 'fg':      ['fg', 'Normal'],
+            "\ 'bg':      ['bg', 'Normal'],
+            "\ 'hl':      ['fg', 'Comment'],
+            "\ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+            "\ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+            "\ 'hl+':     ['fg', 'Statement'],
+            "\ 'info':    ['fg', 'PreProc'],
+            "\ 'border':  ['fg', 'Ignore'],
+            "\ 'prompt':  ['fg', 'Conditional'],
+            "\ 'pointer': ['fg', 'Exception'],
+            "\ 'marker':  ['fg', 'Keyword'],
+            "\ 'spinner': ['fg', 'Label'],
+            "\ 'header':  ['fg', 'Comment'] }
+
+"let g:fzf_tags_command = 'ctags -R --sort=1 --c++-kinds=+plAU --python-kinds=+iz --tag-relative=yes --fields=+ailmnS --extras=+q'
+
+"}}}
+
+" Rainbow Parentheses:
+let g:rainbow_active=1
+
+" GitGutter: {{{2
+"let g:gitgutter_sign_added              = '¤'
+let g:gitgutter_sign_added              = '⇒'
+let g:gitgutter_sign_modified           = '»'
+let g:gitgutter_sign_removed            = '✗'
+let g:gitgutter_sign_removed_first_line = '‾'
+let g:gitgutter_sign_modified_removed   = '≃'
+" }}}
+
+" Vimade:
+let g:vimade = {}
+let g:vimade.basebg = [255,0,0]
+
+"Easy Align {{{2
+let g:easy_align_delimiters = {
+\  ' ': { 'pattern': ' ',  'left_margin': 0, 'right_margin': 0, 'stick_to_left': 0 },
+\  '=': { 'pattern': '===\|<=>\|\(&&\|||\|<<\|>>\)=\|=\~[#?]\?\|=>\|[:+/*!%^=><&|.-]\?=[#?]\?',
+\                          'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+\  ':': { 'pattern': ':',  'left_margin': 0, 'right_margin': 1, 'stick_to_left': 1 },
+\  ',': { 'pattern': ',',  'left_margin': 0, 'right_margin': 1, 'stick_to_left': 1 },
+\  '|': { 'pattern': '|',  'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+\  '.': { 'pattern': '\.', 'left_margin': 0, 'right_margin': 0, 'stick_to_left': 0 },
+\  '#': { 'pattern': '#\+', 'delimiter_align': 'l', 'ignore_groups': ['!Comment']  },
+\  '&': { 'pattern': '\\\@<!&\|\\\\',
+\                          'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+\  '{': { 'pattern': '(\@<!{',
+\                          'left_margin': 1, 'right_margin': 1, 'stick_to_left': 0 },
+\  '}': { 'pattern': '}',  'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 }
+\ }
+"}}}
+
+" Indent Line:
+let g:indentLine_enabled = 1
+let g:indentLine_char = '┊'
+let g:indentLine_fileType = ['c', 'cpp', 'python', 'vim', 'sh', 'csh', 'tcsh' ]
+let g:indentLine_fileTypeExclude = ['qf', 'help', 'startify', 'vim-plug']
+let g:indentLine_bufTypeExclude = ['help', 'terminal']
+let g:indentLine_leadingSpaceEnabled = 1
+
+
+" Grepper {{{2
+let g:grepper = {}
+let g:grepper.tools = ['git', 'ag', 'grep']
+let g:grepper.ag = {}
+let g:grepper.ag.grepprg = 'ag --vimgrep  --ignore *~ --ignore *.swp --ignore *.diff --ignore tags  --ignore *.tags '
+let g:grepper.open = 1
+let g:grepper.jump = 0
+"let g:grepper.prompt_mapping_tool = '<leader>g'
+let g:grepper.searchreg = 1
+let g:grepper.highlight = 1
+let g:grepper.dir = 'repo,file'
+" }}}
+
+" Simply Fold:
+let g:SimpylFold_docstring_preview = 1
+
+" Jedi {{{2
+let g:jedi#completions_command = ""
+let g:jedi#goto_command = "]t"
+let g:jedi#goto_assignments_command = ""
+let g:jedi#usages_command = "[T"
+let g:jedi#popup_on_dot = 0
+let g:jedi#smart_auto_mappings = 1
+" }}}
+"
+" Flake8 {{{2
+let g:flake8_show_in_gutter=1
+let g:flake8_show_in_file=1
+let g:flake8_max_markers=50
+let g:flake8_error_marker='✗' "EE
+let g:flake8_warning_marker='ω' "WW
+" }}}
+
+" Pymode {{{2
+let g:pymode_run = 1
+let g:pymode_breakpoint = 0
+let g:pymode_rope_complete_on_dot = 0
+let g:pymode_rope_completion_bind = ''
+let g:pymode_rope_goto_definition_bind = '<]t>'
+" }}}
 
 " }}}
 
