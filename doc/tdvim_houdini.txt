@@ -1,0 +1,72 @@
+*tdvim_houdini.txt*	For TDVim version 0.2   Last Change:November 15, 2019 - 00:59 AM.
+
+
+
+                              TDVIM USER MANUAL
+                               TDVIM IN HOUDINI
+                                                               *tdvim_houdini*
+
+===============================================================================
+
+TDVim comes with some tools to integrate Houdini for both HDK (C++) and
+Python developemnt.
+
+In $TDVIMROOT/tools/ there is a script called buildHDKTags.cmd and
+buildHDKTags.sh, depending of the platform.
+This script will create tags for the HDK and the hou Python module.
+Just run ii from a terminal setup for Houdini, basically it just need to have
+$HFS setup correctly.
+
+The you can use the project setup file, project.vim, to make the tag files
+created available for C++ and Pthon.
+
+In $TDVIMROOT/templates there is a template for project.vim which shows
+how to integrate the tags files in the project.
+
+With this setup correctly now it is possible to make tags lookups for the
+Houdini develpment files.
+
+The script will also create a Gtags, global tags, data base.
+
+Another important point for Houdini development is how to open vim in order
+to load the hou module inside Vim's python session.
+
+To do that just setup you environment, terminal, so it extend the PYTHONPATH
+variable to include Houdini's python libraries:
+$HFS/houdini/python2.7libs .
+Then double chekc that  the Python 2.7 loaded by VIM is the same platform
+as Houdini, 32 or 64bits.
+
+With all of these ready, then inside Houdini you should be able to run:
+python import hou .
+
+That means that Jedi should be now able to offer autocompletion for hou
+members.
+
+Finall to enable HDK tags and hou tags inside your project just add them 
+to the `project.vim` script, something like this:
+
+
+" CPP project settings: 
+if &filetype == "cpp" || &filetype == "c"
+    " Add tags HDK tags
+    set tags+=hdk.tags
+
+    " Set build command
+    if utils#GetOS() == 3
+        "Windows
+        set makeprg="nmake"
+    endif
+endif
+
+" Python project settings: 
+if &filetype == "python"
+    " Add tags HOU tags
+    set tags+=hou.tags
+endif
+
+
+
+
+
+vim:tw=78:ts=8:ft=help.txtfmt:norl:autoindent:nofoldenable

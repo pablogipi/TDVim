@@ -1,0 +1,213 @@
+*tdvim_development.txt*	For TDVim version 0.2   Last Change:November 15, 2019 - 00:53 AM.
+
+
+
+                              TDVIM USER MANUAL
+                                  DEVELOPMENT
+                                                             *tdvim_development*
+
+===============================================================================
+
+TDVim provides several useful tools tailored for developing source code.
+
+1. Tagbar as symbols, tags, browser. Use <Shift-F8> to toggle it.
+2. NERDTree as project drawer. USe <F8> .
+3. Gutentags to aumatically update tags and gtags in the background.
+
+
+
+===============================================================================
+1. Navigation                                                       *navigation*
+The usual layout is to have the file being edited in the middle buffer and
+have NERDTree to browser files opened at the left and Tagbar to browse
+symbols at he right side.
+
+Some useful navigation shortcuts for coding: |tdvim-development|
+
+A collection of some of the most useful maps:
+
+    - Move to prev or next indented line:       <[l> , <]l>
+    - Move to prev or next level indented line: <[L> , <]L>
+    - Go to previous change position:           [c
+    - Go to next change position:               ]c
+    - Close preview window:                     <leader>qp
+    - Close Quickfix window:                    <leader>qq
+    - Jump to Preview window:                   <leader>jp
+    - Jump to Quickfix window:                  <leader>jq
+    - Jump to Explorer window:                  <leader>je, <leader>e
+    - Jump to Tags Inspector window:            <leader>jt
+
+1.1 Searching                                               *navigation_search*
+There are sevral tools available to quickly search for things in your peoject:
+
+1. Use Ack to quickly search for words. It is setup to use ag search
+engine by default. Take a look at the search hotkeys:  |tdvim-search|
+The search hotkeys are assigned to different combinations of <F4> .
+
+2. Inspect the code using tags and gtags: |tdvim-development|
+Most of the search functions for source code are assigned around <F6> .
+
+===============================================================================
+2. Tags                                                                  *tags*
+
+Tags are a data base of symbols, mainly functions, in your project.
+It uses two diferent tools:
+1. Universal Tags or Ctags
+2. GNU Global or gtags
+
+See TDVim external tools: |tdvim_install_external|
+
+Gutentags will mantein the tags files automatically, usually they will be in
+the root of your project, `tags` for Ctags and `GPATH`, `GRTAGS` and `GTAGS` for
+Global (aka gtags) .
+
+Is it also possible to manually force the update using the <F12> keymaps.
+
+Other tags files, data bases, can be included in the current tagfiles, this can
+be done using the project support explained in the next chapter.
+This is useful to include tags for used libraries os SDKs in the project.
+
+With the keymaps around the <F6> key we can perform tags search, look for
+functions and other symbols definitions, show current function in the
+|previewwindow| ,search for a symbol in gtags etc ...
+Other useful keymaps are the []tT, thy allow to quickly navigate tags jumps
+and search for backreferences (who is calling this function):
+
+    - Browse functions:                        <F6>, <leader>fu
+    - Tags Finder:                             <Shift-F6>
+    - Show current word tag in Preview Window: <Ctrl-F6>
+    - Search symbol in Gtags:                  <Ctrl-Shift-F6>
+    - Jump to tag:                             <]t>
+    - Go back from tag stack:                  <[t>
+    - Search tag in Gtags:                     <]T>
+    - Show back references in Gtags:           <[T>
+
+Finally the symbols browser, Tagbar, creates and mantein it's own tags files
+and allows to search and navigate tags in your current file quickly, some
+useful keymaps inside Tagbar:
+    - Jump to prototype definition:          p
+    - Show prototype in preview window:      P
+
+The last thing to recall about tags is the ability to show the prototype of
+the function where the cursor is at the moment in the airline status line.
+
+
+===============================================================================
+3. Project Setup                                                                  *project*
+
+For a project we understand a set of files under the same folder, which builds
+some software solution.
+Usually they are inside a version controlled repository, at the moment only
+GIT  is supported.
+
+Files used acrossed all the project will be at the root of this repository,
+for instace the previously mentioned tags files.
+
+Another important file is `project.vim`
+There is a template for this file in $TDVIMROOT/templates.
+
+Vim will look for a project.vim file in the current folder or going up in the
+parents hirarchy every time a new file is opened.
+The idea is to use this file to setup some local ( only for the current file )
+or global settings for the project.
+
+This is an example:
+
+
+" CPP project settings: 
+if &filetype == "cpp" || &filetype == "c"
+    " Add tags HDK tags
+    set tags+=hdk.tags
+    set tags+=opengl.tags
+    set tags+=mytags.tags
+
+    " Set build command
+    if utils#GetOS() == 3
+        "Windows
+        set makeprg="nmake"
+    endif
+endif
+
+" Python project settings: 
+if &filetype == "python"
+    " Add tags HOU tags
+    set tags+=hou.tags
+endif
+
+" Vim project settings: 
+"if &filetype == "vim"
+"endif
+
+" Add folder to file search paths: 
+" set path += /apps/myapp/myincludes/*
+
+" Debug Gutentags:
+"let g:gutentags_trace = 1
+
+This example shows how to add custom tags files, modify the make program
+depending on the platform or adding some plugins setup options.
+
+As a good practive it is suggested to always copy the project.vim from the
+templates every time a new project is started.
+
+===============================================================================
+4. GIT                                                                  *git*
+
+Git is the VCS supported in TDVim, the amazing Fugitive plugin is bundle to
+use Git from vim:
+https://github.com/tpope/vim-fugitive
+
+Git is also used to define the project root, this is important in order to put
+common used files at this location, like tags files or the project setup
+script, project.vim .
+
+Another useful plugin that works alongside Git is Gitgutter:
+https://github.com/airblade/vim-gitgutter
+This plugin shows which lines has been modified, added ordeletead comparing
+the current file wit the one in GIT. It is sows as symbols in the gutter
+column. This is the leftside column.
+
+Some useful keymaps for GIT, all arund the <F9> key :
+
+    - GiT File diff:                              <Shift-F9>, <leader>gd
+    - Git Status:                                 <F9>, <leader>gs
+    - Git Log:                                    <Ctrl-F9>, <leader>gl
+    - Git File Log:                               <Ctrl-Shift-F9>
+    - Go to previous hunk position:               [h
+    - Go to next hunk position:                   ]h
+
+===============================================================================
+5. Languages                                                      *languages*
+
+TDVim offers some extra tools for C++ and Python, these ar the main languages
+used in VFX.
+On the other hand vim already offers an extensive offer of tools and plugins
+for virtually any used language or platform in software developing.
+
+5.1 C++
+
+For C++ better automcompletion functions using tags is used by default:
+https://github.com/vim-scripts/OmniCppComplete
+
+Also and improved syntax highliting is bundle
+https://github.com/octol/vim-cpp-enhanced-highlight
+
+5.2 Python
+
+Some useful plugins:
+
+SimplyFold to improve Python code folding:
+https://github.com/tmhedberg/SimpylFold
+
+Better indentation:
+https://github.com/vim-scripts/indentpython.vim
+
+Check sntax and code style, Flake8:
+https://github.com/nvie/vim-flake8
+
+Text objects motion, jump to class, methods, etc ... :
+https://github.com/jeetsukumaran/vim-pythonsense
+
+
+
+vim:tw=78:ts=8:ft=help.txtfmt:norl:autoindent:nofoldenable

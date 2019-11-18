@@ -1,0 +1,140 @@
+*tdvim-intro.txt*	For TDVim version 2.0	       Last change: 2009 May 06
+
+
+
+			   VIM REFERENCE MANUAL
+			   Introduction to TDVim
+								       *tdvim*
+1. Introduction                                                  |tdvim-intro|
+2. Quickref                                                   |tdvim-quickref|
+3. User Manual                                            |tdvim-user-toc.txt|
+
+
+===============================================================================
+1. Introduction                                                *tdvim-intro*
+
+Some years ago I learned vi, or maybe better vim, when I was studying at the
+university.
+It was hard at the beginning but once you master it is second to none for coding.
+So now, after some years as a TD in the CG world sometimes I have to code stuff
+I cleaned the dust from my old vi and recover it.
+Is really amazing the amount of possibilities of this editor and how you can
+construct your own developing environment around it. Because working as a TD in
+this tough industry usually means no time to setup things correctly and not enough
+time to work properly in the code I decided to compile all the stuff about vim so
+I don´t need to reconfigure my coding environment every time I go to a new place
+and also, with the time, to have a really complete and easy to use vim setup. The
+final goal is to make a powerful, yet easy to use, vim setup with many of the
+features you can get from more integrated IDE tools and the most important
+integrated with many of the languages and tools used in production.
+Hopefully will be also useful for others.
+
+Enjoy!
+
+
+===============================================================================
+2. Quickref                                                 *tdvim-quickref*
+
+Basically TDVim is a modification of VIM targeted mainly to Technical
+Directors for Digital Creation Content (DCC).
+
+It is also really useful for any kind of general purpose developing task and
+the goal is to make the use of VIM as easy as possible but keeping the power
+of what makes VIM so powerful: being a modal editor.
+Before begging is worth to say that every |tag| is a tag to point to a help
+file with useful help about the topic it refers. To follow a tag just double
+click on it if you use a mice or type <Ctrl-[>. To return to the previous tag
+type <Ctrl-t> .
+
+Also for Mac OSX users when we use <Ctrl> as a modifier key in the Mac usually
+is replaced by the Command key. So as a rule of thumb, if you see Ctrl type
+Command instead.
+
+Is worth to take a first look to a VIM |ref| before begin to use TDVim.
+Ok, probably if this is your first time using VIM and you have just taken a
+look at VIM Introduction |intro| you feel a little bit scared.
+Don't worry many of us have felt the same th first time we have used VIM.
+Well the main concept around VIM is that it is a modal editor
+|vim-modes-intro|.
+
+Usually in VIM you start in normal mode and you can't write nothing just type
+commands, and the thing is even worst, you can't see this commands!
+In VIM you have to type ':' to enter in |Cmdline-mode|, now you can type
+commands in the bottom line, these are called Ex Comands and is one of the
+most powerful features of VIM.
+
+But we are in an editor so we want to type things in our document, type <Esc>
+to return to |Normal-mode|, and now type 'i' to enter in |Insert-mode|.
+Follow this previous link to know more a about the Insert mode and how to enter
+into it.
+
+When editing text is where many people rally get scared with VIM because very
+common shortcuts as Ctrl-C, Ctrl-V or Shift-Arrows to select don't work.
+Here is where TDVIm comes to you and enables all of these common shortcuts for
+you. Try copy, paste, cut, select with the Shift, select all, etc ...
+Now you feel more comfortable, I hope so.
+
+Well, if this would be all, this wouldn't be VIM.
+Press F2, this returns you to |Cmdline-mode| from any other mode, so this is another
+important thing in TDVim, you can always to  command mode using F2, so you
+save to use <Esc> and then ':' in case you are in Insert mode for instance and
+allows to enter commands faster.
+There is a myriad of commands and learning this commands is out of the scope
+of this manual so everything is in VIM's own manual |Command-line-mode|.
+These command put VIM apart from other editors and when yo uare used to use
+some of them you realize why it is so powerful.
+The last important mode to see in this brief introduction is the
+|Visual-mode|.
+
+In this mode you can make selections with the keyboard or more friendly with
+the mouse. Usually to enter in the Visual mode you go to Normal mode typing
+<Esc> and then 'v'. TDVim again makes things easier and just pressing F3 you
+can go to Visual mode from any other mode.
+Take a look at the visual mode help to learn what you can do with your
+selections |Visual-mode|.
+
+As you can guess know many of TDVim's shortcuts jumps automatically from one
+mode to another, for instance if you are editing and the you press
+<Shift-Right>, then VIM will change from Insert mode to Visual mode and begin
+to allow you to make your selection.
+For a brief introduction to some of the basics of VIM, and as a useful help
+card there is wikia, a VIM wiki, really useful:
+	http://vim.wikia.com/wiki/Best_Vim_Tips
+
+Also is worth to say that because TDVim is build on top of VIM the key to
+master it is to master VIM, and a very with resource is to use the tutor
+shipped with  vim |vimtutor| .
+
+Now you should be ready to make a basic text, move around, copy and paste
+text, what's next: save you file.
+Again TDVim makes thing easier just use the friendly <Ctrl-S> to save your
+file, it will automatically ask for a filename if necessary.
+You want to open a file, no worries <Ctrl-O> comes in a handy.
+
+Tabs, VIM have tabs! |tab-page|, and TDVim makes them easier, <Ctrl-Alt-T> will
+open a new tab, whereas <Ctrl-Alt-W> will close the current one.
+
+Another way to  layout your work areas is splitting windows.
+Look at this explanation about window |definitions| in VIM.
+You can move around windows using <Alt-Arrows>, toggle maximize with <Ctrl-m>
+and resize windows with <Alt-Shift-Arrows>.
+
+Now you can do a lot with you brand new VIM setup through TDVim, go to more
+specific help chapters to know more about any topic you need, you have
+chapters for general editing, language specific editing, applications specific
+integration, projects management, pipeline integration, platforms issues, etc.
+Everything in the User Manual |user_toc.txt|
+
+Thanks for using TDVim
+
+===============================================================================
+3. User Manual                                              *tdvim-user-toc.txt*
+
+Jump to the User Manuel for a more in depth information about different topics
+in TDVim.
+
+
+
+===============================================================================
+
+ vim:tw=78:ts=8:ft=help.txtfmt:norl:autoindent:

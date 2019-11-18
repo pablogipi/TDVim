@@ -1,0 +1,46 @@
+*tdvim-install.txt*	For TDVim version 0.2   Last Change:November 15, 2019 - 00:15 AM.
+
+
+
+			      TDVIM USER MANUAL
+                                   Install
+							   *tdvim_install*
+
+
+===============================================================================
+
+1. TDVim Installation
+
+TDVim is really easy to install just follow the next steps:
+
+For linux run the installer: `TDVim_0.2.2_installer.run`
+For Windows run: `setupTDVim_0.2.2.exe`
+Just change 0.2.2 by the latest release.
+
+Both are self extracting installers, they will follow the next steps:
+
+- Copy TDVim distribution aywhere that suits you.
+  You will be asked for the preffered location, bing `HOME/TDVim`the defaul
+  location.
+- Copy a run script as your main vimrc, in linuxin `$HOME/.vim/vimrc`.
+  In windows `%HOME%\_vimrc`
+- Copy plugins is the user choose to do that.
+  Plugins can be installed later running `PlugInstall`()
+- Setup environment variable called `TDVIMROOT`point to the TDVim install
+  location.
+- User can optionally create a `$HOME/.myvimrc` to override any default setup
+  or modify the current setup.
+
+
+2. TDVim Dependencies and External Tools              *tdvim_install_external*
+
+To get the full experience of TDVim some external tools are needed:
+
+- AG Silver Searcher: https://github.com/ggreer/the_silver_searcher
+- Universal CTags:    https://ctags.io/
+- GNU Global (gtags): https://www.gnu.org/software/global/
+- Jedi:               https://github.com/davidhalter/jedi
+
+
+
+vim:tw=78:ts=8:ft=help.txtfmt:norl:autoindent:nofoldenable
