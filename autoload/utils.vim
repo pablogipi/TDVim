@@ -2,9 +2,30 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  November 18, 2019 - 01:27 AM.
+" Last change:  December 20, 2019 - 13:39 PM.
 "
 "
+
+"
+" Internal utility functions
+"
+
+" getWinInfo
+" winid: id of the window, if not passed then current window will be used
+function! s:getWinInfo( winid=-1 )
+    let curwin = a:winid
+    if curwin == -1
+        let curwin = winnr()
+    endif
+    let wininfos = getwininfo()
+    for idx in range( len( wininfos ) )
+        let wininfo = wininfos[ idx ]
+        if wininfo['winnr'] == curwin
+            return wininfo
+        endif
+    endfor
+    return {}
+endfunction
 
 " GuiTabLabel {{{
 " Set tabs label appearance: 
@@ -294,6 +315,9 @@ let s:LightLineModeMap = { 'n': 'NORMAL', 'i': 'INSERT', 'R': 'REPLACE', 'v': 'V
         \     'c': 'COMMAND', 's': 'SELECT', 'S': 'S-LINE', "\<C-s>": 'S-BLOCK', 't': 'TERMINAL'
         \}
 function! utils#LightlineMode() abort
+    " Get current window info
+    let wininfo = s:getWinInfo()
+
     if &previewwindow
         return 'PREVIEW'
     elseif &filetype == "ctrlp"
@@ -301,7 +325,14 @@ function! utils#LightlineMode() abort
     elseif &filetype == "help"
         return 'HELP'
     elseif &filetype == "qf"
-        return 'QUICKFIX'
+        if wininfo['loclist'] 
+            "let parentwinid = getloclist( winnr(), {'filewinid': -1} )['filewinid']
+            "let parentwinname = bufname( winbufnr( parentwinid ) )
+            "return 'LOCATIONLIST - ' . parentwinname
+            return 'LOCATIONLIST'
+        else
+            return 'QUICKFIX'
+        endif
     elseif &filetype == "tagbar"
         return 'SYMBOLS'
     elseif &filetype == "nerdtree"
@@ -318,12 +349,27 @@ endfunction
 " Custom version of original lightline filename function to return
 " filename string.
 " Customizations:
-" - returne empty string for those filetypes where filename is not needed and
-"   mode is used instead, mostly for plugins vwindows or aux windows like
-"   Quickfix.
+" - return empty string for those filetypes where filename is not needed and
+"   mode is used instead.
+" - Fow Quickfix windows return empty name, for location windows return name of
+"   file associated to parent window
 function! utils#LightlineFilename() abort
-    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
+    " Get current window info
+    let wininfo = s:getWinInfo()
+
+    if &filetype == "help" || &filetype == "ctrlp" || &filetype == "tagbar" || &filetype == "nerdtree"
         return ''
+    endif
+    " For quickfix windows:
+    "
+    if &filetype == "qf"
+        if wininfo['loclist'] 
+            let parentwinid = getloclist( winnr(), {'filewinid': -1} )['filewinid']
+            let parentwinname = bufname( winbufnr( parentwinid ) )
+            return parentwinname
+        else
+            return ''
+        endif
     endif
     return expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
 endfunction
@@ -348,9 +394,12 @@ function! utils#LightlineLineInfo() abort
 endfunction
 " }}}
 
-" LightlinePreview {{{2
+" LightlineInactiveMode {{{2
 " Return PREVIEW string or nothing, used in lightline for inactive windows
-function! utils#LightlinePlugin() abort
+function! utils#LightlineInactiveMode() abort
+    " Get current window info
+    let wininfo = s:getWinInfo()
+
     if &previewwindow
         return 'PREVIEW'
     elseif &filetype == "ctrlp"
@@ -358,7 +407,14 @@ function! utils#LightlinePlugin() abort
     elseif &filetype == "help"
         return 'HELP'
     elseif &filetype == "qf"
-        return 'QUICKFIX'
+        if wininfo['loclist'] 
+            "let parentwinid = getloclist( winnr(), {'filewinid': -1} )['filewinid']
+            "let parentwinname = bufname( winbufnr( parentwinid ) )
+            "return 'LOCATIONLIST - ' . parentwinname
+            return 'LOCATIONLIST'
+        else
+            return 'QUICKFIX'
+        endif
     elseif &filetype == "tagbar"
         return 'SYMBOLS'
     elseif &filetype == "nerdtree"
@@ -369,17 +425,32 @@ function! utils#LightlinePlugin() abort
 endfunction
 " }}}
 
-" LightlineCurrentTag {{{2
-function! utils#LightlineCurrentTag() abort
+" LightlineExtraInfo {{{2
+" Return some extra information at the center of lightline
+" - For programming file types return tag for current function
+" - For Quickfix and Location list windows return command used to generated the
+"   window entries
+function! utils#LightlineExtraInfo() abort
+    " Only add extra info for wide enough windows
+    if winwidth(0) < 100
+        return ""
+    endif
+
+    " Get current window info
+    let wininfo = s:getWinInfo()
+
+    " Quickfix and Location List windows
+    if &filetype == "qf"
+        return wininfo['variables']['quickfix_title']
+    endif
+
+    " Programing 
     if exists("*tagbar#currenttag")
         if &filetype == "c" || &filetype == "cpp" || &filetype == "vim"  || &filetype == "python"
-            if winwidth(0) > 100
-                return tagbar#currenttag("→%s","", "fs")
-            "else
-                "return tagbar#currenttag("→%s","", "f")
-            endif
+            return tagbar#currenttag("→%s","", "fs")
         endif
     endif
+
     return ""
 endfunction
 " }}}
@@ -531,7 +602,7 @@ endfunc
 "   Default: 1
 " g:tdvim_project_enable_logging : enable logging message for every time local
 " settins are set.
-"   Default: 1
+"   Default: 0
 " g:tdvim_project_dev_locations: list of patterns to be ued to chek if current
 " locationshould try to use local settings file.
 "   Default: ["dev"]
@@ -562,7 +633,7 @@ function! utils#ProjectSettings( dirname, depth )
         let g:tdvim_project_detect_git = 1
     endif
     if !exists( "g:tdvim_project_enable_logging" )
-        let g:tdvim_project_enable_logging = 1
+        let g:tdvim_project_enable_logging = 0
     endif
     if !exists( "g:tdvim_project_dev_locations" )
         let g:tdvim_project_dev_locations = ["dev"]
@@ -634,20 +705,45 @@ endfunction
 " Setup preview window depending based on previous window type.
 " This is mainly used to offer a better preview for tags and other
 " development help.
-" Usage: call this using an autocommand
+" Usage: call this using a BufWinEnter autocommand
 function! utils#PreviewWindowSetup()
     if &previewwindow			" if we really are at the preview window
+        "echomsg "In Preview window!!"
         if &filetype == ""
             " Tags preview
             set filetype=passwd 
         else
             " Preview jump to tag
-            silent! foldopen!   " Disable folds
+                                " silent! foldopen!   " Disable folds
+            set nofoldenable
             setlocal cursorline " Highlight current line
+            set number          " Set line numbers
             set ro              " Force Read-Only
         endif
+        " Preview buffers local maps
+        map <silent> <buffer> <Esc> :bdelete <bar> wincmd p<CR>
+        map <silent> <buffer> q :bdelete <bar> wincmd p<CR>
+        " Move preview window to the very bottom
+        wincmd J
+        " But keep Quickfix window at the bottom :)
+        call utils#JumpToWindowsByType( 'quickfix' )
+        wincmd J
+        " Go back to preview
+        wincmd P
     endif
 endfunction
+" }}}
+
+" LeavePreviewWindowSetup {{{
+" Setup preview window when leaving it
+" Usage: call this using a BufWinLeave autocommand
+ function! utils#LeavePreviewWindowSetup ()
+    if &previewwindow			" if we really are at the preview window
+        " Restore buffer editable
+        set noro
+    endif
+ endfunction
+"
 " }}}
 
 " ShowTDVimHelp {{{
@@ -1060,7 +1156,28 @@ function! utils#JumpToWindowsByType ( buffertype )
       let cond1 = getbufvar(nbuf, '&buftype') ==# a:buffertype
       let cond2 = getbufvar(nbuf, '&filetype') ==# a:buffertype
       let cond3 = "preview" ==# a:buffertype ? getwinvar(nwin, '&previewwindow') : 0
+      " quickfix buffer type is a special case, it can be quickfix or location
+      " list
+      if "quickfix" ==# a:buffertype || "location" ==# a:buffertype
+          " Get current window info
+          let wininfo = s:getWinInfo( nwin )
+          let islocwin = wininfo['loclist']
+          let cond1 = 0
+          if "quickfix" ==# a:buffertype && wininfo['quickfix'] && !wininfo['loclist']
+              let cond1 = 1
+          endif
+          if "location" ==# a:buffertype && wininfo['quickfix'] && wininfo['loclist']
+              let cond1 = 1
+          endif
+          "echomsg "Type: " . a:buffertype . " ,Condition: " . cond1
+      endif
+      if "qf" ==# a:buffertype
+          " Get current window info
+          let wininfo = s:getWinInfo( nwin )
+          let cond2 = wininfo['quickfix'] && !wininfo['loclist']
+      endif
       if cond1 || cond2 || cond3
+          "echomsg "Correct!, jump to window " . nwin
           " Correct saved window number if younger window will be closed.
           if save_winnr > nbuf
               let save_winnr = save_winnr - 1
@@ -1155,11 +1272,22 @@ endfunction
 " Setups done:
 " Set q and <Esc> as keymaps to close the window
 function! utils#SetupAuxBuffer( )
-
      "echomsg "Calling setup for qickfix buffer"
     " Aux buffers local maps
+    " Close window with Esc or q
     map <silent> <buffer> <Esc> :bdelete <bar> wincmd p<CR>
     map <silent> <buffer> q :bdelete <bar> wincmd p<CR>
+
+    "For quickfix and location list disable buffer in buffers list
+    if 'quickfix' ==# &buftype
+        let wininfo = s:getWinInfo( )
+        " Move quickfix to the bottom
+        if wininfo['quickfix'] && !wininfo['loclist']
+            wincmd J
+        endif
+        setlocal nobuflisted
+        setlocal cursorline
+    endif
 
 endfunction
 " }}}
@@ -1215,5 +1343,233 @@ function! utils#AckWrapper( ackargs )
 endfunction
 " }}}
 
+" MoveQuickfixBottom {{{
+" Move Quickfix window to bottom. Move Quickfix to bottom is usually convenient
+" DEPRECATED: Quickfix window location at bottom is now manage using
+" autocommands calling to utils#SetupAuxBuffer()
+function! utils#MoveQuickfixBottom( )
+
+  " Save current window number to revert.
+  let save_winnr = winnr()
+  call utils#JumpToWindowsByType ('quickfix')
+  if &buftype ==# 'quickfix'
+      "echo "In quickfix move it down"
+      "silent! 'wincmd J'
+      let wininfo = s:getWinInfo( )
+      if wininfo['quickfix'] && !wininfo['loclist']
+          wincmd J
+      endif
+  endif
+
+  execute save_winnr . 'wincmd w'
+
+endfunction
+" }}}
+
+" ProcessTaglist {{{
+" Process dict entries created by taglist()
+" Creates an useful string that can be used as output
+function! s:ProcessTaglist( key, val )
+    let res = ""
+    let cleanstr    = a:key
+    let cleanstr    = substitute( cleanstr, "$/", "", "" )
+    let cleanstr    = substitute( cleanstr, ";$", "", "" )
+    let cleanstr    = substitute( cleanstr, "/^", "", "" )
+    let cleanstr    = trim( cleanstr )
+    let cleanstrtmp = split( cleanstr, '\s\+' )
+    let cleanstr    = join( cleanstrtmp, " " )
+
+    let res .= a:val['kind'] . " "
+    if has_key( a:val, "scope" )
+        let res .= "[" . v:val['scope']
+        if has_key( a:val, "access" )
+            let res .= "/" . a:val['access']
+        endif
+        let res .= "]" . " "
+    endif
+    if has_key( a:val, "typename" )
+        let res .= v:val['typename'] . " "
+    endif
+    let res .= cleanstr
+    "echo res . " " . cleanstr
+    "let res = printf( "%s %50S", res, cleanstr )
+    "let res = printf( "%50S", cleanstr )
+    "echo res
+
+    "echomsg "For entry: " . a:key
+    "echomsg " - Val: " . string(a:val)
+    "echomsg " - Result: " . res
+
+    return res
+endfunction
+" }}}
+
+" EchoTagDefinition {{{
+" Get tag under curdor and show information about  in different ways.
+" a:output: output type:
+"  - echo: echo tags using echomsg
+"  - menu: create a popup menu
+"  - preview: preview output in Preview window
+function! utils#EchoTagDefinition( output="echo" )
+    let curword = expand( '<cword>' )
+    let pat = '^' . curword . '$\C'
+    let tags = taglist( pat )
+    let funcs = {}
+    let proto = {}
+    let clases = {}
+    let globals = {}
+    let members = {}
+    let vars = {}
+    let resdict = {}
+
+
+    "tselect
+
+    "echomsg "Tags for " . curword
+    "echomsg tags
+
+    for key in range( len( tags ) )
+        "echomsg "Entry " . key
+        "echomsg tags[key]
+        if !has_key( tags[key], 'kind' )
+            continue
+        else
+            " Prototypes
+            if tags[key]['kind'] == 'p'
+                "echomsg "Prototype " . key
+                "echomsg tags[key]['name'] . tags[key]['signature']
+                "echohl Function | echomsg tags[key]['name'] . tags[key]['signature'] | echohl None
+                if has_key( proto, tags[key]['cmd'] )
+                    if !count( proto[tags[key]['cmd']]['name'], '::' ) 
+                        let proto[tags[key]['cmd']] = tags[key]
+                    endif
+                else
+                    let proto[tags[key]['cmd']] = tags[key]
+                endif
+            elseif tags[key]['kind'] == 'f'
+                if has_key( funcs, tags[key]['cmd'] )
+                    if !count( funcs[tags[key]['cmd']]['name'], '::' ) 
+                        let funcs[tags[key]['cmd']] = tags[key]
+                    endif
+                else
+                    let funcs[tags[key]['cmd']] = tags[key]
+                endif
+            elseif tags[key]['kind'] == 'c'
+                let clases[tags[key]['cmd']] = tags[key]
+            elseif tags[key]['kind'] == 'g'
+                let globals[tags[key]['cmd']] = tags[key]
+            elseif tags[key]['kind'] == 'm'
+                let members[tags[key]['cmd']] = tags[key]
+            else
+                let vars[tags[key]['cmd']] = tags[key]
+            endif
+        endif
+    endfor
+
+    " Add results to resdict
+    " For functions only add prototypes
+    if len( proto ) > 0
+        call extend( resdict, proto )
+    else
+        call extend( resdict, funcs )
+    endif
+    call extend( resdict, clases )
+    call extend( resdict, globals )
+    call extend( resdict, members )
+    call extend( resdict, vars )
+
+    "echomsg "Results before processing:"
+    "echomsg resdict
+    "echomsg
+    " Process res dict to generate sme useful output string
+    call map( resdict, function("s:ProcessTaglist"))
+
+    "echomsg "Result:"
+    "echomsg resdict
+
+    let res = ""
+    for val in resdict->values()
+        if a:output == "echo" || a:output == "popup"
+            let res .= val . "\n"
+        endif
+    endfor
+
+    if a:output == "echo"
+        echo curword . ":"
+        "echomsg res
+        echo res
+    elseif a:output == "popup"
+        let reslist = split( res, "\n" )
+        call sort( reslist )
+        "call popup_atcursor( reslist,#{
+                    "\ pos: 'botleft',
+                    "\ line: 'cursor-1',
+                    "\ col: 'cursor',
+                    "\ moved: 'WORD',
+                    "\ title: "---" . curword . ":",
+                    "\ cursorline: 1,
+                    "\ })
+        "call popup_create ( reslist,#{
+                    "\ pos: 'botleft',
+                    "\ line: 'cursor-1',
+                    "\ col: 'cursor',
+                    "\ moved: 'WORD',
+                    "\ title: "---" . curword . ":",
+                    "\ cursorline: 1,
+                    "\ drag: 1,
+                    "\ close: 'button',
+                    "\ border: [1,1,1,1],
+                    "\ })
+        call popup_create ( reslist,#{
+                    \ pos: 'botleft',
+                    \ line: 'cursor-1',
+                    \ col: 'cursor',
+                    \ moved: 'WORD',
+                    \ title: "---" . curword . ":",
+                    \ })
+    endif
+
+endfunction
+" }}}
+
+" PreviewTag {{{
+" Call ptjump to open tag in preview window and setup Preview window.
+" I can't use autocommands because ptjump dnt trigge any of them
+" when spawingthe Preview Window.
+" So current window is stored. ptjump is called, jump to Preview window
+" Setup Preview Window, back to original window.
+function! utils#PreviewTag( tagname )
+    let curwin = winnr()
+
+    " Open tag in Preview
+    execute "ptjump " . a:tagname
+
+    " Jump to Preview Window
+    call utils#JumpToWindowsByType( 'preview' )
+    " Setup Preview Window
+    call utils#PreviewWindowSetup()
+
+    " Back to original window
+    execute curwin.'wincmd w'
+
+
+endfunction
+" }}}
+
+" ScrollPrevWindow {{{
+function! utils#ScrollPrevWindow( dir )
+    let curwin = winnr()
+
+    wincmd p
+    if a:dir == 0
+        "execute "norm k"
+        execute "norm! 1\<C-y>"
+    else
+        "execute "norm j"
+        execute "norm! 1\<C-e>"
+    endif
+    wincmd p
+endfunction
+" }}}
 
 " vim: ts=8 ft=vim nowrap fdm=marker 

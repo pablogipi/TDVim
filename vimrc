@@ -44,7 +44,6 @@ Plug 'rkitover/vimpager'
 "Plug 'tpope/vim-dispatch'
 " }}}
 
-
 " Fuzzy Search Pluging {{{2
 " CtrlP
 "ctrlpvim/ctrlp.vim
@@ -58,7 +57,6 @@ Plug 'rkitover/vimpager'
 " LeaderF
 Plug 'Yggdroot/LeaderF'
 "}}}
-
 
 " UI {{{2
 "
@@ -91,6 +89,10 @@ Plug 'ryanoasis/vim-devicons'
 
 " Vimade
 "Plug 'TaDaa/vimade'
+
+" Nuake
+Plug 'Lenovsky/nuake'
+
 
 
 " }}}
@@ -185,7 +187,6 @@ Plug 'Yggdroot/indentLine'
 
 " }}}
 
-
 " Colors {{{2
 "
 Plug 'altercation/vim-colors-solarized'
@@ -208,7 +209,7 @@ call plug#end()
 " Global variables {{{
 
 " TDVim version
-let $TDVIMVERSION="0.2.9"
+let $TDVIMVERSION="0.3"
 
 " }}}
 
@@ -626,7 +627,6 @@ if has("autocmd")
             "\if &previewwindow |
             "\   call utils#PreviewWindowSetup() |
             "\   endif
-        autocmd BufEnter * call utils#PreviewWindowSetup()
         " Call TDVim Project
         autocmd BufEnter * call utils#ProjectSettings(expand("<afile>:p:h"), 0)
     augroup END
@@ -634,11 +634,16 @@ if has("autocmd")
     "augroup tdvimBufLeave
     "augroup END
     " BufWinEnter
-    "augroup tdvimBufWinEnter
-    "augroup END
+    augroup tdvimWinNew
+        autocmd WinNew * call utils#PreviewWindowSetup()
+    augroup END
+    augroup tdvimWinEnter
+        autocmd WinEnter * call utils#PreviewWindowSetup()
+    augroup END
     " BufWinLeave
-    "augroup tdvimBufWinLeave
-    "augroup END
+    augroup tdvimWinLeave
+        autocmd WinLeave * call utils#LeavePreviewWindowSetup()
+    augroup END
     " BufAdd
     "augroup tdvimBufAdd
         " Setup quickfix and preview windows keymaps
@@ -707,12 +712,34 @@ let g:NERDTreeExactMatchHighlightFullName = 1
 let g:NERDTreePatternMatchHighlightFullName = 1
 let g:NERDTreeLimitedSyntax = 1
 let NERDTreeIgnore=['\.swo$', '\.swp$','\.pyc$', '\.o$','\~$']
+let NERDTreeAutoDeleteBuffer = 1
+" NERDTree Git
+let g:NERDTreeIndicatorMapCustom = {
+    \ "Modified"  : "✹",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔︎",
+    \ 'Ignored'   : '☒',
+    \ "Unknown"   : "?"
+    \ }
+
+"let g:gitgutter_sign_added              = '⇒'
+"let g:gitgutter_sign_modified           = '»'
+let g:gitgutter_sign_added              = '✚'
+let g:gitgutter_sign_modified           = '✹'
+let g:gitgutter_sign_removed            = '✗'
+let g:gitgutter_sign_removed_first_line = '‾'
+let g:gitgutter_sign_modified_removed   = '≃'
 "}}}
 
 " NERD Commenter:
 let g:NERDMenuMode = 0 " Disable menu
 
-" Ack:
+" Ack: {{{2
 if executable('ag')
   "let g:ackprg = 'ag --vimgrep --ignore={"*~", "*.swp", "*.diff"}'
   "let g:ackprg = 'ag --vimgrep --ignore *~ --ignore *.swp --ignore *.diff'
@@ -723,6 +750,7 @@ let g:ackhighlight = 1
 let g:ack_autofold_results = 1
 "let g:ack_use_dispatch = 1
 let g:ackpreview = 1
+" }}}
 
 " Session:
 let g:session_command_aliases = 1 " Enable vim-session commands aliases
@@ -750,13 +778,13 @@ let g:lightline = {
                 \ 'fileformat': 'utils#LightlineDeviconsFileformat',
                 \ 'modifiedicon': 'utils#LightlineModified',
                 \ 'readonly': 'utils#LightlineReadonly',
-                \ 'tag': 'utils#LightlineCurrentTag',
+                \ 'extrainfo': 'utils#LightlineExtraInfo',
                 \ 'tagsgen': 'utils#LightlineGutentags',
                 \ },
         \ 'component': {
                 \ 'filename': '%{utils#LightlineFilename()}',
                 \ 'mode': '%{utils#LightlineMode()}',
-                \ 'plugin': '%{utils#LightlinePlugin()}',
+                \ 'inactivemode': '%{utils#LightlineInactiveMode()}',
         \       },
         \ }
 
@@ -764,18 +792,18 @@ let g:lightline = {
 
 if has ('gui_running')
     let g:lightline.active = {
-                \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'tag', 'tagsgen' ] ],
+                \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
                 \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git' ] ]
                 \   }
 else
     let g:lightline.active = {
-                \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modifiedicon' ], [ 'tag', 'tagsgen' ] ],
+                \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
                 \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git', 'filetype' ] ]
                 \   }
 endif
 
 let g:lightline.inactive = {
-            \ 'left': [ [ 'plugin', 'filename', 'modifiedicon' ] ],
+            \ 'left': [ [ 'inactivemode', 'filename', 'modifiedicon' ] ],
             \ 'right': [ [ 'lineinfo' ],
             \            [ 'git', 'percent' ] ] }
 " lightline-buffer
@@ -788,7 +816,7 @@ set guioptions-=e
 let g:lightline_buffer_show_bufnr = 1
 let g:lightline_buffer_rotate     = 0
 let g:lightline_buffer_fname_mod  = ':t'
-let g:lightline_buffer_excludes   = ['vimfiler', 'nerdtree', 'tagbar']
+let g:lightline_buffer_excludes   = ['vimfiler', 'nerdtree', 'tagbar', 'help', 'quickfix']
 let g:lightline_buffer_maxflen    = 30
 let g:lightline_buffer_maxfextlen = 3
 let g:lightline_buffer_minflen    = 16
@@ -891,7 +919,7 @@ let g:mucomplete#ultisnips#match_at_start = 0
 
 "}}}
 
-" Gutentags:
+" Gutentags: {{{2
 if executable( 'gtags-cscope' )
     let g:gutentags_modules = [ 'ctags', 'gtags_cscope' ]
 else
@@ -899,20 +927,23 @@ else
 endif
 
 let g:gutentags_define_advanced_commands=1
-let g:gutentags_ctags_extra_args = [ '-R', '--sort=1', '--c++-kinds=+plAU', '--python-kinds=-iz', '--tag-relative=yes', '--fields=+aimnSZ', '--extras=+q']
+let g:gutentags_ctags_extra_args = [ '-R', '--sort=1', '--c++-kinds=+dplAU', '--python-kinds=-iz', '--tag-relative=yes', '--fields=+aimnSZ', '--extras=+q']
 "let g:gutentags_trace = 1
-
+" }}}
+"
 " Gtags:
-let Gtags_No_Auto_Jump = 1
-let Gtags_Close_When_Single = 0
+let g:Gtags_No_Auto_Jump = 1
+let g:Gtags_Close_When_Single = 0
+let g:Gtags_UseQuickfixWindow = 0
 
-" Tagbar:
+" Tagbar: {{{2
 let g:tagbar_map_showproto = "<Tab>"
 let g:tagbar_sort = 1
 if has("gui_running")
     let g:tagbar_iconchars = ['▶', '∇']
 endif
 let g:tagbar_previewwin_pos = "botright"
+" }}}
 
 " Netrw: {{{ 2
 let g:Netrw_UserMaps= [["u","utils#UserNetrwBrowseUpDir"],
@@ -976,6 +1007,15 @@ let g:startify_commands = [
             \ {'f': ['Explorer', 'NERDTreeToggle']},
             \ {'t': ['Terminal', 'terminal']},
             \ ]
+
+if utils#GetOS() == 3
+    "Windows
+    "let g:startify_bookmarks = [ {'c': ['TDVim user Config', '~/_myvimrc']} ]
+    let g:startify_bookmarks = [ {'c': '~/_myvimrc'} ]
+else
+    " Anything other OS, assumed UNIX
+    let g:startify_bookmarks = [ {'c': '~/.myvimrc'} ]
+endif
 
 let g:startify_files_number = 5
 
@@ -1050,26 +1090,28 @@ let g:easy_align_delimiters = {
 \ }
 "}}}
 
-" Indent Line:
+" Indent Line: {{{2
 let g:indentLine_enabled = 1
 let g:indentLine_char = '┊'
 let g:indentLine_fileType = ['c', 'cpp', 'python', 'vim', 'sh', 'csh', 'tcsh' ]
 let g:indentLine_fileTypeExclude = ['qf', 'help', 'startify', 'vim-plug']
 let g:indentLine_bufTypeExclude = ['help', 'terminal']
 let g:indentLine_leadingSpaceEnabled = 1
-
+" }}}
 
 " Grepper {{{2
-let g:grepper = {}
-let g:grepper.tools = ['git', 'ag', 'grep']
-let g:grepper.ag = {}
+let g:grepper            = {}
+let g:grepper.tools      = ['git', 'ag', 'grep']
+let g:grepper.ag         = {}
 let g:grepper.ag.grepprg = 'ag --vimgrep  --ignore *~ --ignore *.swp --ignore *.diff --ignore tags  --ignore *.tags '
-let g:grepper.open = 1
-let g:grepper.jump = 0
+let g:grepper.open       = 1
+let g:grepper.switch     = 1
+let g:grepper.jump       = 0
 "let g:grepper.prompt_mapping_tool = '<leader>g'
-let g:grepper.searchreg = 1
-let g:grepper.highlight = 1
-let g:grepper.dir = 'repo,file'
+let g:grepper.searchreg  = 1
+let g:grepper.highlight  = 1
+let g:grepper.dir        = 'repo,file'
+let g:grepper.quickfix   = 0
 " }}}
 
 " Simply Fold:
@@ -1098,6 +1140,11 @@ let g:pymode_breakpoint = 0
 let g:pymode_rope_complete_on_dot = 0
 let g:pymode_rope_completion_bind = ''
 let g:pymode_rope_goto_definition_bind = '<]t>'
+" }}}
+
+" Nuake {{{2
+let g:nuake_position = 'top'
+let g:nuake_size = 0.4
 " }}}
 
 " }}}

@@ -212,7 +212,7 @@ endif
 "
 let s:global_command = $GTAGSGLOBAL
 if s:global_command == ''
-        let s:global_command = "global"
+    let s:global_command = "global"
 endif
 " Open the Gtags output window.  Set this variable to zero, to not open
 " the Gtags output window by default.  You can open it manually by using
@@ -220,6 +220,11 @@ endif
 " (This code was derived from 'grep.vim'.)
 if !exists("g:Gtags_OpenQuickfixWindow")
     let g:Gtags_OpenQuickfixWindow = 1
+endif
+
+" Whether or not use quickfix window. If not use location window instead
+if !exists("g:Gtags_UseQuickfixWindow")
+    let g:Gtags_UseQuickfixWindow = 1
 endif
 
 if !exists("g:Gtags_VerticalWindow")
@@ -237,9 +242,9 @@ endif
 " 'Dont_Jump_Automatically' is deprecated.
 if !exists("g:Gtags_No_Auto_Jump")
     if !exists("g:Dont_Jump_Automatically")
-	let g:Gtags_No_Auto_Jump = 0
+        let g:Gtags_No_Auto_Jump = 0
     else
-	let g:Gtags_No_Auto_Jump = g:Dont_Jump_Automatically
+        let g:Gtags_No_Auto_Jump = g:Dont_Jump_Automatically
     endif
 endif
 
@@ -292,8 +297,8 @@ endif
 "
 function! s:Error(msg)
     echohl WarningMsg |
-           \ echomsg 'Error: ' . a:msg |
-           \ echohl None
+                \ echomsg 'Error: ' . a:msg |
+                \ echohl None
 endfunction
 "
 " Extract pattern or option string.
@@ -310,7 +315,7 @@ function! s:Extract(line, target)
         let l:i = 5
     endif
     while l:i < l:length && a:line[l:i] == ' '
-       let l:i = l:i + 1
+        let l:i = l:i + 1
     endwhile 
     while l:i < l:length
         if a:line[l:i] == "-" && l:force_pattern == 0
@@ -318,7 +323,7 @@ function! s:Extract(line, target)
             " Ignore long name option like --help.
             if l:i < l:length && a:line[l:i] == '-'
                 while l:i < l:length && a:line[l:i] != ' '
-                   let l:i = l:i + 1
+                    let l:i = l:i + 1
                 endwhile 
             else
                 while l:i < l:length && a:line[l:i] != ' '
@@ -334,13 +339,13 @@ function! s:Extract(line, target)
             let l:pattern = ''
             " allow pattern includes blanks.
             while l:i < l:length
-                 if a:line[l:i] == "'"
-                     let l:pattern = l:pattern . g:Gtags_Single_Quote_Char
-                 elseif a:line[l:i] == '"'
-                     let l:pattern = l:pattern . g:Gtags_Double_Quote_Char
-                 else
-                     let l:pattern = l:pattern . a:line[l:i]
-                 endif
+                if a:line[l:i] == "'"
+                    let l:pattern = l:pattern . g:Gtags_Single_Quote_Char
+                elseif a:line[l:i] == '"'
+                    let l:pattern = l:pattern . g:Gtags_Double_Quote_Char
+                else
+                    let l:pattern = l:pattern . a:line[l:i]
+                endif
                 let l:i = l:i + 1
             endwhile 
             if a:target == 'pattern'
@@ -349,7 +354,7 @@ function! s:Extract(line, target)
         endif
         " Skip blanks.
         while l:i < l:length && a:line[l:i] == ' '
-               let l:i = l:i + 1
+            let l:i = l:i + 1
         endwhile 
     endwhile 
     if a:target == 'option'
@@ -429,35 +434,63 @@ function! s:ExecLoad(option, long_option, pattern, flags)
         return
     endif
 
-    " Open the quickfix window
-    if g:Gtags_OpenQuickfixWindow == 1
-	let l:open = 1
-        if g:Gtags_Close_When_Single == 1
-	    let l:open = 0
-	    let l:idx = stridx(l:result, "\n")
-	    if l:idx > 0 && stridx(l:result, "\n", l:idx + 1) > 0
-		let l:open = 1
-	    endif
-	endif
-	if l:open == 0
-	    cclose
-        elseif g:Gtags_VerticalWindow == 1
-            topleft vertical copen
-        else
-            botright copen
-        endif
-    endif
-    " Parse the output of 'global -x or -t' and show in the quickfix window.
+    " Parse the output of 'global -x or -t' and show in the quickfix/location window.
     let l:efm_org = &efm
     let &efm = g:Gtags_Efm
     if a:flags =~# 'a'
-        cadde l:result		" append mode
+        " Append mode
+        if g:Gtags_UseQuickfixWindow == 1
+            cadde l:result
+        else
+            lad l:result
+        endif
     elseif g:Gtags_No_Auto_Jump == 1
-        cgete l:result		" does not jump
+        " Does not jump
+        if g:Gtags_UseQuickfixWindow == 1
+            cgete l:result
+        else
+            lgete l:result
+        endif
     else
-        cexpr! l:result		" jump
+        " Jump
+        if g:Gtags_UseQuickfixWindow == 1
+            cexpr! l:result
+        else
+            lexpr! l:result
+        endif
     endif
     let &efm = l:efm_org
+
+    " Open the quickfix/location window
+    if g:Gtags_OpenQuickfixWindow == 1
+        let l:open = 1
+        if g:Gtags_Close_When_Single == 1
+            let l:open = 0
+            let l:idx = stridx(l:result, "\n")
+            if l:idx > 0 && stridx(l:result, "\n", l:idx + 1) > 0
+                let l:open = 1
+            endif
+        endif
+        if l:open == 0
+            if g:Gtags_UseQuickfixWindow == 1
+                cclose
+            else
+                lclose
+            endif
+        elseif g:Gtags_VerticalWindow == 1
+            if g:Gtags_UseQuickfixWindow == 1
+                topleft vertical copen
+            else
+                topleft vertical lopen
+            endif
+        else
+            if g:Gtags_UseQuickfixWindow == 1
+                botright copen
+            else
+                botright lopen
+            endif
+        endif
+    endif
 endfunction
 
 "
@@ -548,18 +581,26 @@ command! -nargs=0 GtagsCursor call s:GtagsCursor()
 command! -nargs=0 Gozilla call s:Gozilla()
 command! -nargs=0 GtagsUpdate call s:GtagsAutoUpdate()
 if g:Gtags_Auto_Update == 1
-	:autocmd! BufWritePost * call s:GtagsAutoUpdate()
+    :autocmd! BufWritePost * call s:GtagsAutoUpdate()
 endif
 " Suggested map:
 if g:Gtags_Auto_Map == 1
-	:nmap <F2> :copen<CR>
-	:nmap <F4> :cclose<CR>
-	:nmap <F5> :Gtags<SPACE>
-	:nmap <F6> :Gtags -f %<CR>
-	:nmap <F7> :GtagsCursor<CR>
-	:nmap <F8> :Gozilla<CR>
-	:nmap <C-n> :cn<CR>
-	:nmap <C-p> :cp<CR>
-	:nmap <C-\><C-]> :GtagsCursor<CR>
+    if g:Gtags_UseQuickfixWindow
+        :nmap <F2> :copen<CR>
+        :nmap <F4> :cclose<CR>
+        :nmap <C-n> :cn<CR>
+        :nmap <C-p> :cp<CR>
+    else
+        :nmap <F2> :lopen<CR>
+        :nmap <F4> :lclose<CR>
+        :nmap <C-n> :lne<CR>
+        :nmap <C-p> :lp<CR>
+    endif
+
+    :nmap <F5> :Gtags<SPACE>
+    :nmap <F6> :Gtags -f %<CR>
+    :nmap <F7> :GtagsCursor<CR>
+    :nmap <F8> :Gozilla<CR>
+    :nmap <C-\><C-]> :GtagsCursor<CR>
 endif
 let loaded_gtags = 1

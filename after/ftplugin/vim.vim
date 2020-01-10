@@ -1,7 +1,7 @@
 " File: vim.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: VimL language setup for TDVim
-" Last Change: September 23, 2019 - 00:56 AM.
+" Last Change: December 10, 2019 - 00:23 AM.
 "
 
 " DEPRECATED: using this file to setup autocommands and events is DEPRECATED.
@@ -20,7 +20,7 @@ let b:vcm_tab_complete = "vim"
 set completeopt+=preview
 
 " iskeyword for VimL
-setlocal iskeyword=a-z,A-Z,48-57,#
+setlocal iskeyword=a-z,A-Z,48-57,#,_
 
 " Increment default preview window height
 set previewheight=10

@@ -76,13 +76,14 @@ function! commands#DevelopmentCommands ()
 
     command! TdvimCscope call utils#TdvimCscope()
 
-    command! -nargs=* TdvimMake make! <args> | cwindow 10
+    "command! -nargs=* TdvimMake make <args> | cwindow 10 | call utils#MoveQuickfixBottom( ) | cc
+    command! -nargs=* TdvimMake make <args> | cwindow 10 | cc | setlocal cursorline
 
 endfunction
 " }}}
 
 " FZF{{{
-command! FZFTags call utils#FZFTags()
+"command! FZFTags call utils#FZFTags()
 " }}}
 
 " vim: ts=8 ft=vim nowrap fdm=marker

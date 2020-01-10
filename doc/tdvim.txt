@@ -2,20 +2,20 @@
 
 Table Of Contents~
 
-Files                                |tdvim-files| 
-Editing                            |tdvim-editing|
-Window Management                  |tdvim-windows|
-Commands                          |tdvim-commands|
-Search                              |tdvim-search|
-Development                    |tdvim-development|
-Function Keys                    |tdvim-func-keys|
-Leader Key                          |tdvim-leader|
-Unimpaired                      |tdvim-unimpaired|
+|tdvim-files|                             Files
+|tdvim-editing|                         Editing
+|tdvim-windows|               Window Management
+|tdvim-commands|                       Commands
+|tdvim-search|                           Search
+|tdvim-development|                 Development
+|tdvim-func-keys|                 Function Keys
+|tdvim-leader|                       Leader Key
+|tdvim-unimpaired|                   Unimpaired
+|tdvim-git-symbols|                 GIT Symbols
 
-TDVim Introduction                   |tdvim-intro|
-TDVim For Development                  |tdvim-dev|
-TDVim and Houdini                  |tdvim-houdini|
-
+|tdvim-intro|                TDVim Introduction
+|tdvim-dev|                TDVim For Development
+|tdvim-houdini|                TDVim and Houdini
 
 ==================================================
 Files                                  *tdvim-files*
@@ -35,27 +35,27 @@ Files                                  *tdvim-files*
 ==================================================
 Editing                             *tdvim-editing*
 
-- Deleting Word:                  <Ctrl-Backspace>, <Ctrl-Del>
-- Add next line:                  <]-Space>
-- Add previous line:              <[-Space>
-- Enter Align mode in Visual:     <CR>
-- Enter Align mode:               <leader>a
-- Copy:                           <Ctrl-C>
-- Paste:                          <Ctrl-V>
-- Cut:                            <Ctrl-X>
-- Move and select:                <Shift-[Up|Down|Left|Right]>
-- Select to Start or End of Line: <Shift-[Home|End]>  !!
-- Select to Start or End of File: <Ctrl-Shift-[Home|End]>  !!
-- Half Page Jump and Select:      <Shift-[PageUp|PageDown]>  !!
-- Word Selection:                 <Ctrl-Shift-[Left|Right]>
-- Select All:                     <Ctrl-A>
-- Jump Start/End File:            <Ctrl-[PageUp|PageDown]>
-- File History:                   <Ctrl-Shift-F4>
-- Go to previous jump position:   [j
-- Go to next jump position:       ]j
-- Go to previous change position: [c
-- Go to next change position:     ]c
-- Show changes list:              <Ctrl-F4>
+- Deleting Word:                           <Ctrl-Backspace>, <Ctrl-Del>
+- Add next line:                           <]-Space>
+- Add previous line:                       <[-Space>
+- Enter Align mode in Visual:              <CR>
+- Enter Align mode:                        <leader>a
+- Copy:                                    <Ctrl-C>
+- Paste:                                   <Ctrl-V>
+- Cut:                                     <Ctrl-X>
+- Move and select:                         <Shift-[Up|Down|Left|Right]>
+- Select to Start or End of Line:          <Shift-[Home|End]>  !!
+- Select to Start or End of File:          <Ctrl-Shift-[Home|End]>  !!
+- Half Page Jump and Select:               <Shift-[PageUp|PageDown]>  !!
+- Word Selection:                          <Ctrl-Shift-[Left|Right]>
+- Select All:                              <Ctrl-A>
+- Jump Start/End File:                     <Ctrl-[PageUp|PageDown]>
+- File History:                            <Ctrl-Shift-F4>
+- Go to previous jump position:            [j
+- Go to next jump position:                ]j
+- Go to previous change position:          [c
+- Go to next change position:              ]c
+- Diff non saved file with latest version: <Ctrl-F4>
 
 ==================================================
 Window Management                   *tdvim-windows*
@@ -71,32 +71,39 @@ Window Management                   *tdvim-windows*
     - Close window:                           <leader>q
     - Close Preview window:                   <leader>qp
     - Close Quickfix window:                  <leader>qq
+    - Close Location window:                  <leader>ql
     - Jump to Preview window:                 <leader>jp
     - Jump to Quickfix window:                <leader>jq
+    - Jump to Location window:                <leader>jl
     - Jump to Explorer window:                <leader>je, <leader>e
     - Jump to Tags Inspector window:          <leader>jt
     - Reset windows size:                     <leader>=
 - Buffers:
-    - Buffers Explorer:               <F3>, <leader>b
-    - Switch Previous Buffer:         <Ctrl-F3>
-    - Remove Buffer:                  <leader>x
+    - Buffers Explorer:                       <F3>, <leader>b
+    - Switch Previous Buffer:                 <Ctrl-F3>
+    - Remove Buffer:                          <leader>x
 - UI:
-    - Show/Hide menu bar:             <Ctrl-F8>
-    - Explorer:                       <F8>
-    - Focus Explorer:                 <leader>e, <leader>je
-    - Focus Current File in Explorer: <leader>ef
-    - In Window Explorer:             <->
-    - LeaderF Search Commands Menu:   <F7>
+    - Show/Hide menu bar:                     <Ctrl-F8>
+    - Explorer:                               <F8>
+    - Focus Explorer:                         <leader>e, <leader>je
+    - Focus Current File in Explorer:         <leader>ef
+    - In Window Explorer:                     <->
+    - Open/Close Terminal:                    <F7>
+    - LeaderF Search Commands Menu:           <Shift-F7>
 
 - Explorer (NERD Tree)
-  - Go up dir:                   <u>
-  - Bookmarks:                  <Shift-B>
-  - Go back to file buffer:      <q>
+  - Go up dir:                                <u>
+  - Bookmarks:                                <Shift-B>
+  - Go back to file buffer:                   <q>
 
 ==================================================
 Search                                 *tdvim-search*
 
 - Grep word under cursor in all files:        F4, <leader>f, <leader>g
+- Jump to next search in location window:     ]s
+- Jump to next search in location window:     [s
+- Jump to first search in location window:    [S
+- Jump to last search in location window:     ]S
 - Browse changes in file:                     Ctrl-F4, <leader>fc
 - Browse lines in file:                       Shift-F4, <leader>fl
 - Grep operator (use motions and selections): gs
@@ -129,31 +136,32 @@ Development                     *tdvim-development*
       - These motion are valid:                 ic, af, dif, etc ...
 
 - Comments:
-    - Toggle Comment:                             <F5>, <leader>ct
-    - Multiline Comment:                          <Ctrl-F5>, <leader>cs
-    - Yank and Comment:                           <Shift-F5>, <leader>cy
+    - Toggle Comment:                          <F5>, <leader>ct
+    - Multiline Comment:                       <Ctrl-F5>, <leader>cs
+    - Yank and Comment:                        <Shift-F5>, <leader>cy
 - Build:
-    - Build:                                      <F11>
-    - Check Syntax:                               <Ctrl-Shift-F11>
-    - Prev/Next Error:                            <Shift/Ctrl F11>
+    - Build:                                   <F11>
+    - Check Syntax:                            <Ctrl-Shift-F11>
+    - Prev/Next Error:                         <Shift/Ctrl F11>
 - Tags and Code Navigation:
-    - Build Buffer Tags:                          <F12>
-    - Build Project Tags:                         <Ctrl-F12>
-    - Tags Explorer:                              <Shift-F8>
-    - Browse functions:                           <F6>, <leader>fu
-    - Tags Finder:                                <Shift-F6>
-    - Show current word tag in Preview Window:    <Ctrl-F6>
-    - Search symbol in Gtags:                     <Ctrl-Shift-F6>
-    - Jump to tag:                                <]t>
-    - Go back from tag stack:                     <[t>
-    - Search tag in Gtags:                        <]T>
-    - Show back references in Gtags:              <[T>
+    - Build Buffer Tags:                       <F12>
+    - Build Project Tags:                      <Ctrl-F12>
+    - Tags Explorer:                           <Shift-F8>
+    - Browse functions:                        <F6>, <leader>fu
+    - Tags Finder:                             <Shift-F6>
+    - Show current word tag in Preview Window: <Ctrl-F6>
+    - Search symbol in Gtags:                  <Ctrl-Shift-F6>
+    - Show tags for current word in a popup:   <leader>i
+    - Jump to tag:                             <]t>
+    - Go back from tag stack:                  <[t>
+    - Search all tags for word:                <]T>
+    - Show back references in Gtags:           <[T>
     - Tagbar Window:
-      - Jump to prototype definition:             p
-      - Show prototype in preview window:         P
+      - Jump to prototype definition:          p
+      - Show prototype in preview window:      P
 - Autocomplete:
-    - Autocomplete:                               <TAB>
-    - OmniComplete:                               <Ctrl-x> <Ctrl-o> , <Ctrl-Space>
+    - Autocomplete:                            <TAB>
+    - OmniComplete:                            <Ctrl-x> <Ctrl-o> , <Ctrl-Space>
 - Snippets:
     - Expand Snippet:                             <Ctrl-t>
     - Show available snippets:                    <Ctrl-B>
@@ -186,16 +194,17 @@ Function Keys                     *tdvim-func-keys*
    - <Shift-F3>:       Open Files
    - <Ctrl-F3>:        Switch previous buffer
 - <F4>:                Grep word under cursor in all files in location
-   - <Ctrl-F4>:        Navigate changes
+   - <Ctrl-F4>:        Diff non saved file with latest version
    - <Shift-F4>:       Navigate lines
    - <Ctrl-Shift-F4>:  File History
 - <F5>:                Toggle line comment
    - <Shift-F5>:       Yank and comment line
-   - <Ctrl-F5>:       Multi-line comment
+   - <Ctrl-F5>:        Multi-line comment
 - <F6>:                Browse Functions
    - <Ctrl-F6>:        Show tag for current word in Preview Window.
    - <Shift-F6>:       Tags Finder
-- <F7>:                LeaderF Search Commands Menu
+- <F7>:                Open Terminal
+   - <Shift-F7>:       LeaderF Search Commands Menu
 - <F8>:                Open file browser
    - <Ctrl-F8>:        Enable/disable menu bar
    - <Shift-F8>:       Tags Explorer
@@ -234,8 +243,10 @@ Leader Key                           *tdvim-leader*
 - Close window:                           <leader>q
 - Close preview window:                   <leader>qp
 - Close Quickfix window:                  <leader>qq
+- Close Location window:                  <leader>ql
 - Jump to Preview window:                 <leader>jp
 - Jump to Quickfix window:                <leader>jq
+- Jump to Location window:                <leader>jl
 - Jump to Explorer window:                <leader>je, <leader>e
 - Jump to Tags Inspector window:          <leader>jt
 - Reset windows size:                     <leader>=
@@ -243,6 +254,7 @@ Leader Key                           *tdvim-leader*
 - GiT File diff:                          <leader>gd
 - Git Status:                             <leader>gs
 - Git Log:                                <leader>gl
+- Show tags for current word in a popup:  <leader>i
 
 ==================================================
 Unimpaired                         *tdvim-unimpaired*
@@ -267,10 +279,18 @@ Unimpaired                         *tdvim-unimpaired*
 *[j* :        Next Jump
 *[h* :        Previous Hunk
 *[h* :        Next Hunk
-*]t* :      Jump to tag                             
-*[t* :      Go back from tag stack     
-*]T* :      Search tag in Gtags      
-*[T* :      Show back references in Gtags
+*]t* :        Jump to tag
+*[t* :        Go back from tag stack
+*]T* :        Search tag in Gtags
+*[T* :        Show back references in Gtags
+*]s* :        Jump to next search in location window
+*[s* :        Jump to previous search in location window
+*]S* :        Jump to last search in location window
+*[S* :        Jump to first search in location window
+*]l* :        Jump to next line with same indentation
+*[l* :        Jump to previous line with same indentation
+*]L* :        Jump to next line with less indentation
+*[L* :        Jump to previous line with less indentation
 
 OPTION TOGGLING                                 *unimpaired-toggling*
 
@@ -288,5 +308,31 @@ On	Off	Toggle	Option
 *[ov*	*]ov*	*yov*	'virtualedit'
 *[ow*	*]ow*	*yow*	'wrap'
 *[ox*	*]ox*	*yox*	'cursorline' 'cursorcolumn' (x as in crosshairs)
+
+==================================================
+GIT Symbols                     *tdvim-git-symbols*
+
+File Manager (NERDTree):
+
+|Staged|    : ✚
+|Untracked| : ✭
+|Renamed|   : ➜
+|Unmerged|  : ═
+|Deleted|   : ✖
+|Dirty|     : ✗
+|Clean|     : ✔︎
+|Ignored|   : ☒
+|Unknown|   : ?
+
+Per line symbol:
+
+Added:               ✚
+Modified:            ✹
+Removed:             ✗
+Removed  First Line: ‾
+Modified Removed:    ≃
+
+
+
 
 vim:tw=78:ts=8:ft=help:norl:
