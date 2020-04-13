@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  December 20, 2019 - 13:39 PM.
+" Last change:  January 31, 2020 - 12:01 PM.
 "
 "
 
@@ -217,18 +217,24 @@ function! utils#updateStatusLineColors()
                 else
                     let g:lightline.colorscheme = "pencil_light"
                 endif
-                    
             else
                 let g:lightline.colorscheme = g:colors_name
             endif
 
-            if exists('g:loaded_lightline')
-                call lightline#init()
-                call lightline#colorscheme()
-                call lightline#update()
+        elseif g:colors_name =~# 'lisuxDark'
+            " special cases
+            if g:colors_name =~# 'lisuxDark'
+                
+                    let g:lightline.colorscheme = "rigel"
             endif
         else
             let g:lightline.colorscheme = 'default'
+        endif
+        " Force update in lightline
+        if exists('g:loaded_lightline')
+            call lightline#init()
+            call lightline#colorscheme()
+            call lightline#update()
         endif
     catch
     endtry
@@ -444,12 +450,13 @@ function! utils#LightlineExtraInfo() abort
         return wininfo['variables']['quickfix_title']
     endif
 
+    " XXX: calling tagbar could be expensive
     " Programing 
-    if exists("*tagbar#currenttag")
-        if &filetype == "c" || &filetype == "cpp" || &filetype == "vim"  || &filetype == "python"
-            return tagbar#currenttag("→%s","", "fs")
-        endif
-    endif
+    "if exists("*tagbar#currenttag")
+        "if &filetype == "c" || &filetype == "cpp" || &filetype == "vim"  || &filetype == "python"
+            "return tagbar#currenttag("→%s","", "fs")
+        "endif
+    "endif
 
     return ""
 endfunction
@@ -750,7 +757,8 @@ endfunction
 " Show TDVim help window
 function! utils#ShowTDVimHelp(  )
     :helpclose
-    :botright h tdvim
+    :botright h tdvim.txt
+
 
     " Help buffer local maps
     map <silent> <buffer> <Esc> :bdelete<CR>

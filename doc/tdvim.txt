@@ -65,7 +65,7 @@ Window Management                   *tdvim-windows*
     - Increase/decrease window size:          <Ctrl-Shift-[Up|Down|Left|Right]>
     - Move around windows:                    <Alt-[Up|Down|Left|Right]>
     - Move to last window in every direction: <leader><[Up|Down|Left|Right]>
-    - Switch between windows:                 <leader>p
+    - Switch between windows:                 <Ctrl-Tab>, <leader>p
     - Split window:                           <leader>s
     - Split horzontal window:                 <leader>sh
     - Close window:                           <leader>q
@@ -136,36 +136,37 @@ Development                     *tdvim-development*
       - These motion are valid:                 ic, af, dif, etc ...
 
 - Comments:
-    - Toggle Comment:                          <F5>, <leader>ct
-    - Multiline Comment:                       <Ctrl-F5>, <leader>cs
-    - Yank and Comment:                        <Shift-F5>, <leader>cy
+    - Toggle Comment:                           <F5>, <leader>ct
+    - Multiline Comment:                        <Ctrl-F5>, <leader>cs
+    - Yank and Comment:                         <Shift-F5>, <leader>cy
 - Build:
-    - Build:                                   <F11>
-    - Check Syntax:                            <Ctrl-Shift-F11>
-    - Prev/Next Error:                         <Shift/Ctrl F11>
+    - Build:                                    <F11>
+    - Check Syntax:                             <Ctrl-Shift-F11>
+    - Prev/Next Error:                          []q
 - Tags and Code Navigation:
-    - Build Buffer Tags:                       <F12>
-    - Build Project Tags:                      <Ctrl-F12>
-    - Tags Explorer:                           <Shift-F8>
-    - Browse functions:                        <F6>, <leader>fu
-    - Tags Finder:                             <Shift-F6>
-    - Show current word tag in Preview Window: <Ctrl-F6>
-    - Search symbol in Gtags:                  <Ctrl-Shift-F6>
-    - Show tags for current word in a popup:   <leader>i
-    - Jump to tag:                             <]t>
-    - Go back from tag stack:                  <[t>
-    - Search all tags for word:                <]T>
-    - Show back references in Gtags:           <[T>
+    - Build Buffer Tags:                        <F12>
+    - Build Project Tags:                       <Ctrl-F12>
+    - Tags Explorer:                            <Shift-F8>
+    - Browse functions:                         <F6>, <leader>fu
+    - Echo current function:                    <Shift-F6>
+    - Tags Finder:                              <Ctrl-Shift-F6>
+    - Show current word tag in Preview Window:  <Ctrl-F6>
+    - Search symbol in Gtags:                   <Ctrl-Shift-F6>
+    - Show tags for current word in a popup:    <leader>i
+    - Jump to tag:                              <]t>
+    - Go back from tag stack:                   <[t>
+    - Search all tags for word:                 <]T>
+    - Show back references in Gtags:            <[T>
     - Tagbar Window:
-      - Jump to prototype definition:          p
-      - Show prototype in preview window:      P
+      - Jump to prototype definition:           p
+      - Show prototype in preview window:       P
 - Autocomplete:
-    - Autocomplete:                            <TAB>
-    - OmniComplete:                            <Ctrl-x> <Ctrl-o> , <Ctrl-Space>
+    - Autocomplete:                             <TAB>
+    - OmniComplete:                             <Ctrl-x> <Ctrl-o> , <Ctrl-Space>
 - Snippets:
-    - Expand Snippet:                             <Ctrl-t>
-    - Show available snippets:                    <Ctrl-B>
-    - Forward/Backwards in snippets placeholders: <TAB>, <Shift-TAB>
+    - Expand Snippet:                           <Ctrl-Tab>
+    - Show available snippets:                  <Ctrl-B>
+    - Forward in snippets placeholders:         <Ctrl-Shift-TAB>
 - Git:
     - GiT File diff:                              <Shift-F9>, <leader>gd
     - Git Status:                                 <F9>, <leader>gs
@@ -202,7 +203,8 @@ Function Keys                     *tdvim-func-keys*
    - <Ctrl-F5>:        Multi-line comment
 - <F6>:                Browse Functions
    - <Ctrl-F6>:        Show tag for current word in Preview Window.
-   - <Shift-F6>:       Tags Finder
+   - <Shift-F6>:       Echo current function
+   - <Ctrl-Shift-F6>:  Tags Finder
 - <F7>:                Open Terminal
    - <Shift-F7>:       LeaderF Search Commands Menu
 - <F8>:                Open file browser

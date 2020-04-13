@@ -1,7 +1,7 @@
 " File: keymaps.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Keymaps TDVim setup
-" Last Change: December 21, 2019 - 01:39 AM.
+" Last Change: January 27, 2020 - 00:53 AM.
 
 " Note:
 " For a complete list of keymaps take a look at ../doc/tdvim.txt
@@ -167,10 +167,6 @@ function! keymaps#MainOperations ()
     "    noremap <silent> <D-D> <C-D>
     "endif
 
-    " Use TAB to match bracket pairs
-    "nnoremap <tab> %
-    "vnoremap <tab> %
-
     " F1 only for help
     inoremap <F1> <ESC>
     nnoremap <F1> <ESC>
@@ -277,118 +273,6 @@ function! keymaps#WindowManagement()
     " Tabs Browsing, close tabs/window {{{2
     " Tabs mappings don't work in terminals
     "
-
-
-    " Open and navigate tabs DEPRECATED{{{3
-    " Open new tab with Ctrl-Shift-t, and new tab with file browsing with
-    " Ctrl+TAB and CTRL+Shift+TAB to go for and backeard in tabs
-    " gn and gb again to go for and backward
-
-    "FIXME: these mappings are disabled for the moment because it uses similar
-    "keymaps as UltiSnips and I dont use tabs.
-    "Let's find other keymaps in the future
-
-    "nnoremap  <unique> <silent>    <Plug>TdvimNewTab  :tabnew<CR>
-    "vnoremap  <unique> <silent>    <Plug>TdvimNewTab  <Esc>:tabnew<CR>
-    "inoremap  <unique> <silent>    <Plug>TdvimNewTab  <Esc>:tabnew<CR>
-
-    "nnoremap  <unique> <silent>    <Plug>TdvimPrevTab  :tabprevious<CR>
-    "vnoremap  <unique> <silent>    <Plug>TdvimPrevTab  <Esc>:tabprevious<CR>
-    "inoremap  <unique> <silent>    <Plug>TdvimPrevTab  <Esc>:tabprevious<CR>
-
-    "nnoremap  <unique> <silent>    <Plug>TdvimNextTab  :tabnext<CR>
-    "vnoremap  <unique> <silent>    <Plug>TdvimNextTab  <Esc>:tabnext<CR>
-    "inoremap  <unique> <silent>    <Plug>TdvimNextTab  <Esc>:tabnext<CR>
-
-    "if has("win32") || has("win64") 
-    "" For windows
-    "nmap <silent> <C-M-t> <Plug>TdvimNewTab
-    "vmap <silent> <C-M-t> <Plug>TdvimNewTab
-    "imap <silent> <C-M-t> <Plug>TdvimNewTab
-    "if (exists("$C_TAB_SWITCHER") &&  $C_TAB_SWITCHER == 0) || !exists("$C_TAB_SWITCHER")
-    "nmap <silent> <C-TAB> <Plug>TdvimNextTab
-    "nmap <silent> <C-S-TAB> <Plug>TdvimPrevTab
-    "imap <silent> <C-TAB> <Plug>TdvimNextTab
-    "imap <silent> <C-S-TAB> <Plug>TdvimPrevTab
-    "vmap <silent> <C-TAB> <Plug>TdvimNextTab
-    "vmap <silent> <C-S-TAB> <Plug>TdvimPrevTab
-
-    "endif
-    "nmap <silent> tn <Plug>TdvimNextTab
-    "vmap <silent> tn <Plug>TdvimNextTab
-    "nmap <silent> tb <Plug>TdvimPrevTab
-    "vmap <silent> tb <Plug>TdvimPrevTab
-    "nmap <silent> tt <Plug>TdvimNewTab
-    "vmap <silent> tt <Plug>TdvimNewTab
-
-    ""elseif $TERM_PROGRAM =~ 'Apple_Terminal'
-    "" For Mac OS X terminal
-    "elseif has("gui_macvim")
-    "" Mac OS X macvim
-    "nmap <silent> <D-M-t> <Plug>TdvimNewTab
-    "vmap <silent> <D-M-t> <Plug>TdvimNewTab
-    "imap <silent> <D-M-t> <Plug>TdvimNewTab
-    "if (exists("$C_TAB_SWITCHER") &&  $C_TAB_SWITCHER == 0) || !exists("$C_TAB_SWITCHER")
-    "nmap <silent> <C-TAB> <Plug>TdvimNextTab
-    "nmap <silent> <C-S-TAB> <Plug>TdvimPrevTab
-    "imap <silent> <C-TAB> <Plug>TdvimNextTab
-    "imap <silent> <C-S-TAB> <Plug>TdvimPrevTab
-    "vmap <silent> <C-TAB> <Plug>TdvimNextTab
-    "vmap <silent> <C-S-TAB> <Plug>TdvimPrevTab
-    "endif
-    "nmap <silent> tn <Plug>TdvimNextTab
-    "vmap <silent> tn <Plug>TdvimNextTab
-    "nmap <silent> tb <Plug>TdvimPrevTab
-    "vmap <silent> tb <Plug>TdvimPrevTab
-    "nmap <silent> tt <Plug>TdvimNewTab
-    "vmap <silent> tt <Plug>TdvimNewTab
-    "elseif has("mac") || has("macunix")
-    "" For Mac OS X
-    "nmap <silent> <D-M-t> <Plug>TdvimNewTab
-    "vmap <silent> <D-M-t> <Plug>TdvimNewTab
-    "imap <silent> <D-M-t> <Plug>TdvimNewTab
-    "if (exists("$C_TAB_SWITCHER") &&  $C_TAB_SWITCHER == 0) || !exists("$C_TAB_SWITCHER")
-    "nmap <silent> <C-TAB> <Plug>TdvimNextTab
-    "nmap <silent> <C-S-TAB> <Plug>TdvimPrevTab
-    "imap <silent> <C-TAB> <Plug>TdvimNextTab
-    "imap <silent> <C-S-TAB> <Plug>TdvimPrevTab
-    "vmap <silent> <C-TAB> <Plug>TdvimNextTab
-    "vmap <silent> <C-S-TAB> <Plug>TdvimPrevTab
-    "endif
-    "nmap <silent> tn <Plug>TdvimNextTab vmap <silent> tn <Plug>TdvimNextTab nmap <silent> tb <Plug>TdvimPrevTab
-    "vmap <silent> tb <Plug>TdvimPrevTab
-    "nmap <silent> tt <Plug>TdvimNewTab
-    "vmap <silent> tt <Plug>TdvimNewTab
-
-    "elseif (has("unix") || has("win32unix")) && has("gui_running")
-    "" For Unix with GUI running (gvim)
-    "nmap <silent> <C-M-t> <Plug>TdvimNewTab
-    "vmap <silent> <C-M-t> <Plug>TdvimNewTab
-    "imap <silent> <C-M-t> <Plug>TdvimNewTab
-    "if (exists("$C_TAB_SWITCHER") &&  $C_TAB_SWITCHER == 0) || !exists("$C_TAB_SWITCHER")
-    "nmap <silent> <C-tab> <Plug>TdvimNextTab
-    "nmap <silent> <C-S-tab> <Plug>TdvimPrevTab
-    "imap <silent> <C-tab> <Plug>TdvimNextTab
-    "imap <silent> <C-S-tab> <Plug>TdvimPrevTab
-    "vmap <silent> <C-tab> <Plug>TdvimNextTab
-    "vmap <silent> <C-S-tab> <Plug>TdvimPrevTab
-    "endif
-    "nmap <silent> tn <Plug>TdvimNextTab
-    "vmap <silent> tn <Plug>TdvimNextTab
-    "nmap <silent> tb <Plug>TdvimPrevTab
-    "vmap <silent> tb <Plug>TdvimPrevTab
-    "nmap <silent> tt <Plug>TdvimNewTab
-    "vmap <silent> tt <Plug>TdvimNewTab
-    ""elseif (has("unix") || has("win32unix")) && (has("mouse_gpm") || has("mouse_sysmouse") || has("mouse_xterm") || has("mouse"))
-    "" For Unix running with mouse support(Terminals and GUI)
-
-    ""elseif has("unix") || has("win32unix")
-    "" For Unix 
-
-    ""else
-    "" Default
-    "endif
-    "}}}
 
     " Maximize/restore windows {{{2
     nnoremap <unique> <silent> <Plug>TdvimZoom :MaximizerToggle<CR>
@@ -1319,13 +1203,7 @@ function! keymaps#Development()
     " }}}
 
     " Buffer Tags Finder {{{2
-    " Default mapped to S-F6
-    "nnoremap <unique> <silent> <Plug>TdvimTagFinder :CtrlPTag      <CR>
-    "inoremap <unique> <silent> <Plug>TdvimTagFinder <Esc>:CtrlPTag <CR>
-    "vnoremap <unique> <silent> <Plug>TdvimTagFinder :CtrlPTag      <CR>
-    "nnoremap <unique>          <Plug>TdvimTagFinder    :CtrlPBufTag <C-R><C-W><CR>
-    "inoremap <unique>          <Plug>TdvimTagFinder    <Esc>:CtrlPBufTag <C-R><C-W><CR>
-    "vnoremap <unique>          <Plug>TdvimTagFinder    :CtrlPBufTag <C-R><C-W><CR>
+    " Default mapped to C-S-F6
     nnoremap <unique> <silent> <Plug>TdvimTagFinder :LeaderfTag<CR>
     inoremap <unique> <silent> <Plug>TdvimTagFinder <Esc>:LeaderfTag<CR>
     vnoremap <unique> <silent> <Plug>TdvimTagFinder :LeaderfTag<CR>
@@ -1333,16 +1211,19 @@ function! keymaps#Development()
     "inoremap <unique> <silent> <Plug>TdvimTagFinder <Esc>:tags
     "vnoremap <unique> <silent> <Plug>TdvimTagFinder :tags
 
-    nmap <silent> <S-F6> <Plug>TdvimTagFinder
-    imap <silent> <S-F6> <Plug>TdvimTagFinder
-    vmap <silent> <S-F6> <Plug>TdvimTagFinder
+    nmap <silent> <C-S-F6> <Plug>TdvimTagFinder
+    imap <silent> <C-S-F6> <Plug>TdvimTagFinder
+    vmap <silent> <C-S-F6> <Plug>TdvimTagFinder
     " }}}
 
-    " Current function scope - NOT USED {{{2
-    "nnoremap <unique> <silent> <Plug>TdvimCurrentFunction :TagbarCurrentTag fs<CR>
-    "inoremap <unique> <silent> <Plug>TdvimCurrentFunction <Esc>:TagbarCurrentTag fs<CR>
-    "vnoremap <unique> <silent> <Plug>TdvimCurrentFunction :TagbarCurrentTagt fs<CR>
+    " Current function scope - S-F6 {{{2
+    nnoremap <unique> <silent> <Plug>TdvimCurrentFunction :TagbarCurrentTag fs<CR>
+    inoremap <unique> <silent> <Plug>TdvimCurrentFunction <Esc>:TagbarCurrentTag fs<CR>
+    vnoremap <unique> <silent> <Plug>TdvimCurrentFunction :TagbarCurrentTagt fs<CR>
 
+    nmap <silent> <S-F6> <Plug>TdvimCurrentFunction
+    imap <silent> <S-F6> <Plug>TdvimCurrentFunction
+    vmap <silent> <S-F6> <Plug>TdvimCurrentFunction
     " }}}
 
     " Jump to Tags Finder {{{2
@@ -1401,52 +1282,13 @@ function! keymaps#Development()
     vmap     <silent> <S-F8>     <Plug>TdvimTagExplorer
     " }}}
 
-    " Show available snippets DEPRECATED {{{2
-    " Default mapped to C-S-F5
-    " XXX: not used
-    "nnoremap <unique> <silent>          <Plug>TdvimShowSnippets :call UltiSnips_ListSnippets()<CR>
-    "inoremap <unique> <silent>          <Plug>TdvimShowSnippets <Esc>:call UltiSnips_ListSnippets()<CR>
-    "vnoremap <unique> <silent>          <Plug>TdvimShowSnippets :call UltiSnips_ListSnippets()<CR>
-
-    "if has("win32") || has("win64") 
-        "" For windows
-        "nmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-        "imap <silent> <C-S-F5>                 <Plug>TdvimShowSnippets
-        "vmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-    "elseif $TERM_PROGRAM =~ 'Apple_Terminal'
-        "" For Mac OS X terminal
-        "nmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-        "imap <silent> <C-S-F5>                 <Plug>TdvimShowSnippets
-        "vmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-    "elseif has("gui_macvim")
-        "" Mac OS X macvim
-        "nmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-        "imap <silent> <C-S-F5>                 <Plug>TdvimShowSnippets
-        "vmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-    "elseif has("mac") || has("macunix")
-        "" For Mac OS X
-        "nmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-        "imap <silent> <C-S-F5>                 <Plug>TdvimShowSnippets
-        "vmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-    "elseif (has("unix") || has("win32unix")) && has("gui_running")
-        "nmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-        "imap <silent> <C-S-F5>                 <Plug>TdvimShowSnippets
-        "vmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-        "" For Unix with GUI running (gvim)
-    "elseif (has("unix") || has("win32unix")) && (has("mouse_gpm") || has("mouse_sysmouse") || has("mouse_xterm") || has("mouse"))
-        "" For Unix running with mouse support(Terminals and GUI)
-        "nmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-        "imap <silent> <C-S-F5>                 <Plug>TdvimShowSnippets
-        "vmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-    "elseif has("unix") || has("win32unix")
-        "" For Unix 
-        "nmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-        "imap <silent> <C-S-F5>                 <Plug>TdvimShowSnippets
-        "vmap <silent> <C-S-F5>         <Plug>TdvimShowSnippets
-
-        ""else
-        "" Default
-    "endif
+    " Snippets Ctrl-Tab {{{2
+    " Expand: Ctrl-Shift-Tab
+    " View available snippets: Ctrl-B
+    imap <C-Tab> <Plug>snipMateNextOrTrigger
+    smap <C-Tab> <Plug>snipMateNextOrTrigger
+    vmap <C-Tab> <Plug>snipMateVisual
+    imap <C-B> <Plug>snipMateShow
     " }}}
 
     " Update Tags - F12 {{{2
