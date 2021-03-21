@@ -1,0 +1,92 @@
+#!/bin/bash
+
+#
+# Script to create self extract installer for TDVim
+#
+
+# Check arguments
+if [ -z "$1" ]; then
+    echo "Please provide release version"
+    echo "Usage: mkrelease 0.2"
+    exit 1
+fi
+INSTALLERNAME=TDVim_$1_installer.run
+RELEASESLOC="../releases"
+
+CURDIR=`pwd`
+
+echo "Build installer for release $1"
+sleep 1
+
+echo "Clean build location ..."
+sleep 1
+rm -r build/*
+
+
+echo "Package release files ..."
+echo
+#echo "Copying source files ..."
+BUILD=build
+#TARFILE=build/TDVim_${1}.tbz2
+RELEASETARFILE=release.tbz2
+mkdir $BUILD/src
+tar cf - --exclude-vcs -T distfiles.txt | tar xf - -C $BUILD/src
+#echo "Convert files to UNIX format"
+find $BUILD/src -type f -print0 | xargs -0 dos2unix -q
+#tar -cvzf $$BUILD/$RELEASETARFILE --exclude-vcs -T distfiles.txt
+tar -cjf $BUILD/$RELEASETARFILE $BUILD/src/*
+
+echo "Package plugins ..."
+echo
+PLUGINSTARFILE=plugins.tbz2
+PLUGINSLOC=/mnt/c/Users/pablo/vimfiles/
+mkdir $BUILD/plugged
+cd $PLUGINSLOC
+tar cf - --exclude-vcs plugged | tar xf - -C $CURDIR/$BUILD
+#tar -cvzf $CURDIR/$$BUILD/$PLUGINSTARFILE --exclude-vcs plugged
+cd $CURDIR
+find $BUILD/plugged -type f -print0 | xargs -0 dos2unix -q
+tar -cjf $CURDIR/$BUILD/$PLUGINSTARFILE --exclude-vcs $BUILD/plugged
+echo "Copy installer script ..."
+echo
+cp installer $BUILD
+# Pack everything to append to the self extract installer
+cd $BUILD
+tar cf files.tar $RELEASETARFILE $PLUGINSTARFILE installer
+cd $CURDIR
+
+echo "Create self extracting installer ..."
+echo
+
+if [ -e $BUILD/files.tar ]; then
+    # Build installer
+    cat decompress $BUILD/files.tar > $INSTALLERNAME
+    if [ $? -eq 0 ]; then
+        chmod +x $INSTALLERNAME
+        mv $INSTALLERNAME $RELEASESLOC
+    else
+        echo "Error building self extracting installer file"
+    fi
+
+else
+    echo "$BUILD/files.tar does not exist"
+    cd $CURDIR
+    exit 1
+fi
+
+cd $CURDIR
+# Clean all
+rm -r build/*
+echo
+echo
+echo "TDVim $1 installer created!!!!"
+echo "Installer: "`pwd $RELEASESLOC/$INSTALLERNAME`/$INSTALLERNAME
+echo
+
+exit 0
+
+
+
+
+
+# vim: ft=sh ts=8 ff=unix

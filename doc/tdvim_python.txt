@@ -1,0 +1,41 @@
+*tdvim_python.txt*	For TDVim version 0.2   Last Change:November 13, 2019 - 01:13 AM.
+
+
+
+                              TDVIM USER MANUAL
+                              PYTHON DEVELOPMENT
+                                                                *tdvim_python*
+
+===============================================================================
+
+For Python developing TDVim includes some useful plugins:
+- Simply Folds: https://github.com/tmhedberg/SimpylFold
+  Use simple rules to effectively folds Python code.
+- Indent Python: https://github.com/vim-scripts/indentpython.vim
+  Better Python indenting
+- Flake8: https://github.com/nvie/vim-flake8
+  Enable code linting using Flake 8.
+- Pythonsense: https://github.com/jeetsukumaran/vim-pythonsense
+  Create text objects for Python.
+
+When writing  a Python file extra un used charatcers will be shown in red.
+
+Use Flake8, with <Ctrl-Shift-F11>, is possible correct many syntax errors
+without sourcing the scrip in Python.
+
+To integrate Houdini's python module, hou, in Vim please take a look at |tdvim_houdini.txt|
+
+Some useful keymaps with Python:
+
+
+
+
+
+
+
+
+
+
+
+
+vim:tw=78:ts=8:ft=help.txtfmt:norl:autoindent:nofoldenable

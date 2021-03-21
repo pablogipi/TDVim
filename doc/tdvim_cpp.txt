@@ -1,0 +1,21 @@
+*tdvim_cpp.txt*	For TDVim version 0.2   Last Change:November 13, 2019 - 01:13 AM.
+
+
+
+                              TDVIM USER MANUAL
+                              C++ DEVELOPMENT
+                                                                *tdvim_cpp*
+
+===============================================================================
+For C++ TDVim offers some useful tools:
+
+- Project setup using project.vim
+- Symbols browser using Tagbat.
+- Static autocompletion using ctags.
+- Advanced searching for tags, functions, back references, etc ...
+
+
+
+
+
+vim:tw=78:ts=8:ft=help.txtfmt:norl:autoindent:nofoldenable

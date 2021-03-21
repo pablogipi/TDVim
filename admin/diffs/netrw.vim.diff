@@ -1,0 +1,35 @@
+*** /mnt/c/opt/vim/vim80/autoload/netrw.vim	2017-06-28 23:07:56.000000000 +0100
+--- netrw.vim	2017-12-19 00:01:41.777242500 +0000
+***************
+*** 18,23 ****
+--- 18,29 ----
+  "  But be doers of the Word, and not only hearers, deluding your own selves {{{1
+  "  (James 1:22 RSV)
+  " =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
++ 
++ " Modified version for TDVim {{{1
++ " Last Change: 19-Dec-2017.
++ "
++ "}}}
++ 
+  " Load Once: {{{1
+  if &cp || exists("g:loaded_netrw")
+    finish
+***************
+*** 10853,10862 ****
+--- 10859,10873 ----
+  
+  " ---------------------------------------------------------------------
+  " netrw#Call: allows user-specified mappings to call internal netrw functions {{{2
++ " XXX: Function fixed below to support arbitrary arguments in calling function,
++ " not only no argument or list of arguments like the original version
+  fun! netrw#Call(funcname,...)
+  "  call Dfunc("netrw#Call(funcname<".a:funcname.">,".string(a:000).")")
+    if a:0 > 0
+     exe "call s:".a:funcname."(".string(a:000).")"
++   elseif a:funcname =~ '^\p\+(\p\+)$'
++    "echomsg "call s:".a:funcname
++    exe "call s:".a:funcname
+    else
+     exe "call s:".a:funcname."()"
+    endif

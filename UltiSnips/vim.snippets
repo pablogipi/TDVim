@@ -1,0 +1,34 @@
+###########################################################################
+#                            TDVim Snippets				  #
+###########################################################################
+snippet tdvimh"TDVim file header" b
+" File: ${1:`!v expand('%:t')`}
+" Author: ${2:`!v g:snips_author`}
+" Description: ${3}
+" ${4:Last Change: `!v strftime("%B %d, %Y - %H:%M %p")`.}
+"
+" You should have a proper TDVim setup to use this file.
+" Refer to the installation docs in the Wiki about how to install
+" TDVim in your system
+"
+" TDVim credits:
+" Pablo Gimenez <pablogipi@gmail.com>: project founder and main developer
+" Bram Moolenaar <Bram@vim.org>: VIM founder and main developer
+"
+" License: GPLv2
+"
+
+$0
+endsnippet
+
+snippet tdvimf "TDVim function skeleton" b
+" ${1:function_name} {{{
+" ${2}
+function! ${3:`!v expand('%:r:t')`}#$1(${4})
+	${0:" code}
+endf
+" }}}
+endsnippet
+
+
+# vim:ft=snippets:

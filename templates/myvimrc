@@ -1,0 +1,32 @@
+"
+" User setup for TDVim
+"
+
+" Enable autowrite
+"set autowrite
+
+" Setup GUI
+if has( "gui_running" )
+    colorscheme seoul256
+    set background=dark
+    set guioptions-=m
+    set guioptions-=T
+    call utils#SetFancyUI()
+    "set guifont=Consolas:h11:cANSI:qDRAFT
+    set guifont=DejaVu_Sans_Mono_for_Powerline:h10
+else
+    colorscheme pencil
+    set background=light
+endif
+
+" Personal plugins setup
+"let g:NERDTreeHijackNetrw=1
+
+" Debug Gutentags:
+"let g:gutentags_trace = 1
+
+" Enable indent lines preview per file type:
+"let g:indentLine_fileType = ['c', 'cpp', 'python', 'vim']
+
+" Enable Project Setup Logging:
+"let g:tdvim_project_enable_logging = 0
