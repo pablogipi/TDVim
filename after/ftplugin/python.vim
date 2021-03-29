@@ -1,7 +1,7 @@
 " File: python.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Python language setup for TDVim
-" Last Change: November 08, 2019 - 00:17 AM.
+" Last Change: March 29, 2021 - 23:11 PM.
 "
 
 " Enable syntax highlight errors
@@ -16,7 +16,7 @@ setlocal formatoptions=crq
 setlocal textwidth=80
 
 " iskeyword for Python
-setlocal iskeyword+=.,_
+"setlocal iskeyword+=.,_
 
 " Set compiler to pylint for errorand syntax  checking:
 "autocmd FileType python compiler pylint

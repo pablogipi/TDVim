@@ -1,7 +1,7 @@
 " File: keymaps.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Keymaps TDVim setup
-" Last Change: January 27, 2020 - 00:53 AM.
+" Last Change: March 29, 2021 - 17:28 PM.
 
 " Note:
 " For a complete list of keymaps take a look at ../doc/tdvim.txt
@@ -929,15 +929,16 @@ function! keymaps#Edit()
 
     " Search using incsearch and anzu {{{2
     " Advanced search using incsearch and anzu plugins
-    map <silent>   /           <Plug>(incsearch-forward)
-    map <silent>   ?           <Plug>(incsearch-backward)
-    map <silent>   g/          <Plug>(incsearch-stay)
-    map <silent>   n           <Plug>(incsearch-nohl)<Plug>(anzu-n-with-echo)
-    map <silent>   N           <Plug>(incsearch-nohl)<Plug>(anzu-N-with-echo)
-    map <silent>   *           <Plug>(incsearch-nohl-*)
-    map <silent>   #           <Plug>(incsearch-nohl-#)
-    map <silent>   g*          <Plug>(incsearch-nohl-g*)
-    map <silent>   g#          <Plug>(incsearch-nohl-g#)
+    " FIXME: this is causing issues at the moment, gvim crashes, disable all anzu keymaps and the plugin
+    " map <silent>   /           <Plug>(incsearch-forward)
+    " map <silent>   ?           <Plug>(incsearch-backward)
+    " map <silent>   g/          <Plug>(incsearch-stay)
+    " map <silent>   n           <Plug>(incsearch-nohl)<Plug>(anzu-n-with-echo)
+    " map <silent>   N           <Plug>(incsearch-nohl)<Plug>(anzu-N-with-echo)
+    " map <silent>   *           <Plug>(incsearch-nohl-*)
+    " map <silent>   #           <Plug>(incsearch-nohl-#)
+    " map <silent>   g*          <Plug>(incsearch-nohl-g*)
+    " map <silent>   g#          <Plug>(incsearch-nohl-g#)
 
 
     " }}}
@@ -1261,9 +1262,12 @@ function! keymaps#Development()
     "nnoremap <unique> <silent> <Plug>TdvimSearchFunctions :CtrlPFunky <C-R><C-W><CR>
     "inoremap <unique> <silent> <Plug>TdvimSearchFunctions <Esc>:CtrlPFunky <C-R><C-W><CR>
     "vnoremap <unique> <silent> <Plug>TdvimSearchFunctions :CtrlPFunky <C-R><C-W><CR>
-    nnoremap <unique> <silent> <Plug>TdvimSearchFunctions :LeaderfFunction<CR>
-    inoremap <unique> <silent> <Plug>TdvimSearchFunctions <Esc>:LeaderfFunction<CR>
-    vnoremap <unique> <silent> <Plug>TdvimSearchFunctions :LeaderfFunction<CR>
+    "nnoremap <unique> <silent> <Plug>TdvimSearchFunctions :LeaderfFunction<CR>
+    "inoremap <unique> <silent> <Plug>TdvimSearchFunctions <Esc>:LeaderfFunction<CR>
+    "vnoremap <unique> <silent> <Plug>TdvimSearchFunctions :LeaderfFunction<CR>
+    nnoremap <unique> <silent> <Plug>TdvimSearchFunctions :LeaderfBufTag<CR>
+    inoremap <unique> <silent> <Plug>TdvimSearchFunctions <Esc>:LeaderfBufTag<CR>
+    vnoremap <unique> <silent> <Plug>TdvimSearchFunctions :LeaderfBufTag<CR>
 
     nmap     <silent> <F6>   <Plug>TdvimSearchFunctions
     imap     <silent> <F6>   <Plug>TdvimSearchFunctions

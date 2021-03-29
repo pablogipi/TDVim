@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  January 31, 2020 - 12:01 PM.
+" Last change:  March 29, 2021 - 17:41 PM.
 "
 "
 
@@ -12,7 +12,8 @@
 
 " getWinInfo
 " winid: id of the window, if not passed then current window will be used
-function! s:getWinInfo( winid=-1 )
+"function! s:getWinInfo( winid=-1 )
+function! s:getWinInfo( winid )
     let curwin = a:winid
     if curwin == -1
         let curwin = winnr()
@@ -217,24 +218,18 @@ function! utils#updateStatusLineColors()
                 else
                     let g:lightline.colorscheme = "pencil_light"
                 endif
+                    
             else
                 let g:lightline.colorscheme = g:colors_name
             endif
 
-        elseif g:colors_name =~# 'lisuxDark'
-            " special cases
-            if g:colors_name =~# 'lisuxDark'
-                
-                    let g:lightline.colorscheme = "rigel"
+            if exists('g:loaded_lightline')
+                call lightline#init()
+                call lightline#colorscheme()
+                call lightline#update()
             endif
         else
             let g:lightline.colorscheme = 'default'
-        endif
-        " Force update in lightline
-        if exists('g:loaded_lightline')
-            call lightline#init()
-            call lightline#colorscheme()
-            call lightline#update()
         endif
     catch
     endtry
@@ -322,7 +317,7 @@ let s:LightLineModeMap = { 'n': 'NORMAL', 'i': 'INSERT', 'R': 'REPLACE', 'v': 'V
         \}
 function! utils#LightlineMode() abort
     " Get current window info
-    let wininfo = s:getWinInfo()
+    let wininfo = s:getWinInfo(-1)
 
     if &previewwindow
         return 'PREVIEW'
@@ -361,7 +356,7 @@ endfunction
 "   file associated to parent window
 function! utils#LightlineFilename() abort
     " Get current window info
-    let wininfo = s:getWinInfo()
+    let wininfo = s:getWinInfo(-1)
 
     if &filetype == "help" || &filetype == "ctrlp" || &filetype == "tagbar" || &filetype == "nerdtree"
         return ''
@@ -404,7 +399,7 @@ endfunction
 " Return PREVIEW string or nothing, used in lightline for inactive windows
 function! utils#LightlineInactiveMode() abort
     " Get current window info
-    let wininfo = s:getWinInfo()
+    let wininfo = s:getWinInfo(-1)
 
     if &previewwindow
         return 'PREVIEW'
@@ -443,20 +438,19 @@ function! utils#LightlineExtraInfo() abort
     endif
 
     " Get current window info
-    let wininfo = s:getWinInfo()
+    let wininfo = s:getWinInfo(-1)
 
     " Quickfix and Location List windows
     if &filetype == "qf"
         return wininfo['variables']['quickfix_title']
     endif
 
-    " XXX: calling tagbar could be expensive
     " Programing 
-    "if exists("*tagbar#currenttag")
-        "if &filetype == "c" || &filetype == "cpp" || &filetype == "vim"  || &filetype == "python"
-            "return tagbar#currenttag("→%s","", "fs")
-        "endif
-    "endif
+    if exists("*tagbar#currenttag")
+        if &filetype == "c" || &filetype == "cpp" || &filetype == "vim"  || &filetype == "python"
+            return tagbar#currenttag("→%s","", "fs")
+        endif
+    endif
 
     return ""
 endfunction
@@ -757,8 +751,8 @@ endfunction
 " Show TDVim help window
 function! utils#ShowTDVimHelp(  )
     :helpclose
+    ":botright h tdvim
     :botright h tdvim.txt
-
 
     " Help buffer local maps
     map <silent> <buffer> <Esc> :bdelete<CR>
@@ -1288,7 +1282,7 @@ function! utils#SetupAuxBuffer( )
 
     "For quickfix and location list disable buffer in buffers list
     if 'quickfix' ==# &buftype
-        let wininfo = s:getWinInfo( )
+        let wininfo = s:getWinInfo( -1 )
         " Move quickfix to the bottom
         if wininfo['quickfix'] && !wininfo['loclist']
             wincmd J
@@ -1363,7 +1357,7 @@ function! utils#MoveQuickfixBottom( )
   if &buftype ==# 'quickfix'
       "echo "In quickfix move it down"
       "silent! 'wincmd J'
-      let wininfo = s:getWinInfo( )
+      let wininfo = s:getWinInfo( -1 )
       if wininfo['quickfix'] && !wininfo['loclist']
           wincmd J
       endif
@@ -1418,7 +1412,8 @@ endfunction
 "  - echo: echo tags using echomsg
 "  - menu: create a popup menu
 "  - preview: preview output in Preview window
-function! utils#EchoTagDefinition( output="echo" )
+"function! utils#EchoTagDefinition( output="echo" )
+function! utils#EchoTagDefinition( output )
     let curword = expand( '<cword>' )
     let pat = '^' . curword . '$\C'
     let tags = taglist( pat )

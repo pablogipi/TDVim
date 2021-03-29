@@ -1,6 +1,8 @@
 [<Space>	tdvim.txt	/*[<Space>*
 [B	tdvim.txt	/*[B*
+[L	tdvim.txt	/*[L*
 [Q	tdvim.txt	/*[Q*
+[S	tdvim.txt	/*[S*
 [T	tdvim.txt	/*[T*
 [b	tdvim.txt	/*[b*
 [c	tdvim.txt	/*[c*
@@ -13,6 +15,7 @@
 [h	tdvim.txt	/*[h*
 [j	tdvim.txt	/*[j*
 [j	tdvim.txt	/*[j*
+[l	tdvim.txt	/*[l*
 [ob	tdvim.txt	/*[ob*
 [oc	tdvim.txt	/*[oc*
 [od	tdvim.txt	/*[od*
@@ -27,12 +30,16 @@
 [ow	tdvim.txt	/*[ow*
 [ox	tdvim.txt	/*[ox*
 [q	tdvim.txt	/*[q*
+[s	tdvim.txt	/*[s*
 [t	tdvim.txt	/*[t*
 ]<Space>	tdvim.txt	/*]<Space>*
 ]B	tdvim.txt	/*]B*
+]L	tdvim.txt	/*]L*
 ]Q	tdvim.txt	/*]Q*
+]S	tdvim.txt	/*]S*
 ]T	tdvim.txt	/*]T*
 ]b	tdvim.txt	/*]b*
+]l	tdvim.txt	/*]l*
 ]ob	tdvim.txt	/*]ob*
 ]oc	tdvim.txt	/*]oc*
 ]od	tdvim.txt	/*]od*
@@ -47,6 +54,7 @@
 ]ow	tdvim.txt	/*]ow*
 ]ox	tdvim.txt	/*]ox*
 ]q	tdvim.txt	/*]q*
+]s	tdvim.txt	/*]s*
 ]t	tdvim.txt	/*]t*
 git	tdvim_development.txt	/*git*
 languages	tdvim_development.txt	/*languages*
@@ -60,6 +68,7 @@ tdvim-development	tdvim.txt	/*tdvim-development*
 tdvim-editing	tdvim.txt	/*tdvim-editing*
 tdvim-files	tdvim.txt	/*tdvim-files*
 tdvim-func-keys	tdvim.txt	/*tdvim-func-keys*
+tdvim-git-symbols	tdvim.txt	/*tdvim-git-symbols*
 tdvim-install.txt	tdvim_install.txt	/*tdvim-install.txt*
 tdvim-intro	tdvim_intro.txt	/*tdvim-intro*
 tdvim-intro.txt	tdvim_intro.txt	/*tdvim-intro.txt*

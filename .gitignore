@@ -6,6 +6,7 @@ Session.vim
 admin/build
 tags*
 *.tags
+tags
 GPATH
 GRTAGS
 GTAGS

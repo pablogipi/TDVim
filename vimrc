@@ -37,12 +37,23 @@ endif
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-unimpaired'
 Plug 'xolox/vim-misc'
+"Plug 'xolox/vim-session'
 Plug 'tomtom/tlib_vim'
 Plug 'vim-scripts/HelpClose'
 Plug 'rkitover/vimpager'
+"Plug 'tpope/vim-dispatch'
 " }}}
 
-" Fuzzy Search {{{2
+" Fuzzy Search Pluging {{{2
+" CtrlP
+"ctrlpvim/ctrlp.vim
+"Plug 'ctrlpvim/ctrlp.vim'
+"Plug 'ctrlpvim/ctrlp.vim',           { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
+"Plug 'fisadev/vim-ctrlp-cmdpalette'
+"Plug 'fisadev/vim-ctrlp-cmdpalette', { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
+"Plug 'd11wtq/ctrlp_bdelete.vim'
+" FzF
+"Plug 'junegunn/fzf.vim'
 " LeaderF
 Plug 'Yggdroot/LeaderF'
 "}}}
@@ -57,22 +68,28 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
 " Lightline
 Plug 'itchyny/lightline.vim'
-" Tabline buffers
-Plug 'taohexxx/lightline-buffer'
 " Tagbar
 Plug 'majutsushi/tagbar',                { 'on':  ['TagbarToggle', 'TagbarCurrentTag'], 'for': ['cpp', 'c', 'python', 'vim'] }
+" Mini Buf Explorer
+"Plug 'fholgado/minibufexpl.vim'
+" Tabline buffers
+Plug 'taohexxx/lightline-buffer'
 " Gundo
 Plug 'sjl/gundo.vim',                    { 'on': 'GundoToggle' }
 " Maximizer
 Plug 'szw/vim-maximizer',                { 'on': 'MaximizerToggle' }
 " Startify
 " Only use startify in gvim sessions
-if has("gui_running")
-    Plug 'mhinz/vim-startify'
-endif
+Plug 'mhinz/vim-startify'
+" if has("gui_running")
+    " Plug 'mhinz/vim-startify'
+" endif
 
 " Devicons
 Plug 'ryanoasis/vim-devicons'
+
+" Vimade
+"Plug 'TaDaa/vimade'
 
 " Nuake
 Plug 'Lenovsky/nuake'
@@ -83,6 +100,9 @@ Plug 'Lenovsky/nuake'
 
 " Development {{{2
 "
+" Autocomplete
+"Plug 'ajh17/VimCompletesMe'
+"Plug 'lifepillar/vim-mucomplete'
 " FSwitch
 Plug 'derekwyatt/vim-fswitch'
 " Guten Tags
@@ -94,14 +114,10 @@ Plug 'vim-scripts/diffchanges.vim'
 " Ultisnips
 "Plug 'SirVer/ultisnips',                 { 'for': ['cpp', 'c', 'python', 'vim'] }
 "Plug 'honza/vim-snippets',               { 'for': ['cpp', 'c', 'python', 'vim'] }
-
-" Snipmate
-Plug 'garbas/vim-snipmate',          { 'for': ['cpp', 'c', 'python', 'vim'] }
-Plug 'honza/vim-snippets',           { 'for': ['cpp', 'c', 'python', 'vim'] }
-Plug 'MarcWeber/vim-addon-mw-utils', { 'for': ['cpp', 'c', 'python', 'vim'] }
-Plug 'tomtom/tlib_vim',              { 'for': ['cpp', 'c', 'python', 'vim'] }
-Plug 'honza/vim-snippets',           { 'for': ['cpp', 'c', 'python', 'vim'] }
-
+" TTodo
+"Plug 'tomtom/ttodo_vim'
+" Task List
+"Plug 'vim-scripts/TaskList.vim',         { 'for': ['cpp', 'c', 'python', 'vim'] }
 " Tagma Tasks
 Plug 'JessicaKMcIntosh/TagmaTasks',         { 'for': ['cpp', 'c', 'python', 'vim'] }
 
@@ -114,16 +130,15 @@ Plug 'vim-scripts/OmniCppComplete',      { 'for': ['cpp', 'c'] }
 
 " GIT {{{3
 " Fugitive (GIT)
-Plug 'tpope/vim-fugitive',               { 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit']}
+"Plug 'tpope/vim-fugitive',               { 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit']}
 Plug 'tpope/vim-fugitive',               { 'for': ['cpp', 'c', 'vim', 'python'], 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit'] }
 Plug 'itchyny/vim-gitbranch'
 " NERDTree Git
 Plug 'Xuyuanp/nerdtree-git-plugin'
 " Git Gutter
-" Only use Git Gutter in gvim sessions
-if has("gui_running")
-    Plug 'airblade/vim-gitgutter'
-endif
+Plug 'airblade/vim-gitgutter'
+"CtrlPFunky
+"Plug 'tacahiroy/ctrlp-funky'
 "}}}
 "
 " Python {{{3
@@ -132,9 +147,12 @@ Plug 'tmhedberg/SimpylFold', { 'for': ['python'] }
 " Indent Python
 Plug 'vim-scripts/indentpython.vim', { 'for': ['python'] }
 " Jedi
-Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
+ Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
+" DEPRECATED:
+" PyLint
+"Plug 'congma/pylint.vim', { 'for': ['python'] }
 " Flake8
-Plug 'nvie/vim-flake8', { 'for': ['python'] }
+" Plug 'nvie/vim-flake8', { 'for': ['python'] }
 " Pymotions
 Plug 'jeetsukumaran/vim-pythonsense', { 'for': ['python'] }
 
@@ -149,12 +167,16 @@ Plug 'scrooloose/nerdcommenter'
 " Easy Align
 "Plug 'junegunn/vim-easy-align',          { 'on': [ 'LiveEasyAlign', 'EasyAlign' ] }
 Plug 'junegunn/vim-easy-align'
+"Plug 'junegunn/vim-easy-align'
 " Surround
 Plug 'tpope/vim-surround'
 " Incsearch
 Plug 'haya14busa/incsearch.vim'
+" FIXME: anzu keymap to / is causing a crash in gvim. Disable it at the moment
 " Anzu
-Plug 'osyo-manga/vim-anzu'
+" Plug 'osyo-manga/vim-anzu'
+" Ack
+"Plug 'mileszs/ack.vim',                  { 'on': 'Ack' }
 " Grepper
 Plug 'mhinz/vim-grepper',                  { 'on': 'Grepper' }
 " Delimit Mate
@@ -177,6 +199,7 @@ Plug 'NovaDev94/lightline-onedark'
 Plug 'Rigellute/rigel'
 Plug 'itchyny/landscape.vim'
 Plug 'morhetz/gruvbox'
+Plug 'crusoexia/vim-monokai'
 
 " }}}
 
@@ -188,7 +211,7 @@ call plug#end()
 " Global variables {{{
 
 " TDVim version
-let $TDVIMVERSION="0.3.1"
+let $TDVIMVERSION="0.3"
 
 " }}}
 
@@ -202,19 +225,6 @@ endif
 " Use Vim settings, rather then Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
 set nocompatible
-
-" Terminal settings {{{2
-set ttyfast
-
-if ! has("gui_running")
-    set shortmess=aoOt
-    " Check terminals colors, if is not a 256 color terminal make a warning
-    if &t_Co < 256
-        silent echomsg "Current terminal doesn't support 256 colors. Some colors and the status line won't look correctly"
-    endif
-endif
-
-" }}}
 
 " Allow backspacing over everything in insert mode
 set backspace=indent,eol,start
@@ -251,6 +261,10 @@ elseif utils#GetOS() == 3
     set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*,*.swp,*.bak,*~
 endif
 
+" Check terminals colors, if is not a 256 color terminal make a warning
+if !has('gui_running') && &t_Co < 256
+    echomsg "Current terminal doesn't support 256 colors. Some colors and the status line won't look correctly"
+endif
 
 " Set viminfo. Mainly set history limits
 " File history: 25
@@ -281,11 +295,17 @@ set clipboard^=unnamed,unnamedplus
 " Sessions {{{
 " Options for what to save in the sessions file:
 let &sessionoptions='buffers,curdir,folds,resize,winsize'
+"let &sessionoptions-='help'
+"let &sessionoptions+='resize'
 " View, restore file state options:
 let &viewoptions='cursor,folds,slash,unix'
 
 " }}}
 
+" Terminal settings {{{
+set ttyfast
+
+" }}}
 
 " Edit options and Language specific options {{{
 "
@@ -696,7 +716,8 @@ let g:NERDTreeLimitedSyntax = 1
 let NERDTreeIgnore=['\.swo$', '\.swp$','\.pyc$', '\.o$','\~$']
 let NERDTreeAutoDeleteBuffer = 1
 " NERDTree Git
-let g:NERDTreeIndicatorMapCustom = {
+"let g:NERDTreeIndicatorMapCustom = {
+let g:NERDTreeGitStatusIndicatorMapCustom = {
     \ "Modified"  : "✹",
     \ "Staged"    : "✚",
     \ "Untracked" : "✭",
@@ -1041,6 +1062,14 @@ let g:startify_session_before_save = [
 " Rainbow Parentheses:
 let g:rainbow_active=1
 
+" GitGutter: {{{2
+"let g:gitgutter_sign_added              = '¤'
+let g:gitgutter_sign_added              = '⇒'
+let g:gitgutter_sign_modified           = '»'
+let g:gitgutter_sign_removed            = '✗'
+let g:gitgutter_sign_removed_first_line = '‾'
+let g:gitgutter_sign_modified_removed   = '≃'
+" }}}
 
 " Vimade:
 let g:vimade = {}
@@ -1096,7 +1125,7 @@ let g:jedi#completions_command = ""
 let g:jedi#goto_command = "]t"
 let g:jedi#goto_assignments_command = ""
 let g:jedi#usages_command = "[T"
-let g:jedi#popup_on_dot = 0
+let g:jedi#popup_on_dot = 1
 let g:jedi#smart_auto_mappings = 1
 " }}}
 "
@@ -1125,4 +1154,3 @@ let g:nuake_size = 0.4
 
 
 " vim: ts=8 ft=vim nowrap fdm=marker
-
