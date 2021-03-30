@@ -192,8 +192,12 @@ Plug 'Yggdroot/indentLine'
 "
 Plug 'altercation/vim-colors-solarized'
 Plug 'junegunn/seoul256.vim'
-Plug 'reedes/vim-colors-pencil'
-Plug 'yami-beta/lightline-pencil.vim'
+" Only load pencil in terminal mode if it supports 256 colors, otherwise it
+" will report errors
+if !has('gui_running') && &t_Co < 256
+    Plug 'reedes/vim-colors-pencil'
+    Plug 'yami-beta/lightline-pencil.vim'
+endif
 Plug 'joshdick/onedark.vim'
 Plug 'NovaDev94/lightline-onedark'
 Plug 'Rigellute/rigel'
@@ -263,7 +267,7 @@ endif
 
 " Check terminals colors, if is not a 256 color terminal make a warning
 if !has('gui_running') && &t_Co < 256
-    echomsg "Current terminal doesn't support 256 colors. Some colors and the status line won't look correctly"
+    silent echomsg "Current terminal doesn't support 256 colors. Some colors and the status line won't look correctly"
 endif
 
 " Set viminfo. Mainly set history limits
@@ -416,7 +420,8 @@ let &foldnestmax = 3
 " Completion {{{
 " Completion options
 set noshowmode
-set shortmess+=c
+"set shortmess+=c
+set shortmess=aTt
 set noinfercase
 set belloff+=ctrlg " If Vim beeps during completion
 set belloff+=cursor " If Vim beeps during scrolling

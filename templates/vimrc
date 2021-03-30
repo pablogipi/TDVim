@@ -30,17 +30,19 @@ syntax on
 filetype plugin indent on
 
 if exists("$TDVIMROOT")
-    " Only load TDVim and VAM if cetain criteria is sathisfied
-    "if (v:version >= 800 && has('python') )
-    if (v:version >= 800)
+    " Only load TDVim if cetain criteria is sathisfied
+    "if (v:version >= 800)
+	if (v:version >= 800 && (has('python') || has('python3')))
+        let s:tdvimroot = substitute($TDVIMROOT, "\\", "/", "g")
         "Add TDVim to runtim path
-        execute "set rtp^=" . $TDVIMROOT
-        execute "set rtp+=" . $TDVIMROOT . "/after"
+        execute "set rtp^=" . s:tdvimroot
+        execute "set rtp+=" . s:tdvimroot . "/after"
 
         " Load TDVim !!
-        let s:loadScriptPath =  $TDVIMROOT . "/vimrc"
+        "let s:loadScriptPath =  $TDVIMROOT . "/vimrc"
+        let s:loadScriptPath =  s:tdvimroot . "/vimrc"
         exec "source " . s:loadScriptPath
-        "echomsg "TDVim " . $TDVIMVERSION . " loaded"
+        "echomsg "TDVim " . s:tdvimroot . " loaded"
     else
         echohl ErrorMsg
         echoerr "TDVim needs at least VIM v8 with Python support"

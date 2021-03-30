@@ -2,6 +2,7 @@ plugged
 Session.vim
 *.swp
 *.swo
+*.bak
 *~
 admin/build
 tags*
