@@ -1,7 +1,7 @@
 " File: python.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Python language setup for TDVim
-" Last Change: April 09, 2021 - 16:35 PM.
+" Last Change: April 09, 2021 - 17:18 PM.
 "
 
 " Enable syntax highlight errors
@@ -22,10 +22,10 @@ setlocal textwidth=80
 "autocmd FileType python compiler pylint
 
 " Autocommands
-augroup tdvim_python
-    " Set autocommand to set current tag on cursor hold
-    autocmd! CursorHold *.py ++nested call utils#UpdateCurrentTag()
-augroup END
+"augroup tdvim_python
+" Set autocommand to set current tag on cursor hold
+:au! CursorHold *.py ++nested call utils#UpdateCurrentTag()
+"augroup END
 
 
 "

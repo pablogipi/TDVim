@@ -1,7 +1,7 @@
 " File: cpp.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: C/C++ language setup for TDVim
-" Last Change: April 09, 2021 - 16:37 PM.
+" Last Change: April 09, 2021 - 18:02 PM.
 "
 
 " We want to keep comments within an 80 column limit, but not code.
@@ -26,10 +26,10 @@ set completeopt+=preview
 setlocal iskeyword=a-z,A-Z,48-57,_
 
 " Autocommands
-augroup tdvim_cpp
-    " Set autocommand to set current tag on cursor hold
-    autocmd! CursorHold *.cpp,*.c, *.h,*.hpp,*.C ++nested call utils#UpdateCurrentTag()
-augroup END
+"augroup tdvim_cpp
+" Set autocommand to set current tag on cursor hold
+:au! CursorHold *.cpp,*.c, *.h,*.hpp,*.C ++nested call utils#UpdateCurrentTag()
+"augroup END
 
 " Increment default preview window height
 set previewheight=10

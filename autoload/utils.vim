@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  April 09, 2021 - 16:32 PM.
+" Last change:  April 09, 2021 - 17:48 PM.
 "
 "
 
@@ -474,7 +474,7 @@ function! utils#LightlineExtraInfo() abort
             "return tagbar#currenttag("→%s","", "fs")
         "endif
     "endif
-    # Using w:curenttag set by UpdateCurrentTag using CursorHold autocmd. This fixes the lagging due to calling tagbar#currenttag in every redraw
+    " Using w:curenttag set by UpdateCurrentTag using CursorHold autocmd. This fixes the lagging due to calling tagbar#currenttag in every redraw
     if exists("w:currenttag")
         return w:currenttag
     endif
