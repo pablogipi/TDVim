@@ -1,8 +1,8 @@
-"
+
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  March 29, 2021 - 17:41 PM.
+" Last change:  April 09, 2021 - 16:32 PM.
 "
 "
 
@@ -255,6 +255,25 @@ function! utils#ToggleMenuBar()
 endfunction
 "}}}
 
+" UpdateCurrentTag {{{
+" Update current tag in window. This function will use tagbar#currenttag() to
+" get the tag for the function where the cursor is.
+" the intention is to call this function from the CursorHold autocommand.
+" This way we can update curent tag only when the cursor stops.
+" Looking for the current tag everytime the redraw is needed, this is what
+" happens when this is used inside Lightline in order to get the tag in the
+" status line, can make moving around laggy.
+" This autocommand will be added to files where it can make sense, like vim,
+" cpp, python, etc ... 
+" Will be added in their setyp files in the after directory
+" The function will set the window variable: w:currenttag .
+function! utils#UpdateCurrentTag()
+    if exists("*tagbar#currenttag")
+        let w:currenttag = tagbar#currenttag("→%s","", "fs")
+    endif
+endfunction
+"}}}
+
 " LightLine utility functions {{{
 function! utils#LightlineReadonly()
     if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
@@ -446,10 +465,18 @@ function! utils#LightlineExtraInfo() abort
     endif
 
     " Programing 
-    if exists("*tagbar#currenttag")
-        if &filetype == "c" || &filetype == "cpp" || &filetype == "vim"  || &filetype == "python"
-            return tagbar#currenttag("→%s","", "fs")
-        endif
+    " FIXME: this can cause slowness since tagbar#currenttag() is a slow
+    " function and calling it all the time when moving quickly in every redraw
+    " is expensive, try to find how to optimize this.
+    " Delay lightline redraw? Delay calling to this function?
+    "if exists("*tagbar#currenttag")
+        "if &filetype == "c" || &filetype == "cpp" || &filetype == "vim"  || &filetype == "python"
+            "return tagbar#currenttag("→%s","", "fs")
+        "endif
+    "endif
+    # Using w:curenttag set by UpdateCurrentTag using CursorHold autocmd. This fixes the lagging due to calling tagbar#currenttag in every redraw
+    if exists("w:currenttag")
+        return w:currenttag
     endif
 
     return ""

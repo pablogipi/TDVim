@@ -26,10 +26,10 @@
 " Specify a directory for plugins (for Neovim: ~/.local/share/nvim/plugged)
 if utils#GetOS() == 3
     "Windows
-    call plug#begin('~/vimfiles/plugged')
+    silent! call plug#begin('~/vimfiles/plugged')
 else
     " Anything other OS, assumed UNIX
-    call plug#begin('~/.vim/plugged')
+    silent! call plug#begin('~/.vim/plugged')
 endif
 
 " Misc {{{2
@@ -129,16 +129,16 @@ Plug 'vim-scripts/OmniCppComplete',      { 'for': ['cpp', 'c'] }
 " }}}
 
 " GIT {{{3
-" Fugitive (GIT)
-"Plug 'tpope/vim-fugitive',               { 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit']}
-Plug 'tpope/vim-fugitive',               { 'for': ['cpp', 'c', 'vim', 'python'], 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit'] }
-Plug 'itchyny/vim-gitbranch'
-" NERDTree Git
-Plug 'Xuyuanp/nerdtree-git-plugin'
-" Git Gutter
-Plug 'airblade/vim-gitgutter'
-"CtrlPFunky
-"Plug 'tacahiroy/ctrlp-funky'
+if executable('git')
+    " Fugitive (GIT)
+    "Plug 'tpope/vim-fugitive',               { 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit']}
+    Plug 'tpope/vim-fugitive',               { 'for': ['cpp', 'c', 'vim', 'python'], 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit'] }
+    Plug 'itchyny/vim-gitbranch'
+    " NERDTree Git
+    Plug 'Xuyuanp/nerdtree-git-plugin'
+    " Git Gutter
+    Plug 'airblade/vim-gitgutter'
+endif
 "}}}
 "
 " Python {{{3
@@ -147,7 +147,7 @@ Plug 'tmhedberg/SimpylFold', { 'for': ['python'] }
 " Indent Python
 Plug 'vim-scripts/indentpython.vim', { 'for': ['python'] }
 " Jedi
- Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
+Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
 " DEPRECATED:
 " PyLint
 "Plug 'congma/pylint.vim', { 'for': ['python'] }
@@ -204,6 +204,8 @@ Plug 'Rigellute/rigel'
 Plug 'itchyny/landscape.vim'
 Plug 'morhetz/gruvbox'
 Plug 'crusoexia/vim-monokai'
+Plug 'sonph/onehalf', { 'rtp': 'vim' }
+Plug 'kyoz/purify', { 'rtp': 'vim' }
 
 " }}}
 

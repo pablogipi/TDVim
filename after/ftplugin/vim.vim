@@ -1,7 +1,7 @@
 " File: vim.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: VimL language setup for TDVim
-" Last Change: December 10, 2019 - 00:23 AM.
+" Last Change: April 09, 2021 - 16:35 PM.
 "
 
 " DEPRECATED: using this file to setup autocommands and events is DEPRECATED.
@@ -29,4 +29,6 @@ set previewheight=10
 augroup tdvim_vim
     " Delete any extra white space at the end of the line before writing the file
     autocmd BufWritePre *.vim normal m`:%s/\s\+$//e ``
+    autocmd! CursorHold *.vim ++nested call utils#UpdateCurrentTag()
 augroup END
+" Set autocommand to set current tag on cursor hold
