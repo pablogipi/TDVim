@@ -22,6 +22,11 @@
 " - Global variables
 "
 
+" Custom setup needed for initialization
+let g:tdvim_before_start = 1
+call utils#SourceUserSettings()
+let g:tdvim_before_start = 0
+
 " Vim Plug - Load plugins {{{
 " Specify a directory for plugins (for Neovim: ~/.local/share/nvim/plugged)
 if utils#GetOS() == 3
@@ -37,11 +42,9 @@ endif
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-unimpaired'
 Plug 'xolox/vim-misc'
-"Plug 'xolox/vim-session'
 Plug 'tomtom/tlib_vim'
 Plug 'vim-scripts/HelpClose'
 Plug 'rkitover/vimpager'
-"Plug 'tpope/vim-dispatch'
 " }}}
 
 " Fuzzy Search Pluging {{{2
@@ -80,13 +83,15 @@ Plug 'sjl/gundo.vim',                    { 'on': 'GundoToggle' }
 Plug 'szw/vim-maximizer',                { 'on': 'MaximizerToggle' }
 " Startify
 " Only use startify in gvim sessions
-Plug 'mhinz/vim-startify'
-" if has("gui_running")
-    " Plug 'mhinz/vim-startify'
-" endif
+"Plug 'mhinz/vim-startify'
+ if has("gui_running")
+     Plug 'mhinz/vim-startify'
+ endif
 
 " Devicons
-Plug 'ryanoasis/vim-devicons'
+ if has("gui_running")
+     Plug 'ryanoasis/vim-devicons'
+ endif
 
 " Vimade
 "Plug 'TaDaa/vimade'
@@ -130,10 +135,12 @@ Plug 'vim-scripts/OmniCppComplete',      { 'for': ['cpp', 'c'] }
 
 " GIT {{{3
 if executable('git')
-    " Fugitive (GIT)
-    "Plug 'tpope/vim-fugitive',               { 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit']}
-    Plug 'tpope/vim-fugitive',               { 'for': ['cpp', 'c', 'vim', 'python'], 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit'] }
-    Plug 'itchyny/vim-gitbranch'
+    if has("gui_running")
+        " Fugitive (GIT)
+        "Plug 'tpope/vim-fugitive',               { 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit']}
+        Plug 'tpope/vim-fugitive',               { 'for': ['cpp', 'c', 'vim', 'python'], 'on':  ['Gstatus', 'Glog', 'Gdiff', 'Gcommit', 'Ggrep', 'Gedit'] }
+        Plug 'itchyny/vim-gitbranch'
+    endif
     " NERDTree Git
     Plug 'Xuyuanp/nerdtree-git-plugin'
     " Git Gutter
@@ -147,7 +154,9 @@ Plug 'tmhedberg/SimpylFold', { 'for': ['python'] }
 " Indent Python
 Plug 'vim-scripts/indentpython.vim', { 'for': ['python'] }
 " Jedi
-Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
+ if has("gui_running")
+     Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
+ endif
 " DEPRECATED:
 " PyLint
 "Plug 'congma/pylint.vim', { 'for': ['python'] }
@@ -177,8 +186,9 @@ Plug 'haya14busa/incsearch.vim'
 " Plug 'osyo-manga/vim-anzu'
 " Ack
 "Plug 'mileszs/ack.vim',                  { 'on': 'Ack' }
+" DEPRECATED:
 " Grepper
-Plug 'mhinz/vim-grepper',                  { 'on': 'Grepper' }
+"Plug 'mhinz/vim-grepper',                  { 'on': 'Grepper' }
 " Delimit Mate
 Plug 'Raimondi/delimitMate'
 " Rainbow parentheses
@@ -368,9 +378,9 @@ set gdefault
 
 " Better grep
 if executable("ag")
-    set grepprg=ag\ --nogroup\ --nocolor\ --vimgrep
+    "set grepprg=ag\ --nogroup\ --nocolor\ --vimgrep
+    set grepprg=ag\ --vimgrep\ --ignore\ *~\ --ignore\ *.swp\ --ignore\ *.diff\ --ignore\ tags\ --ignore\ *.tags
 endif
-
 
 " }}}
 

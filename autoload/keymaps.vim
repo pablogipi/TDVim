@@ -1,7 +1,7 @@
 " File: keymaps.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Keymaps TDVim setup
-" Last Change: March 29, 2021 - 17:28 PM.
+" Last Change: April 11, 2021 - 16:47 PM.
 
 " Note:
 " For a complete list of keymaps take a look at ../doc/tdvim.txt
@@ -1013,10 +1013,12 @@ function! keymaps#TextNavigation()
     " Grep - F4{{{2
     " Grep word under cursor or selection
     " Default mapped to F4
-    "nnoremap <unique>   <Plug>TdvimGrep :Grepper -cword  -open <CR>
-    nnoremap <unique>   <Plug>TdvimGrep :Grepper -open -query <C-R><C-W><CR>
-    inoremap <unique>   <Plug>TdvimGrep <Esc>:Grepper -cword -open <CR>
-    vnoremap <unique>   <Plug>TdvimGrep :Grepper -cword -open <CR>
+    "nnoremap <unique>   <Plug>TdvimGrep :Grepper -open -query <C-R><C-W><CR>
+    "inoremap <unique>   <Plug>TdvimGrep <Esc>:Grepper -cword -open <CR>
+    "vnoremap <unique>   <Plug>TdvimGrep :Grepper -cword -open <CR>
+    nnoremap <unique>   <Plug>TdvimGrep :grep <C-R><C-W><CR>:copen<CR>
+    inoremap <unique>   <Plug>TdvimGrep <Esc>:grep -cword <CR>:copen<CR>
+    vnoremap <unique>   <Plug>TdvimGrep :grep -cword <CR>:copen<CR>
 
     nmap <F4>      <Plug>TdvimGrep
     nmap <leader>g <Plug>TdvimGrep

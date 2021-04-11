@@ -2,6 +2,25 @@
 " User setup for TDVim
 "
 
+" TDVim initialization setup:
+" Settings needed by certain plugins to start correctly
+if g:tdvim_before_start
+    " Set path for python dll:
+    " Python 2
+    "set pythonhome=C:\opt\python\python27
+    "set pythondll=C:\opt\python\python27\python27.dll
+    "let g:completor_python_binary = 'C:\opt\python\python27\python.exe'
+    " Python 3
+    "set pythonthreehome=C:\opt\python\python37
+    "set pythonthreedll=C:\opt\python\python37\python37.dll
+    "let g:completor_python_binary = 'C:\opt\python\python37\python.exe'
+    "
+    finish
+endif
+
+" Enable line numbers
+"set number
+
 " Enable autowrite
 "set autowrite
 
@@ -13,7 +32,7 @@ if has( "gui_running" )
     set guioptions-=T
     call utils#SetFancyUI()
     "set guifont=Consolas:h11:cANSI:qDRAFT
-    set guifont=DejaVu_Sans_Mono_for_Powerline:h10
+	set  guifont=FiraCode_Nerd_Font_Mono:h10:W500:cANSI:qDRAFT
 else
     colorscheme pencil
     set background=light
