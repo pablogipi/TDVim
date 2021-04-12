@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  April 09, 2021 - 17:48 PM.
+" Last change:  April 12, 2021 - 12:18 PM.
 "
 "
 
@@ -218,7 +218,6 @@ function! utils#updateStatusLineColors()
                 else
                     let g:lightline.colorscheme = "pencil_light"
                 endif
-                    
             else
                 let g:lightline.colorscheme = g:colors_name
             endif
@@ -461,7 +460,9 @@ function! utils#LightlineExtraInfo() abort
 
     " Quickfix and Location List windows
     if &filetype == "qf"
-        return wininfo['variables']['quickfix_title']
+        if exists("w:quickfix_title")
+            return wininfo['variables']['quickfix_title']
+        endif
     endif
 
     " Programing 

@@ -213,6 +213,7 @@ Plug 'NovaDev94/lightline-onedark'
 Plug 'Rigellute/rigel'
 Plug 'itchyny/landscape.vim'
 Plug 'morhetz/gruvbox'
+Plug 'shinchu/lightline-gruvbox.vim'
 Plug 'crusoexia/vim-monokai'
 Plug 'sonph/onehalf', { 'rtp': 'vim' }
 Plug 'kyoz/purify', { 'rtp': 'vim' }
