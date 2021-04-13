@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  April 13, 2021 - 09:47 AM.
+" Last change:  April 13, 2021 - 15:25 PM.
 "
 "
 
@@ -286,6 +286,18 @@ function! utils#UpdateCurrentGitBranch()
 endfunction
 "}}}
 
+" UpdateDevIconFileType {{{
+" Update current Dev Icon for buffer in window. This function use WebDevIconsGetFileTypeSymbol()
+" The intention is to call this function from the CursorHold autocommand.
+" The function will set the window variable: w:currentdeviconfiletype .
+function! utils#UpdateDevIconFileType()
+    if exists('*WebDevIconsGetFileTypeSymbol')
+        let w:currentdeviconfiletype = WebDevIconsGetFileTypeSymbol()
+    endif
+endfunction
+"}}}
+
+
 " LightLine utility functions {{{
 function! utils#LightlineReadonly()
     if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
@@ -333,7 +345,10 @@ function! utils#LightlineDeviconsFiletype()
     elseif &filetype == "qf"
         return 'ί'
     else
-        return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
+        "return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
+        if exists('w:currentdeviconfiletype')
+            return winwidth(0) > 70 ? (strlen(&filetype) ? w:currentdeviconfiletype : '') : ''
+        endif
     endif
 endfunction
 
@@ -542,29 +557,29 @@ function! utils#SetFancyUI()
             if has_key( g:lightline, 'component_function' )
                 let g:lightline.component_function.readonly = 'utils#LightlineReadonly'
                 let g:lightline.component_function.fugitive = 'utils#LightlineFugitive'
-                let g:lightline.component_function.git = 'utils#LightlineGit'
+                let g:lightline.component_function.git      = 'utils#LightlineGit'
             else
-                let g:lightline.component_function = {}
+                let g:lightline.component_function          = {}
                 let g:lightline.component_function.readonly = 'utils#LightlineReadonly'
                 let g:lightline.component_function.fugitive = 'utils#LightlineFugitive'
-                let g:lightline.component_function.git = 'utils#LightlineGit'
+                let g:lightline.component_function.git      = 'utils#LightlineGit'
             endif
             let g:lightline.separator = { 'left': '', 'right': '' }
             let g:lightline.subseparator = { 'left': '', 'right': '' }    
         endif
         if exists('g:loaded_lightline_buffer')
             "let g:lightline_buffer_logo = "\u233e"
-            let g:lightline_buffer_logo = "》"
-            let g:lightline_buffer_readonly_icon = ''
-            let g:lightline_buffer_modified_icon = '✗'
-            let g:lightline_buffer_git_icon = ' '
-            let g:lightline_buffer_ellipsis_icon = '..'
-            let g:lightline_buffer_expand_left_icon = "\u25c4"
-            let g:lightline_buffer_expand_right_icon = "\u25ba"
-            let g:lightline_buffer_active_buffer_left_icon = '▌'
+            let g:lightline_buffer_logo                     = "》"
+            let g:lightline_buffer_readonly_icon            = ''
+            let g:lightline_buffer_modified_icon            = '✗'
+            let g:lightline_buffer_git_icon                 = ' '
+            let g:lightline_buffer_ellipsis_icon            = '..'
+            let g:lightline_buffer_expand_left_icon         = "\u25c4"
+            let g:lightline_buffer_expand_right_icon        = "\u25ba"
+            let g:lightline_buffer_active_buffer_left_icon  = '▌'
             let g:lightline_buffer_active_buffer_right_icon = '▐'
             "let g:lightline_buffer_separator_icon = "\u25b9"
-            let g:lightline_buffer_separator_icon = "╱"
+            let g:lightline_buffer_separator_icon           = "╱"
         endif
     endif
 endfunction

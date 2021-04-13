@@ -690,6 +690,11 @@ if has("autocmd")
         autocmd User GutentagsUpdated call lightline#update()
     augroup END
 
+    " CursorHold
+    augroup tdvimCursorHold
+        autocmd! CursorHold * ++nested call utils#UpdateDevIconFileType()
+    augroup END
+
 else
     set autoindent		" always set autoindenting on
 endif " has("autocmd")
