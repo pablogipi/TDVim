@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  April 12, 2021 - 12:18 PM.
+" Last change:  April 13, 2021 - 09:47 AM.
 "
 "
 
@@ -264,11 +264,24 @@ endfunction
 " status line, can make moving around laggy.
 " This autocommand will be added to files where it can make sense, like vim,
 " cpp, python, etc ... 
-" Will be added in their setyp files in the after directory
+" Will be added in their setup files in the after directory
 " The function will set the window variable: w:currenttag .
 function! utils#UpdateCurrentTag()
     if exists("*tagbar#currenttag")
         let w:currenttag = tagbar#currenttag("→%s","", "fs")
+    endif
+endfunction
+"}}}
+
+" UpdateCurrentGitBranch {{{
+" Update current git branch from buffer in window. This function will use gitbranch#name() 
+" The intention is to call this function from the CursorHold autocommand.
+" This way we can update curent branch only when the cursor stops.
+" The function will set the window variable: w:currentgitbranch .
+" Only update if g:tdvim_update_git_branch is set
+function! utils#UpdateCurrentGitBranch()
+    if g:tdvim_update_git_branch && exists('*gitbranch#name')
+        let w:currentgitbranch = gitbranch#name()
     endif
 endfunction
 "}}}
@@ -303,10 +316,13 @@ function! utils#LightlineGit()
         return ''
     elseif winwidth(0) < 100
         return ''
-    elseif exists('*gitbranch#name')
-        let branch = gitbranch#name()
-        return branch !=# '' ? ''.branch : ''
+    elseif exists('w:currentgitbranch')
+        return w:currentgitbranch !=# '' ? ''.w:currentgitbranch : ''
     endif
+    "elseif exists('*gitbranch#name')
+        "let branch = gitbranch#name()
+        "return branch !=# '' ? ''.branch : ''
+    "endif
     return ''
 endfunction
 
@@ -521,6 +537,8 @@ function! utils#SetFancyUI()
                 let g:lightline.component = {}
                 let g:lightline.component.lineinfo = '▤ %3l:%-2v'
             endif
+            let g:tdvim_update_git_branch = 1
+            :au! CursorHold * ++nested call utils#UpdateCurrentGitBranch()
             if has_key( g:lightline, 'component_function' )
                 let g:lightline.component_function.readonly = 'utils#LightlineReadonly'
                 let g:lightline.component_function.fugitive = 'utils#LightlineFugitive'
