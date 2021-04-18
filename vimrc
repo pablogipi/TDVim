@@ -125,6 +125,8 @@ Plug 'vim-scripts/diffchanges.vim'
 "Plug 'vim-scripts/TaskList.vim',         { 'for': ['cpp', 'c', 'python', 'vim'] }
 " Tagma Tasks
 Plug 'JessicaKMcIntosh/TagmaTasks',         { 'for': ['cpp', 'c', 'python', 'vim'] }
+" Speed Folds
+Plug 'Konfekt/FastFold',     { 'for': ['cpp', 'c', 'vim', 'python'] }
 
 " C/C++ {{{3
 " Cpp Enhanced Syntax
@@ -787,7 +789,7 @@ let g:session_autoload        = 0 " Disable load session on startup
 " use lightline-buffer in lightline
 let g:lightline = {
         \ 'tabline': {
-                \ 'left': [ [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+                \ 'left': [ [ 'sessioninfo' ], [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
                 \ 'right': [ [ 'close' ], ],
                 \ },
         \ 'component_expand': {
@@ -797,6 +799,7 @@ let g:lightline = {
                 \ 'buffercurrent': 'tabsel',
                 \ },
         \ 'component_function': {
+                \ 'sessioninfo': 'utils#SessionName',
                 \ 'bufferbefore': 'lightline#buffer#bufferbefore',
                 \ 'bufferafter': 'lightline#buffer#bufferafter',
                 \ 'bufferinfo': 'lightline#buffer#bufferinfo',

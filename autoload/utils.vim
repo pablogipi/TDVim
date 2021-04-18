@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  April 13, 2021 - 15:25 PM.
+" Last change:  April 18, 2021 - 19:13 PM.
 "
 "
 
@@ -297,6 +297,17 @@ function! utils#UpdateDevIconFileType()
 endfunction
 "}}}
 
+" SessionName {{{
+" Check if current vim has an open session and return it's name.
+" Otherwise return an empty string
+function! utils#SessionName()
+    if exists('v:this_session')
+        return '' . fnamemodify(v:this_session, ':t')
+    else
+        return ''
+    endif
+endfunction
+"}}}
 
 " LightLine utility functions {{{
 function! utils#LightlineReadonly()
@@ -582,6 +593,14 @@ function! utils#SetFancyUI()
             let g:lightline_buffer_separator_icon           = "╱"
         endif
     endif
+endfunction
+"}}}
+
+" HighlightWordUnderCursor {{{
+" Highlight word under cursor
+function! utils#HighlightWordUnderCursor ()
+    set highlight
+    let @/ = expand('<cword>')
 endfunction
 "}}}
 

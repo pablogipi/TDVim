@@ -1,8 +1,11 @@
 " File: python.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Python language setup for TDVim
-" Last Change: April 09, 2021 - 17:18 PM.
+" Last Change: April 18, 2021 - 19:15 PM.
 "
+
+" Enable lazyredraw to speed things
+set lazyredraw
 
 " Enable syntax highlight errors
 let python_highlight_all=1
@@ -26,6 +29,9 @@ setlocal textwidth=80
 " Set autocommand to set current tag on cursor hold
 :au! CursorHold *.py ++nested call utils#UpdateCurrentTag()
 "augroup END
+" Test highlight word under cursor...
+":au! CursorHold *.py ++nested call utils#HighlightWordUnderCursor()
+"nnoremap <leader>* :<C-u>let @/ = expand('<cword>')<cr> 
 
 
 "
