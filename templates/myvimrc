@@ -49,3 +49,6 @@ endif
 
 " Enable Project Setup Logging:
 "let g:tdvim_project_enable_logging = 0
+
+" Snippets variables:
+let g:snips_author = ''

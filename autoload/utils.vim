@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  April 18, 2021 - 19:13 PM.
+" Last change:  April 22, 2021 - 10:28 AM.
 "
 "
 
@@ -1128,8 +1128,9 @@ endfunction
 
 " TabAutocompleteWrapper {{{
 " Function to call to Autocomplete when pressing TAB
-" Or insert a TAB if ther is nothing in front of the cursor
+" Or insert a TAB if there is nothing in front of the cursor
 " From: https://stackoverflow.com/questions/2055417/mapping-tab-to-omicompletion-in-gvim 
+" TODO: see if we can integrate SnipMate here
 function! utils#TabAutocompleteWrapper( direction)
     " Make TAB working in popup menu
     if pumvisible()

@@ -117,8 +117,16 @@ Plug 'vim-scripts/autodate.vim'
 " Diffchanges
 Plug 'vim-scripts/diffchanges.vim'
 " Ultisnips
+" DEPRECATED:
 "Plug 'SirVer/ultisnips',                 { 'for': ['cpp', 'c', 'python', 'vim'] }
 "Plug 'honza/vim-snippets',               { 'for': ['cpp', 'c', 'python', 'vim'] }
+" Snipmate
+"Plug 'msanders/snipmate.vim'
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'garbas/vim-snipmate'
+Plug 'honza/vim-snippets'
+
 " TTodo
 "Plug 'tomtom/ttodo_vim'
 " Task List
@@ -948,6 +956,12 @@ let g:mucomplete#ultisnips#match_at_start = 0
 
 "}}}
 
+" SnipMate: {{{2
+let g:snips_author = $USER
+let g:snipMate={}
+let g:snipMate.snippet_version=1
+" }}}
+
 " Gutentags: {{{2
 if executable( 'gtags-cscope' )
     let g:gutentags_modules = [ 'ctags', 'gtags_cscope' ]
@@ -1088,13 +1102,14 @@ let g:startify_session_before_save = [
 " Rainbow Parentheses:
 let g:rainbow_active=1
 
-" GitGutter: {{{2
+" Gitutter: {{{2
 "let g:gitgutter_sign_added              = '¤'
-let g:gitgutter_sign_added              = '⇒'
+"let g:gitgutter_sign_added              = '⇒'
+let g:gitgutter_sign_added              = ''
 let g:gitgutter_sign_modified           = '»'
 let g:gitgutter_sign_removed            = '✗'
-let g:gitgutter_sign_removed_first_line = '‾'
-let g:gitgutter_sign_modified_removed   = '≃'
+let g:gitgutter_sign_removed_first_line = ''
+let g:gitgutter_sign_modified_removed   = ''
 " }}}
 
 " Vimade:

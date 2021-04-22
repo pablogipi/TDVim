@@ -1,11 +1,14 @@
 " File: python.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Python language setup for TDVim
-" Last Change: April 18, 2021 - 19:15 PM.
+" Last Change: April 20, 2021 - 23:53 PM.
 "
 
+" XXX: Some test settings to see if we can speed up syntax and folding
 " Enable lazyredraw to speed things
 set lazyredraw
+" https://www.chunkhang.com/blog/slow-syntax-highlighting-in-vim
+set regexpengine=1
 
 " Enable syntax highlight errors
 let python_highlight_all=1
