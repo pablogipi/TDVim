@@ -3,6 +3,7 @@ Session.vim
 *.swp
 *.swo
 *.bak
+*.old
 *~
 admin/build
 tags*
