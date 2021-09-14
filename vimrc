@@ -703,6 +703,7 @@ if has("autocmd")
     " CursorHold
     augroup tdvimCursorHold
         autocmd! CursorHold * ++nested call utils#UpdateDevIconFileType()
+        autocmd! CursorHold leaderf ++nested normal <C-I>
     augroup END
 
 else
@@ -944,6 +945,7 @@ let g:ctrlp_funky_nerdtree_include_files = 1
 let g:Lf_NormalMap = { "File":   [["u", ':LeaderfFile ..<CR>']] }
 let g:Lf_GtagsSkipUnreadable = 1
 let g:Lf_WorkingDirectoryMode = 'Ac'
+let g:Lf_WildIgnore = {'dir': ['.svn','.git','.hg'],'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]','*.dll']}
 
 " UltiSnips: {{{ 2
 let g:UltiSnipsExpandTrigger="<C-T>"
@@ -1168,6 +1170,7 @@ let g:jedi#goto_assignments_command = ""
 let g:jedi#usages_command = "[T"
 let g:jedi#popup_on_dot = 1
 let g:jedi#smart_auto_mappings = 1
+let g:jedi#goto_stubs_command = ""
 " }}}
 "
 " Flake8 {{{2

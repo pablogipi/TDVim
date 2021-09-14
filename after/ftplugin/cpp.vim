@@ -26,10 +26,12 @@ set completeopt+=preview
 setlocal iskeyword=a-z,A-Z,48-57,_
 
 " Autocommands
-"augroup tdvim_cpp
+augroup tdvim_cpp
+    " Autosave
+    autocmd CursorHold *.cpp,*.c, *.h,*.hpp,*.C update
+augroup END
 " Set autocommand to set current tag on cursor hold
-:au! CursorHold *.cpp,*.c, *.h,*.hpp,*.C ++nested call utils#UpdateCurrentTag()
-"augroup END
+:autocmd CursorHold *.cpp,*.c, *.h,*.hpp,*.C ++nested call utils#UpdateCurrentTag()
 
 " Increment default preview window height
 set previewheight=10

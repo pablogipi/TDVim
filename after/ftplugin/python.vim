@@ -1,7 +1,7 @@
 " File: python.vim
 " Author: Pablo Gimenez <pablogipi@gmail.com>
 " Description: Python language setup for TDVim
-" Last Change: April 20, 2021 - 23:53 PM.
+" Last Change: September 12, 2021 - 19:02 PM.
 "
 
 " XXX: Some test settings to see if we can speed up syntax and folding
@@ -28,13 +28,21 @@ setlocal textwidth=80
 "autocmd FileType python compiler pylint
 
 " Autocommands
-"augroup tdvim_python
+augroup tdvim_python
+    " Autosave
+    autocmd CursorHold *.py update
+    autocmd FileType python setlocal indentkeys-=<:>
+    autocmd FileType python setlocal indentkeys-=:
+    autocmd FileType python setlocal indentkeys+==else
+augroup END
 " Set autocommand to set current tag on cursor hold
-:au! CursorHold *.py ++nested call utils#UpdateCurrentTag()
-"augroup END
+:autocmd CursorHold *.py ++nested call utils#UpdateCurrentTag()
 " Test highlight word under cursor...
 ":au! CursorHold *.py ++nested call utils#HighlightWordUnderCursor()
 "nnoremap <leader>* :<C-u>let @/ = expand('<cword>')<cr> 
+
+" Identation:
+"set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
 
 
 "
