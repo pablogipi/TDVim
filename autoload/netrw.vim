@@ -530,7 +530,7 @@ call s:NetrwInit("g:netrw_tmpfile_escape",' &;')
 call s:NetrwInit("s:netrw_map_escape","<|\n\r\\\<C-V>\"")
 "if has("gui_running") && (&enc == 'utf-8' || &enc == 'utf-16' || &enc == 'ucs-4')
  "let s:treedepthstring= "│ "
-if has("gui_running") && (&enc == 'utf-8' || &enc == 'utf-16' || &enc == 'ucs-4')
+if exists('g:GuiLoaded') && (&enc == 'utf-8' || &enc == 'utf-16' || &enc == 'ucs-4')
  let s:treedepthstring= "| "
 else
  let s:treedepthstring= "| "
@@ -2838,7 +2838,7 @@ fun! s:NetrwGetFile(readcmd, tfile, method)
 "   call Decho("NetReadFixup() not called, doesn't exist  (line1=".line1." line2=".line2.")",'~'.expand("<slnum>"))
   endif
 
-  if has("gui") && has("menu") && has("gui_running") && &go =~# 'm' && g:netrw_menu
+  if has("gui") && has("menu") &&  exists('g:GuiLoaded') && &go =~# 'm' && g:netrw_menu
    " update the Buffers menu
    NetrwKeepj call s:UpdateBuffersMenu()
   endif
@@ -4446,7 +4446,8 @@ fun! s:NetrwBookmarkMenu()
 "  call Dfunc("NetrwBookmarkMenu()  histcnt=".g:netrw_dirhist_cnt." menucnt=".s:netrw_menucnt)
 
   " the following test assures that gvim is running, has menus available, and has menus enabled.
-  if has("gui") && has("menu") && has("gui_running") && &go =~# 'm' && g:netrw_menu
+  "if has("gui") && has("menu") &&  exists('g:GuiLoaded') && &go =~# 'm' && g:netrw_menu
+  if has("menu") &&  exists('g:GuiLoaded') && &go =~# 'm' && g:netrw_menu
    if exists("g:NetrwTopLvlMenu")
 "    call Decho("removing ".g:NetrwTopLvlMenu."Bookmarks menu item(s)",'~'.expand("<slnum>"))
     exe 'sil! unmenu '.g:NetrwTopLvlMenu.'Bookmarks'
@@ -8009,7 +8010,7 @@ fun! s:NetrwMenu(domenu)
    let g:NetrwMenuPriority= 80
   endif
 
-  if has("menu") && has("gui_running") && &go =~# 'm' && g:netrw_menu
+  if has("menu") &&  exists('g:GuiLoaded') && &go =~# 'm' && g:netrw_menu
 "   call Dfunc("NetrwMenu(domenu=".a:domenu.")")
 
    if !exists("s:netrw_menu_enabled") && a:domenu
@@ -8794,7 +8795,8 @@ fun! s:NetrwTgtMenu()
 "  call Dfunc("s:NetrwTgtMenu()")
 
   " the following test assures that gvim is running, has menus available, and has menus enabled.
-  if has("gui") && has("menu") && has("gui_running") && &go =~# 'm' && g:netrw_menu
+  "if has("gui") && has("menu") && has("gui_running") && &go =~# 'm' && g:netrw_menu
+  if has("menu") &&  exists('g:GuiLoaded') && &go =~# 'm' && g:netrw_menu
    if exists("g:NetrwTopLvlMenu")
 "    call Decho("removing ".g:NetrwTopLvlMenu."Bookmarks menu item(s)",'~'.expand("<slnum>"))
     exe 'sil! unmenu '.g:NetrwTopLvlMenu.'Targets'
@@ -11974,7 +11976,8 @@ endfun
 "                      Buffers.Refresh; hence, s:NetrwBMShow() utilizes a "cheat" to call that function anyway.
 fun! s:UpdateBuffersMenu()
 "  call Dfunc("s:UpdateBuffersMenu()")
-  if has("gui") && has("menu") && has("gui_running") && &go =~# 'm' && g:netrw_menu
+  "if has("gui") && has("menu") && has("gui_running") && &go =~# 'm' && g:netrw_menu
+  if has("menu") &&  exists('g:GuiLoaded') && &go =~# 'm' && g:netrw_menu
    try
     sil emenu Buffers.Refresh\ menu
    catch /^Vim\%((\a\+)\)\=:E/

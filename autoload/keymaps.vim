@@ -44,7 +44,7 @@
 " LoadKeymaps {{{
 " Load Keymaps, call all functions that laods every section keymaps
 function! keymaps#LoadKeymaps()
-    call keymaps#TerminalKeycodes()
+    "call keymaps#TerminalKeycodes()
     call keymaps#MainOperations()
     call keymaps#WindowManagement()
     call keymaps#CommandLine()
@@ -61,7 +61,7 @@ endfunction
 " Keycodes to map terminal codes to vim keycodes
 " Needed to keep compatibility with gvim keymaps
 function! keymaps#TerminalKeycodes()
-    if !has('gui_running')
+    if ! exists('g:GuiLoaded')
         "if tdvim#GetValue('g:tdvim_term_mode') == 0
             "" For GNOME terminal
             "call tdvim#MapFastKeycode('<C-F2>', "^[O1;5Q")

@@ -152,7 +152,7 @@ function! utils#SourceUserSettings()
             " Do nothing
         endif
 
-        if has ('gui_running')
+        if  exists('g:GuiLoaded')
             if filereadable($HOME . "/mygvimrc")
                 source $HOME/mygvimrc
             elseif filereadable($HOME . "/.mygvimrc")
@@ -177,7 +177,7 @@ function! utils#SourceUserSettings()
             endif
         endif
 
-        if has('gui_running')
+        if  exists('g:GuiLoaded')
             if has("win32")
                 if filereadable($HOME . "/mygvimrc")
                     source $HOME/mygvimrc
@@ -447,7 +447,7 @@ function! utils#LightlineLineInfo() abort
     if &filetype == "help" || &filetype == "ctrlp" || &filetype == "tagbar" || &filetype == "nerdtree"
         return ''
     endif
-    if has ('gui_running')
+    if  exists('g:GuiLoaded')
         return  '▤ %3l:%-2v'
     else
         return  '%3l:%-2v'
@@ -555,7 +555,7 @@ endfunction
 " Set fancy unicode symbols for UI. Mostly lightline.
 function! utils#SetFancyUI()
 
-    if has("gui_running")
+    if  exists('g:GuiLoaded')
         if exists('g:loaded_lightline') && exists('g:lightline')
             if has_key( g:lightline, 'component' )
                 let g:lightline.component.lineinfo = '▤ %3l:%-2v'
