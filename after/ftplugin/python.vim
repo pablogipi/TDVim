@@ -69,3 +69,8 @@ map <buffer> ]] <Plug>(PythonsenseStartOfNextPythonFunction)
 map <buffer> ][ <Plug>(PythonsenseEndOfPythonFunction)
 map <buffer> [] <Plug>(PythonsenseStartOfPythonFunction)
 map <buffer> [[ <Plug>(PythonsenseEndOfPreviousPythonFunction)
+
+" 
+" Alignements
+let g:easy_align_delimiters['i'] = { 'pattern': ' import ',  'left_margin': 0, 'right_margin': 0, 'stick_to_left': 0 }
+let g:easy_align_delimiters['a'] = { 'pattern': ' as ',  'left_margin': 0, 'right_margin': 0, 'stick_to_left': 0 }

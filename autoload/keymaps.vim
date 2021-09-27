@@ -690,10 +690,13 @@ function! keymaps#Edit()
     "" Align to left/right/center in visual mode
     vnoremap <unique> <silent> <Plug>TdvimAlignMode :LiveEasyAlign<CR>
     nnoremap <unique> <silent> <Plug>TdvimAlignMode :LiveEasyAlign<CR>
+    nnoremap <unique> <silent> <Plug>TdvimAlign :EasyAlign<CR>
 
     vmap <silent> <Enter>   <Plug>TdvimAlignMode
     nmap <silent> <leader>a <Plug>TdvimAlignMode
     vmap <silent> <leader>a <Plug>TdvimAlignMode
+    nmap <silent> ga <Plug>TdvimAlign
+    vmap <silent> ga <Plug>TdvimAlign
 
     " }}}
 
