@@ -1135,7 +1135,7 @@ let g:easy_align_delimiters = {
 \  '}': { 'pattern': '}',  'left_margin': 1, 'right_margin': 0, 'stick_to_left': 0 }
 \ }
 "let g:easy_align_ignore_groups = ['String']
-let g:easy_align_ignore_groups = []
+let g:easy_align_ignore_groups = ['Comment']
 "}}}
 
 " Indent Line: {{{2
