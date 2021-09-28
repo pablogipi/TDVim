@@ -65,7 +65,8 @@ Plug 'Yggdroot/LeaderF'
 "
 " NERD Tree will be loaded on the first invocation of NERDTreeToggle command
 "Plug 'scrooloose/nerdtree',              { 'on': ['NERDTreeToggle','NERDTreeFocus','NERDTreeOpen','NERDTreeFind'] }
-Plug 'scrooloose/nerdtree'
+"Plug 'scrooloose/nerdtree'
+Plug 'preservim/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
 
@@ -76,7 +77,8 @@ Plug 'majutsushi/tagbar',                { 'on':  ['TagbarToggle', 'TagbarCurren
 " Mini Buf Explorer
 "Plug 'fholgado/minibufexpl.vim'
 " Tabline buffers
-Plug 'taohexxx/lightline-buffer'
+"Plug 'taohexxx/lightline-buffer'
+Plug 'mengelbrecht/lightline-bufferline'
 " Gundo
 Plug 'sjl/gundo.vim',                    { 'on': 'GundoToggle' }
 " Maximizer
@@ -84,14 +86,20 @@ Plug 'szw/vim-maximizer',                { 'on': 'MaximizerToggle' }
 " Startify
 " Only use startify in gvim sessions
 "Plug 'mhinz/vim-startify'
- if exists('g:GuiLoaded')
+"
+" FIXME: Apparently NeoVim doesn't set this variable until the Gui is loaded after
+" sourcing this script, which is too late.
+" At the moment we will just force it
+echomsg "GUI Loaded " . exists("g:GuiLoaded")
+let g:GuiLoaded=1
+if exists('g:GuiLoaded')
      Plug 'mhinz/vim-startify'
- endif
+endif
 
 " Devicons
- if  exists('g:GuiLoaded')
+if  exists('g:GuiLoaded')
      Plug 'ryanoasis/vim-devicons'
- endif
+endif
 
 " Vimade
 "Plug 'TaDaa/vimade'
@@ -472,7 +480,7 @@ set splitbelow
 set laststatus=2
 " Defaul status line
 set statusline=%-f%m%r%h%w%q\ %y\ %=[POS=%l,%v][%p%%]
-" Disable show mode, not needed when using lighline or any other status line
+" Disable show mode, not needed when using lightline or any other status line
 " plugin
 set noshowmode
 
@@ -508,6 +516,11 @@ endif
 let g:netrw_banner        = 0
 let g:netrw_sort_sequence = '[\/]$,*'
 "let g:netrw_browse_split  = 4
+" }}}
+
+" window title {{{2
+set title
+let &titlestring='TDVim'
 " }}}
 
 """""""""""""""""""""""""""
@@ -648,6 +661,14 @@ if has("autocmd")
     augroup tdvimBufEnter
         " Set local path to path of current file
         autocmd BufEnter * call utils#SetLocalPath()
+        " Set window title
+        if exists('v:this_session') && len('v:this_session')
+            "autocmd BufEnter * let &titlestring = "TDVim " . $TDVIMVERSION . " - " . fnamemodify(v:this_session, ':t') . " - " . expand("%:p")
+            autocmd BufEnter * let &titlestring = expand("%:t") . " (" . expand("%:p:h") . ")" . "  |> " . fnamemodify(v:this_session, ':t') . " <|   " . "TDVim " . $TDVIMVERSION 
+        else
+            "autocmd BufEnter * let &titlestring = "TDVim " . $TDVIMVERSION . " - " . expand("%:p")
+            autocmd BufEnter * let &titlestring = expand("%:t") . " (" . expand("%:p:h") . ")" . " |   TDVim " . $TDVIMVERSION 
+        endif
         " Set preview window syntax
         "autocmd BufEnter *
             "\if &previewwindow |
@@ -796,16 +817,47 @@ let g:session_autoload        = 0 " Disable load session on startup
 
 " Lightline: {{{2
 " use lightline-buffer in lightline
+"let g:lightline = {
+        "\ 'tabline': {
+                "\ 'left': [ [ 'sessioninfo' ], [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+                "\ 'right': [ [ 'close' ], ],
+                "\ },
+        "\ 'component_expand': {
+                "\ 'buffercurrent': 'lightline#buffer#buffercurrent2',
+                "\ },
+        "\ 'component_type': {
+                "\ 'buffercurrent': 'tabsel',
+                "\ },
+        "\ 'component_function': {
+                "\ 'sessioninfo': 'utils#SessionName',
+                "\ 'bufferbefore': 'lightline#buffer#bufferbefore',
+                "\ 'bufferafter': 'lightline#buffer#bufferafter',
+                "\ 'bufferinfo': 'lightline#buffer#bufferinfo',
+                "\ 'filetypeicon': 'utils#LightlineDeviconsFiletype',
+                "\ 'fileformat': 'utils#LightlineDeviconsFileformat',
+                "\ 'modifiedicon': 'utils#LightlineModified',
+                "\ 'readonly': 'utils#LightlineReadonly',
+                "\ 'extrainfo': 'utils#LightlineExtraInfo',
+                "\ 'tagsgen': 'utils#LightlineGutentags',
+                "\ },
+        "\ 'component': {
+                "\ 'filename': '%{utils#LightlineFilename()}',
+                "\ 'mode': '%{utils#LightlineMode()}',
+                "\ 'inactivemode': '%{utils#LightlineInactiveMode()}',
+        "\       },
+        "\ }
+
+                "\ 'lineinfo': '%{utils#LightlineLineInfo()}',
 let g:lightline = {
         \ 'tabline': {
-                \ 'left': [ [ 'sessioninfo' ], [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+                \ 'left': [ [ 'sessioninfo' ], [ 'buffers' ] ],
                 \ 'right': [ [ 'close' ], ],
                 \ },
         \ 'component_expand': {
-                \ 'buffercurrent': 'lightline#buffer#buffercurrent2',
+                \ 'buffers': 'lightline#bufferline#buffers',
                 \ },
         \ 'component_type': {
-                \ 'buffercurrent': 'tabsel',
+                \ 'buffers': 'tabsel',
                 \ },
         \ 'component_function': {
                 \ 'sessioninfo': 'utils#SessionName',
@@ -825,8 +877,6 @@ let g:lightline = {
                 \ 'inactivemode': '%{utils#LightlineInactiveMode()}',
         \       },
         \ }
-
-                "\ 'lineinfo': '%{utils#LightlineLineInfo()}',
 
 if  exists('g:GuiLoaded')
     let g:lightline.active = {
