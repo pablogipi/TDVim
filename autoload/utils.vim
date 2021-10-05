@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  April 22, 2021 - 10:28 AM.
+" Last change:  October 05, 2021 - 16:18 PM.
 "
 "
 
@@ -205,33 +205,37 @@ function! utils#updateStatusLineColors()
     "    echom g:colors_name
     "    return
     "endif
-    try
-        " TODO: get current colorscheme, look for it in the colors in
-        " lightline, if it exists, set it
-        "if g:colors_name =~# 'wombat\|solarized\|landscape\|jellybeans\|seoul256\|Tomorrow'
-        if g:colors_name =~# 'solarized\|seoul256\|one\|pencil\|gruvbox\|rigel\|landscape\|onedark'
-            "let g:lightline = { 'colorscheme': substitute(substitute(g:colors_name, '-', '_', 'g'), '256.*', '', '') }
-            "let g:lightline.colorscheme = substitute(substitute(g:colors_name, '-', '_', 'g'), '256.*', '', '')
-            if g:colors_name =~# 'pencil'
-                if &background == "dark"
-                    let g:lightline.colorscheme = "pencil_dark"
-                else
-                    let g:lightline.colorscheme = "pencil_light"
-                endif
-            else
-                let g:lightline.colorscheme = g:colors_name
-            endif
+    " Default color
+    let g:lightline.colorscheme = "OldHope"
+    call lightline#init()
+    call lightline#colorscheme()
+    "try
+        "" TODO: get current colorscheme, look for it in the colors in
+        "" lightline, if it exists, set it
+        ""if g:colors_name =~# 'wombat\|solarized\|landscape\|jellybeans\|seoul256\|Tomorrow'
+        "if g:colors_name =~# 'solarized\|seoul256\|one\|pencil\|gruvbox\|rigel\|landscape\|onedark'
+            ""let g:lightline = { 'colorscheme': substitute(substitute(g:colors_name, '-', '_', 'g'), '256.*', '', '') }
+            ""let g:lightline.colorscheme = substitute(substitute(g:colors_name, '-', '_', 'g'), '256.*', '', '')
+            "if g:colors_name =~# 'pencil'
+                "if &background == "dark"
+                    "let g:lightline.colorscheme = "pencil_dark"
+                "else
+                    "let g:lightline.colorscheme = "pencil_light"
+                "endif
+            "else
+                "let g:lightline.colorscheme = g:colors_name
+            "endif
 
-            if exists('g:loaded_lightline')
-                call lightline#init()
-                call lightline#colorscheme()
-                call lightline#update()
-            endif
-        else
-            let g:lightline.colorscheme = 'default'
-        endif
-    catch
-    endtry
+            "if exists('g:loaded_lightline')
+                "call lightline#init()
+                "call lightline#colorscheme()
+                "call lightline#update()
+            "endif
+        "else
+            "let g:lightline.colorscheme = 'default'
+        "endif
+    "catch
+    "endtry
 endfunction
 " }}}
 
@@ -519,7 +523,16 @@ function! utils#LightlineExtraInfo() abort
     "endif
     " Using w:curenttag set by UpdateCurrentTag using CursorHold autocmd. This fixes the lagging due to calling tagbar#currenttag in every redraw
     if exists("w:currenttag")
-        return w:currenttag
+        let l:tag = w:currenttag
+        if len(w:currenttag) > winwidth(0)
+            " Give 65 characters margin to the left in order to [reserver the
+            " left part of the status line
+            let l:tag = l:tag[0:winwidth(0) - 65 ]
+            let l:tag .= " ..."
+        endif
+        "return w:currenttag
+        "return string(winwidth(0))
+        return l:tag
     endif
 
     return ""

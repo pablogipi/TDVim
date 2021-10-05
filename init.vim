@@ -911,6 +911,8 @@ let g:lightline_buffer_minflen    = 16
 let g:lightline_buffer_minfextlen = 3
 let g:lightline_buffer_reservelen = 20
 let g:lightline#bufferline#enable_devicons = 1
+" Default color
+let g:lightline.colorscheme = "PaperColor"
 
 "}}}
 
