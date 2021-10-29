@@ -39,7 +39,7 @@ setlocal expandtab
 augroup tdvim_python
     " Autosave
     autocmd CursorHold *.py update
-    autocmd CursorHold *.py :call UpdateWithLastMod()
+    "autocmd CursorHold *.py :call UpdateWithLastMod()
 	au BufWritePre *.py :call UpdateWithLastMod()
     autocmd FileType python setlocal indentkeys-=<:>
     autocmd FileType python setlocal indentkeys-=:

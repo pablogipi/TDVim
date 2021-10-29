@@ -135,8 +135,6 @@ Plug 'honza/vim-snippets'
 Plug 'JessicaKMcIntosh/TagmaTasks', { 'for': ['cpp', 'c', 'python', 'vim'] }
 " Speed Folds
 Plug 'Konfekt/FastFold',            { 'for': ['cpp', 'c', 'vim', 'python'] }
-" Last Change
-Plug 'vim-scripts/lastchange.vim',  { 'for': ['cpp', 'c', 'vim', 'python'] }
 
 " Syntax:
 Plug 'sheerun/vim-polyglot'
@@ -1191,6 +1189,9 @@ let g:grepper.quickfix   = 0
 
 " Simply Fold:
 let g:SimpylFold_docstring_preview = 1
+
+" Last Change:
+let g:timeStampLeader = 'Last Modified: '
 
 " Jedi {{{2
 let g:jedi#completions_command = ""
