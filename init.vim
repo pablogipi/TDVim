@@ -140,9 +140,16 @@ Plug 'honza/vim-snippets'
 " Task List
 "Plug 'vim-scripts/TaskList.vim',         { 'for': ['cpp', 'c', 'python', 'vim'] }
 " Tagma Tasks
-Plug 'JessicaKMcIntosh/TagmaTasks',         { 'for': ['cpp', 'c', 'python', 'vim'] }
+Plug 'JessicaKMcIntosh/TagmaTasks', { 'for': ['cpp', 'c', 'python', 'vim'] }
 " Speed Folds
-Plug 'Konfekt/FastFold',     { 'for': ['cpp', 'c', 'vim', 'python'] }
+Plug 'Konfekt/FastFold',            { 'for': ['cpp', 'c', 'vim', 'python'] }
+
+" Syntax:
+Plug 'sheerun/vim-polyglot'
+
+" File Formats:
+Plug 'chrisbra/csv.vim'
+
 
 " C/C++ {{{3
 " Cpp Enhanced Syntax
@@ -170,7 +177,9 @@ endif
 " SimplyFold
 Plug 'tmhedberg/SimpylFold', { 'for': ['python'] }
 " Indent Python
-Plug 'vim-scripts/indentpython.vim', { 'for': ['python'] }
+"Plug 'vim-scripts/indentpython.vim', { 'for': ['python'] }
+Plug 'Vimjas/vim-python-pep8-indent', { 'for': ['python'] }
+
 " Jedi
  if  exists('g:GuiLoaded')
      Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
@@ -183,6 +192,11 @@ Plug 'vim-scripts/indentpython.vim', { 'for': ['python'] }
 " Pymotions
 Plug 'jeetsukumaran/vim-pythonsense', { 'for': ['python'] }
 
+" }}}
+
+" USD {{{3
+" USD complete
+Plug 'ColinKennedy/vim-usd-complete'
 " }}}
 
 " }}}
@@ -199,9 +213,6 @@ Plug 'junegunn/vim-easy-align'
 Plug 'tpope/vim-surround'
 " Incsearch
 Plug 'haya14busa/incsearch.vim'
-" FIXME: anzu keymap to / is causing a crash in gvim. Disable it at the moment
-" Anzu
-" Plug 'osyo-manga/vim-anzu'
 " Ack
 "Plug 'mileszs/ack.vim',                  { 'on': 'Ack' }
 " DEPRECATED:
@@ -214,26 +225,17 @@ Plug 'luochen1990/rainbow'
 " Show Indent Lines
 Plug 'Yggdroot/indentLine'
 
+
 " }}}
 
 " Colors {{{2
 "
 Plug 'altercation/vim-colors-solarized'
 Plug 'junegunn/seoul256.vim'
-" Only load pencil in terminal mode if it supports 256 colors, otherwise it
-" will report errors
-if !exists('g:GuiLoaded') && &t_Co < 256
-    Plug 'reedes/vim-colors-pencil'
-    Plug 'yami-beta/lightline-pencil.vim'
-endif
-Plug 'joshdick/onedark.vim'
-Plug 'NovaDev94/lightline-onedark'
 Plug 'Rigellute/rigel'
-Plug 'itchyny/landscape.vim'
 Plug 'morhetz/gruvbox'
 Plug 'shinchu/lightline-gruvbox.vim'
 Plug 'crusoexia/vim-monokai'
-Plug 'sonph/onehalf', { 'rtp': 'vim' }
 Plug 'kyoz/purify', { 'rtp': 'vim' }
 
 " }}}
@@ -396,9 +398,14 @@ set smartcase
 set gdefault
 
 " Better grep
+"if executable("rg")
+    "set grepprg=rg\ --vimgrep\ --no-heading\ -g\ '!*~'\ -g\ '!*.swp'\ -g\ '!*.diff'\ -g\ '!tags'\ -g\ '!*.tags'
+    "set grepformat=%f:%l:%c:%m,%f:%l:%m
+"endif
 if executable("ag")
     "set grepprg=ag\ --nogroup\ --nocolor\ --vimgrep
     set grepprg=ag\ --vimgrep\ --ignore\ *~\ --ignore\ *.swp\ --ignore\ *.diff\ --ignore\ tags\ --ignore\ *.tags
+    set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
 
 " }}}
@@ -710,6 +717,8 @@ if has("autocmd")
 		    \		setlocal omnifunc=syntaxcomplete#Complete |
 		    \	endif
         autocmd FileType nerdtree call utils#SetupNERDTreeBuffer()
+        autocmd! BufRead,BufNewFile *.usd set filetype=usd
+        autocmd! BufRead,BufNewFile *.usda set filetype=usda
     augroup END
     " SessionLoadPost
     "augroup tdvimSessionLoadPost
@@ -799,15 +808,20 @@ let g:NERDMenuMode = 0 " Disable menu
 
 " Ack: {{{2
 if executable('ag')
-  "let g:ackprg = 'ag --vimgrep --ignore={"*~", "*.swp", "*.diff"}'
-  "let g:ackprg = 'ag --vimgrep --ignore *~ --ignore *.swp --ignore *.diff'
   "echomsg "Set ag as executable"
   let g:ackprg = 'ag --vimgrep --ignore *~ --ignore *.swp --ignore *.diff --ignore tags  --ignore *.tags '
 endif
+"if executable("rg")
+    ""let g:ackprg="rg\ --vimgrep\ --no-heading\ -g\ '!*~'\ -g\ '!*.swp'\ -g\ '!*.diff'\ -g\ '!tags'\ -g\ '!*.tags' "
+    "let g:ackprg = 'rg --vimgrep --type-not sql --smart-case'
+"elseif executable("ag")
+    "let g:ackprg="ag\ --vimgrep\ --ignore\ *~\ --ignore\ *.swp\ --ignore\ *.diff\ --ignore\ tags\ --ignore\ *.tags "
+"endif
 let g:ackhighlight = 1
 let g:ack_autofold_results = 1
 "let g:ack_use_dispatch = 1
-let g:ackpreview = 1
+"let g:ackpreview = 1
+let g:ack_use_cword_for_empty_search = 1
 " }}}
 
 " Session:
@@ -998,6 +1012,10 @@ let g:Lf_NormalMap = { "File":   [["u", ':LeaderfFile ..<CR>']] }
 let g:Lf_GtagsSkipUnreadable = 1
 let g:Lf_WorkingDirectoryMode = 'Ac'
 let g:Lf_WildIgnore = {'dir': ['.svn','.git','.hg'],'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]','*.dll']}
+let g:Lf_StlSeparator = { 'left': '', 'right': '' }
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewInPopup = 1
+let g:Lf_CommandMap = {'<C-k>': ['<C-up>'], '<C-j>': ['<C-down>']}
 
 " UltiSnips: {{{ 2
 let g:UltiSnipsExpandTrigger="<C-T>"
@@ -1214,6 +1232,9 @@ let g:grepper.quickfix   = 0
 
 " Simply Fold:
 let g:SimpylFold_docstring_preview = 1
+
+" Last Change:
+let g:timeStampLeader = 'Last Modified: '
 
 " Jedi {{{2
 let g:jedi#completions_command = ""

@@ -1019,9 +1019,17 @@ function! keymaps#TextNavigation()
     "nnoremap <unique>   <Plug>TdvimGrep :Grepper -open -query <C-R><C-W><CR>
     "inoremap <unique>   <Plug>TdvimGrep <Esc>:Grepper -cword -open <CR>
     "vnoremap <unique>   <Plug>TdvimGrep :Grepper -cword -open <CR>
-    nnoremap <unique>   <Plug>TdvimGrep :lgrep <C-R><C-W><CR>:lopen<CR>
-    inoremap <unique>   <Plug>TdvimGrep <Esc>:lgrep -cword <CR>:lopen<CR>
-    vnoremap <unique>   <Plug>TdvimGrep :lgrep -cword <CR>:lopen<CR>
+
+    "nnoremap <unique>   <Plug>TdvimGrep :lgrep <C-R><C-W><CR>:lopen<CR>
+    "inoremap <unique>   <Plug>TdvimGrep <Esc>:lgrep -cword <CR>:lopen<CR>
+    "vnoremap <unique>   <Plug>TdvimGrep :lgrep -cword <CR>:lopen<CR>
+    nnoremap <unique>   <Plug>TdvimGrep :lgrep! <C-R><C-W>
+    inoremap <unique>   <Plug>TdvimGrep <Esc>:lgrep! -cword 
+    vnoremap <unique>   <Plug>TdvimGrep :lgrep! -cword 
+
+    "nnoremap <unique>   <Plug>TdvimGrep :Ack! <C-R><C-W> 
+    "inoremap <unique>   <Plug>TdvimGrep <Esc>:Ack! <C-R><C-W> 
+    "vnoremap <unique>   <Plug>TdvimGrep :Ack! <C-R><C-W> 
 
     nmap <F4>      <Plug>TdvimGrep
     nmap <leader>g <Plug>TdvimGrep

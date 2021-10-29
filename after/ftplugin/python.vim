@@ -21,6 +21,14 @@ set spell
 setlocal formatoptions=crq
 setlocal textwidth=80
 
+" Force managing TABs correctly in Python
+setlocal tabstop=4
+setlocal softtabstop=4
+setlocal shiftwidth=4
+setlocal textwidth=80
+setlocal smarttab
+setlocal expandtab
+
 " iskeyword for Python
 "setlocal iskeyword+=.,_
 
@@ -31,6 +39,8 @@ setlocal textwidth=80
 augroup tdvim_python
     " Autosave
     autocmd CursorHold *.py update
+    autocmd CursorHold *.py :call UpdateWithLastMod()
+	au BufWritePre *.py :call UpdateWithLastMod()
     autocmd FileType python setlocal indentkeys-=<:>
     autocmd FileType python setlocal indentkeys-=:
     autocmd FileType python setlocal indentkeys+==else

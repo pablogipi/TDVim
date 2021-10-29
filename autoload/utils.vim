@@ -2,7 +2,7 @@
 " Vim setup utilities file
 "
 " Mantainer:    Pablo Gimenez <pablogipi@gmail.com>
-" Last change:  October 05, 2021 - 16:18 PM.
+" Last change:  October 06, 2021 - 01:37 AM.
 "
 "
 
@@ -512,22 +512,13 @@ function! utils#LightlineExtraInfo() abort
     endif
 
     " Programing 
-    " FIXME: this can cause slowness since tagbar#currenttag() is a slow
-    " function and calling it all the time when moving quickly in every redraw
-    " is expensive, try to find how to optimize this.
-    " Delay lightline redraw? Delay calling to this function?
-    "if exists("*tagbar#currenttag")
-        "if &filetype == "c" || &filetype == "cpp" || &filetype == "vim"  || &filetype == "python"
-            "return tagbar#currenttag("→%s","", "fs")
-        "endif
-    "endif
     " Using w:curenttag set by UpdateCurrentTag using CursorHold autocmd. This fixes the lagging due to calling tagbar#currenttag in every redraw
     if exists("w:currenttag")
         let l:tag = w:currenttag
         if len(w:currenttag) > winwidth(0)
-            " Give 65 characters margin to the left in order to [reserver the
+            " Give 75 characters margin to the left in order to [reserver the
             " left part of the status line
-            let l:tag = l:tag[0:winwidth(0) - 65 ]
+            let l:tag = l:tag[0:winwidth(0) - 75 ]
             let l:tag .= " ..."
         endif
         "return w:currenttag

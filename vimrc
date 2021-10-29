@@ -132,9 +132,19 @@ Plug 'honza/vim-snippets'
 " Task List
 "Plug 'vim-scripts/TaskList.vim',         { 'for': ['cpp', 'c', 'python', 'vim'] }
 " Tagma Tasks
-Plug 'JessicaKMcIntosh/TagmaTasks',         { 'for': ['cpp', 'c', 'python', 'vim'] }
+Plug 'JessicaKMcIntosh/TagmaTasks', { 'for': ['cpp', 'c', 'python', 'vim'] }
 " Speed Folds
-Plug 'Konfekt/FastFold',     { 'for': ['cpp', 'c', 'vim', 'python'] }
+Plug 'Konfekt/FastFold',            { 'for': ['cpp', 'c', 'vim', 'python'] }
+" Last Change
+Plug 'vim-scripts/lastchange.vim',  { 'for': ['cpp', 'c', 'vim', 'python'] }
+
+" Syntax:
+Plug 'sheerun/vim-polyglot'
+
+" File Formats:
+Plug 'chrisbra/csv.vim'
+
+
 
 " C/C++ {{{3
 " Cpp Enhanced Syntax
@@ -177,6 +187,10 @@ Plug 'jeetsukumaran/vim-pythonsense', { 'for': ['python'] }
 
 " }}}
 
+" USD {{{3
+" USD complete
+Plug 'ColinKennedy/vim-usd-complete'
+" }}}
 " }}}
 
 " Editing {{{2
@@ -689,6 +703,8 @@ if has("autocmd")
 		    \		setlocal omnifunc=syntaxcomplete#Complete |
 		    \	endif
         autocmd FileType nerdtree call utils#SetupNERDTreeBuffer()
+        autocmd! BufRead,BufNewFile *.usd set filetype=usd
+        autocmd! BufRead,BufNewFile *.usda set filetype=usda
     augroup END
     " SessionLoadPost
     "augroup tdvimSessionLoadPost
@@ -948,6 +964,15 @@ let g:Lf_NormalMap = { "File":   [["u", ':LeaderfFile ..<CR>']] }
 let g:Lf_GtagsSkipUnreadable = 1
 let g:Lf_WorkingDirectoryMode = 'Ac'
 let g:Lf_WildIgnore = {'dir': ['.svn','.git','.hg'],'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]','*.dll']}
+let g:Lf_StlSeparator = { 'left': '', 'right': '' }
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewInPopup = 1
+let g:Lf_NormalMap = {
+            \ "_":      [["<C-j>", "j"],
+            \            ["<C-k>", "k"],
+            \            ["<C-up>", "j"],
+            \            ["<C-down>", "k"]
+            \           ]}
 
 " UltiSnips: {{{ 2
 let g:UltiSnipsExpandTrigger="<C-T>"
