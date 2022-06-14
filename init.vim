@@ -48,15 +48,6 @@ Plug 'rkitover/vimpager'
 " }}}
 
 " Fuzzy Search Pluging {{{2
-" CtrlP
-"ctrlpvim/ctrlp.vim
-"Plug 'ctrlpvim/ctrlp.vim'
-"Plug 'ctrlpvim/ctrlp.vim',           { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
-"Plug 'fisadev/vim-ctrlp-cmdpalette'
-"Plug 'fisadev/vim-ctrlp-cmdpalette', { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPBufTag'] }
-"Plug 'd11wtq/ctrlp_bdelete.vim'
-" FzF
-"Plug 'junegunn/fzf.vim'
 " LeaderF
 Plug 'Yggdroot/LeaderF'
 "}}}
@@ -64,10 +55,11 @@ Plug 'Yggdroot/LeaderF'
 " UI {{{2
 "
 " NERD Tree will be loaded on the first invocation of NERDTreeToggle command
-"Plug 'scrooloose/nerdtree',              { 'on': ['NERDTreeToggle','NERDTreeFocus','NERDTreeOpen','NERDTreeFind'] }
-"Plug 'scrooloose/nerdtree'
-Plug 'preservim/nerdtree'
+Plug 'scrooloose/nerdtree'
+"Plug 'preservim/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'PhilRunninger/nerdtree-visual-selection'
+"Plug 'scrooloose/nerdtree-project-plugin'
 
 
 " Lightline
@@ -77,8 +69,8 @@ Plug 'majutsushi/tagbar',                { 'on':  ['TagbarToggle', 'TagbarCurren
 " Mini Buf Explorer
 "Plug 'fholgado/minibufexpl.vim'
 " Tabline buffers
-"Plug 'taohexxx/lightline-buffer'
 Plug 'mengelbrecht/lightline-bufferline'
+
 " Gundo
 Plug 'sjl/gundo.vim',                    { 'on': 'GundoToggle' }
 " Maximizer
@@ -90,7 +82,7 @@ Plug 'szw/vim-maximizer',                { 'on': 'MaximizerToggle' }
 " FIXME: Apparently NeoVim doesn't set this variable until the Gui is loaded after
 " sourcing this script, which is too late.
 " At the moment we will just force it
-echomsg "GUI Loaded " . exists("g:GuiLoaded")
+"echomsg "GUI Loaded " . exists("g:GuiLoaded")
 let g:GuiLoaded=1
 if exists('g:GuiLoaded')
      Plug 'mhinz/vim-startify'
@@ -149,6 +141,9 @@ Plug 'sheerun/vim-polyglot'
 
 " File Formats:
 Plug 'chrisbra/csv.vim'
+
+" Conflicts marker
+Plug 'rhysd/conflict-marker.vim'
 
 
 " C/C++ {{{3
@@ -577,8 +572,6 @@ endif
 " Keyboard mappings {{{
 " Load keymaps mapings for TDVim
 " Leader key
-"let mapleader = ","
-"let mapleader = "`"
 let mapleader = "\<Space>"
 let maplocalleader = ","
 " This is done at VimEnter event.
@@ -1266,6 +1259,22 @@ let g:pymode_rope_goto_definition_bind = '<]t>'
 let g:nuake_position = 'top'
 let g:nuake_size = 0.4
 " }}}
+
+" Conflicts Marker {{{2
+" disable the default highlight group
+let g:conflict_marker_highlight_group = ''
+
+" Include text after begin and end markers
+let g:conflict_marker_begin = '^<<<<<<< .*$'
+let g:conflict_marker_end   = '^>>>>>>> .*$'
+
+highlight ConflictMarkerBegin guibg=#2f7366
+highlight ConflictMarkerOurs guibg=#2e5049
+highlight ConflictMarkerTheirs guibg=#344f69
+highlight ConflictMarkerEnd guibg=#2f628e
+highlight ConflictMarkerCommonAncestorsHunk guibg=#754a81
+" }}}
+
 
 " }}}
 

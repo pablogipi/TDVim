@@ -28,6 +28,9 @@ function! UpdateWithLastMod()
 	if exists('b:nomod') && b:nomod
 		return
 	end
+	"if !&modified
+		"return
+	"end
 	let pos = line('.').' | normal! '.virtcol('.').'|'
 	0
 	if search(s:timeStampLeader) <= 20 && &modifiable

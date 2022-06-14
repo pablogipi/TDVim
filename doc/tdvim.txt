@@ -22,7 +22,7 @@ Files                                  *tdvim-files*
 
 - Open File:                      <Ctrl-O>
 - Open File in new tab:           <Ctrl-Alt-O>
-- Open files using Fuzzy Finder:  <F3>
+- Open files using Fuzzy Finder:  <F3>, <Ctrl-P>
 - Open Recent Files Fuzzy Finder: <Ctrl-Shift-F3>
 - New File:                       <Ctrl-N>
 - New File in tab:                <Ctrl-Alt-N>
@@ -114,7 +114,7 @@ Commands                                 *tdvim-commands*
 - Command Line:           <F2>
 - Command History:        <Ctrl-F2>
 - Visual Block Selection: <Shift-F2>
-- Main LeaderF Commands:  <Ctrl-Shift-F2>
+- Main LeaderF Commands:  <Ctrl-Shift-F2>, <Ctrl-Shift-P>
 
 ==================================================
 Development                     *tdvim-development*

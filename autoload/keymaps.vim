@@ -190,7 +190,7 @@ function! keymaps#MainOperations ()
 
     " }}}
 
-    " Fuzzy Finder Open Files -> S-F3 {{{2
+    " Fuzzy Finder Open Files -> S-F3 C-P {{{2
     "nnoremap <unique> <silent> <Plug>TdvimFinder :CtrlP<CR>
     "inoremap <unique> <silent> <Plug>TdvimFinder :CtrlP<CR>i
     "vnoremap <unique> <silent> <Plug>TdvimFinder :CtrlP<CR>v
@@ -204,6 +204,9 @@ function! keymaps#MainOperations ()
     nmap     <S-F3>   <Plug>TdvimFinder
     imap     <S-F3>   <Plug>TdvimFinder
     vmap     <silent> <S-F3>   <Plug>TdvimFinder
+    nmap     <C-P>   <Plug>TdvimFinder
+    imap     <C-P>   <Plug>TdvimFinder
+    vmap     <silent> <C-P>   <Plug>TdvimFinder
 
     " }}}
 
@@ -1023,9 +1026,9 @@ function! keymaps#TextNavigation()
     "nnoremap <unique>   <Plug>TdvimGrep :lgrep <C-R><C-W><CR>:lopen<CR>
     "inoremap <unique>   <Plug>TdvimGrep <Esc>:lgrep -cword <CR>:lopen<CR>
     "vnoremap <unique>   <Plug>TdvimGrep :lgrep -cword <CR>:lopen<CR>
-    nnoremap <unique>   <Plug>TdvimGrep :lgrep! <C-R><C-W>
-    inoremap <unique>   <Plug>TdvimGrep <Esc>:lgrep! -cword 
-    vnoremap <unique>   <Plug>TdvimGrep :lgrep! -cword 
+    nnoremap <unique>   <Plug>TdvimGrep :silent lgrep <C-R><C-W><CR>:lopen<CR>
+    inoremap <unique>   <Plug>TdvimGrep <Esc>:silent lgrep -cword <CR>:lopen<CR>
+    vnoremap <unique>   <Plug>TdvimGrep :silent lgrep -cword <CR>:lopen<CR>
 
     "nnoremap <unique>   <Plug>TdvimGrep :Ack! <C-R><C-W> 
     "inoremap <unique>   <Plug>TdvimGrep <Esc>:Ack! <C-R><C-W> 
@@ -1544,6 +1547,12 @@ function! keymaps#Help()
     nmap      <C-S-F2>   :LeaderfSelf<CR>
     imap      <C-S-F2>   <Esc>:LeaderfSelf<CR>
     vmap      <C-S-F2>   :LeaderfSelf<CR>
+    " }}}
+
+    " Command Palette C-S-P {{{2
+    nmap      <C-S-P>   :LeaderfCommand<CR>
+    imap      <C-S-P>   <Esc>:LeaderfCommand<CR>
+    vmap      <C-S-P>   :LeaderfCommand<CR>
     " }}}
 
     " Open Shortcuts reference - C-F1 {{{2

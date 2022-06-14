@@ -31,8 +31,7 @@ augroup tdvim_vim
     autocmd BufWritePre *.vim normal m`:%s/\s\+$//e ``
     " Autosave
     autocmd CursorHold *.vim update
-    autocmd CursorHold *.vim :call UpdateWithLastMod()
-	au BufWritePre *.vim :call UpdateWithLastMod()
+    "autocmd CursorHold *.vim :call UpdateWithLastMod()
 augroup END
 " Set autocommand to set current tag on cursor hold
 :autocmd CursorHold *.vim ++nested call utils#UpdateCurrentTag()
