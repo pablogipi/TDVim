@@ -1,0 +1,82 @@
+"
+" User setup for TDVim
+"
+
+" TDVim initialization setup:
+" Settings needed by certain plugins to start correctly
+if g:tdvim_before_start
+    " Set path for python dll:
+    " Python 2
+    "set pythonhome=C:\opt\python\python27
+    "set pythondll=C:\opt\python\python27\python27.dll
+    "let g:completor_python_binary = 'C:\opt\python\python27\python.exe'
+    " Python 3
+    if !has('nvim')
+        set pythonthreehome=C:\opt\python\python37
+        set pythonthreedll=C:\opt\python\python37\python37.dll
+        let g:completor_python_binary = 'C:\opt\python\python37\python.exe'
+    endif
+
+    finish
+    
+endif
+
+
+" Enable line numbers
+set number
+
+" Enable autowrite
+set autowrite
+set autowriteall
+
+" Setup GUI
+if (has('nvim') && exists('g:GuiLoaded')) || has( "gui_running" )
+    colorscheme gruvbox
+    set background=dark
+    set guioptions-=m
+    set guioptions-=T
+    call utils#SetFancyUI()
+    "set guifont=Consolas:h11:cANSI:qDRAFT
+    "set guifont=DejaVu_Sans_Mono_for_Powerline:h10
+	"set  guifont=Hack_NF:h11:cANSI:qDRAFT
+    if has('nvim')
+        " NeoVim
+        if exists('g:neovide')
+            " Neovide
+            silent! set  guifont=FiraCode\ Nerd\ Font\ Mono:h13:W500:cANSI:qDRAFT
+            let g:neovide_cursor_vfx_mode = "pixiedust"
+            let g:neovide_refresh_rate=30
+            let g:neovide_fullscreen=v:false
+            let g:neovide_remember_window_size = v:true
+            let g:neovide_input_use_logo=v:true
+        else
+            " Other neovim GUI
+            silent! set  guifont=FiraCode\ Nerd\ Font\ Mono:h11:W500:cANSI:qDRAFT
+        endif
+    else
+        " Gvim
+        silent! set  guifont=FiraCode_Nerd_Font_Mono:h10:W500:cANSI:qDRAFT
+    endif
+else
+    "colorscheme pencil
+    "set background=light
+	colorscheme desert
+endif
+
+" Personal plugins setup
+"let g:NERDTreeHijackNetrw=1
+
+" Debug Gutentags:
+"let g:gutentags_trace = 1
+
+" Enable indent lines preview per file type:
+"let g:indentLine_fileType = ['c', 'cpp', 'python', 'vim']
+
+" Enable Project Setup Logging:
+"let g:tdvim_project_enable_logging = 0
+
+" Snippets variables:
+echomsg "Override SnipMate author vars"
+let g:snips_author    = 'Pablo Gimenez'
+let g:snips_email     = 'pablo@rohtau.com'
+let g:snips_copyright = 'Copyright 2020 - 2021, rohtau'

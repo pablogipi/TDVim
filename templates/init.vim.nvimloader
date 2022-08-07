@@ -1,0 +1,7 @@
+" User this in the default nvim fodler: %APPDATA%\Local\nvim.
+" This will load ini.vim from home filder in windows
+"
+set runtimepath^=~/.vim runtimepath+=~/.vim/after
+let &packpath = &runtimepath
+"source ~/_vimrc
+source ~/init.vim
