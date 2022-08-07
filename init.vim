@@ -77,9 +77,7 @@ Plug 'sjl/gundo.vim',                    { 'on': 'GundoToggle' }
 Plug 'szw/vim-maximizer',                { 'on': 'MaximizerToggle' }
 " Startify
 " Only use startify in gvim sessions
-"Plug 'mhinz/vim-startify'
-"
-" FIXME: Apparently NeoVim doesn't set this variable until the Gui is loaded after
+" XXX: Apparently NeoVim doesn't set this variable until the Gui is loaded after
 " sourcing this script, which is too late.
 " At the moment we will just force it
 "echomsg "GUI Loaded " . exists("g:GuiLoaded")
@@ -93,11 +91,12 @@ if  exists('g:GuiLoaded')
      Plug 'ryanoasis/vim-devicons'
 endif
 
-" Vimade
-"Plug 'TaDaa/vimade'
-
 " Nuake
 Plug 'Lenovsky/nuake'
+
+" Swap Windows:
+Plug 'wesQ3/vim-windowswap'
+
 
 
 
