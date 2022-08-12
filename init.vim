@@ -1133,7 +1133,7 @@ let g:startify_session_sort = 1
 let g:startify_session_number = 10
 let g:startify_session_persistence = 1
 let g:startify_session_before_save = [
-            \ 'echo "Cleaning up before saving.."',
+            \ 'echomsg "Cleaning up before saving.."',
             \ 'silent! NERDTreeTabsClose',
             \ 'silent! cclose',
             \ 'silent! call utils#CloseAllWindowsByType( "quickfix" )',
