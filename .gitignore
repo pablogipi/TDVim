@@ -2,9 +2,22 @@
 *~
 *.swp
 *.log
+*.swo
+*.bak
+*.old
 tags
 plugin/packer_compiled.lua
 Session.vim
+plugged
+admin/build
+tags*
+*.tags
+GPATH
+GRTAGS
+GTAGS
+releases
+spell/
+.netrwhist
 
 # Compiled Lua sources
 luac.out
