@@ -68,7 +68,7 @@ Plug 'Yggdroot/LeaderF'
 Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'PhilRunninger/nerdtree-visual-selection'
-Plug 'scrooloose/nerdtree-project-plugin'
+"Plug 'scrooloose/nerdtree-project-plugin'
 
 
 " Lightline
