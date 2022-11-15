@@ -32,7 +32,7 @@ filetype plugin indent on
 if exists("$TDVIMROOT")
     " Only load TDVim if cetain criteria is sathisfied
     "if (v:version >= 800)
-	if (v:version >= 800 && (has('python') || has('python3')))
+	if (v:version >= 800 && (has('pythonx') || has('python3_dynamic')))
         let s:tdvimroot = substitute($TDVIMROOT, "\\", "/", "g")
         "Add TDVim to runtim path
         execute "set rtp^=" . s:tdvimroot

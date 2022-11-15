@@ -215,11 +215,10 @@ Function Keys                     *tdvim-func-keys*
    - <Ctrl-F9>:        Git Log
    - <Shift-F9>:       Git Diff
    - <Ctrl-Shift-F9>:  Git File Log
-- <F10>:               NOT USED
-- <F11>:               Build
-   - <Ctrl F11>:       Next Error
-   - <Shift F11>:      Prev Error
-   - <Ctrl-Shift F11>: Errors list
+- <F10>:               Line Diagnistics
+   - <Ctrl F10>:       Diagnostics Finder
+   - <Shift F10>:      Diagnistics List
+- <F11>:               NOT USED
 - <F12>:               Build Tags
 
 ==================================================

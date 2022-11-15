@@ -97,6 +97,13 @@ local mappings = {
   ["F"] = { "<cmd>Telescope live_grep theme=ivy<cr>", "Find Text" },
   ["P"] = { "<cmd>Telescope projects<cr>", "Projects" },
 
+  c = {
+    name = "Comment",
+    t = { "gcc", "Toggle Comment" },
+    b = { "gbc", "Toggle Block Comment" },
+    y = { "yygcc", "Yank and Comment" },
+  },
+
   p = {
     name = "Packer",
     c = { "<cmd>PackerCompile<cr>", "Compile" },
@@ -144,12 +151,16 @@ local mappings = {
     i = { "<cmd>LspInfo<cr>", "Info" },
     I = { "<cmd>LspInstallInfo<cr>", "Installer Info" },
     j = {
-      "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>",
+      "<cmd>lua vim.lsp.diagnostic.goto_next({buffer=0})<CR>",
       "Next Diagnostic",
     },
     k = {
-      "<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>",
+      "<cmd>lua vim.lsp.diagnostic.goto_prev({buffer=0})<cr>",
       "Prev Diagnostic",
+    },
+    d = {
+      "<cmd>lua vim.lsp.diagnostic.open_float({buffer=0})<cr>",
+      "Show Line Diagnostic",
     },
     l = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens Action" },
     q = { "<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>", "Quickfix" },
@@ -239,19 +250,53 @@ local fopts = {
    - <Ctrl-F9>:        Git Log
    - <Shift-F9>:       Git Diff
    - <Ctrl-Shift-F9>:  Git File Log
-- <F10>:               NOT USED
-- <F11>:               Build
-   - <Ctrl F11>:       Next Error
-   - <Shift F11>:      Prev Error
-   - <Ctrl-Shift F11>: Errors list
+- <F10>:               Diagnostic for current line
+   - <Shift F10>:      Send diagnostics to location list
+- <F11>:               NOT USED
 - <F12>:               Build Tags ]]
 local fmappings = {
+  -- F1
   ["<S-F1>"] = { "<cmd>lua require'telescope.builtin'.help_tags(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", "Search In Help" },
   ["<C-F1>"] = { "<cmd>WhichKey<cr>", "WhichKey" },
+  -- F2
   ["<F2>"] = { ":", "Normal Mode" },
+  -- F3
   ["<F3>"] = { "<cmd>lua require'telescope.builtin'.buffers(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", "Buffers" },
-  ["<F6>"] = { "<cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", "Buffers" },
-  ["<C-F6>"] = { "<cmd>lua require'telescope.builtin'.diagnostics(require('telescope.themes').get_ivy({ bufnr=0 }))<cr>", "Buffers" },
+  -- F4
+  ["<F4>"] = { "<cmd>Telescope grep_string<cr>", "Grep" },
+  ["<S-F4>"] = { "<cmd>Telescope live_string<cr>", "Live Grep" },
+  -- F5
+  ["<F5>"] = { "gcc", "Toggle Comment" },
+  ["<C-F5>"] = { "gcc", "Toggle Block Comment" },
+  ["<S-F5>"] = { "gcc", "Copy & Comment" },
+  -- F6
+  ["<F6>"] = { "<cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", "Symbols" },
+  -- F10
+  ["<F10>"] = { "<cmd>lua vim.diagnostic.open_float({buffer=0})<cr>", "Show Line Diagnistics" },
+  ["<S-F10>"] = { "<cmd>lua vim.diagnostic.setloclist()<cr>", "Send Diagnistics to Location List" },
+  ["<C-F10>"] = { "<cmd>lua require'telescope.builtin'.diagnostics(require('telescope.themes').get_ivy({ bufnr=0 }))<cr>", "Diagnostics" },
+}
+--
+
+-- Impaired
+local imopts = {
+  mode = "n", -- VISUAL mode
+  prefix = "",
+  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+  silent = true, -- use `silent` when creating keymaps
+  noremap = true, -- use `noremap` when creating keymaps
+  nowait = true, -- use `nowait` when creating keymaps
+}
+local immappings = {
+  -- []k - Diagnostics
+  ["[k"] = {
+    "<cmd>lua vim.lsp.diagnostic.goto_prev({buffer=0})<cr>",
+    "Prev Diagnostic",
+  },
+  ["]k"] = {
+    "<cmd>lua vim.lsp.diagnostic.goto_next({buffer=0})<cr>",
+    "Next Diagnostic",
+  },
 }
 --
 
@@ -259,3 +304,4 @@ which_key.setup(setup)
 which_key.register(mappings, opts)
 which_key.register(vmappings, vopts)
 which_key.register(fmappings, fopts)
+which_key.register(immappings, imopts)
