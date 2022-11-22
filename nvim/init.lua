@@ -4,11 +4,12 @@ local cmd = vim.cmd
 local fn = vim.fn
 
 -- Disable netrw. Can affect other explorer plugins
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+-- vim.g.loaded_netrw = 1
+-- vim.g.loaded_netrwPlugin = 1
 
 -- Load modules/plugins {{{
 require "user.options"
+require "user.utils"
 require "user.keymaps"
 require "user.plugins"
 require "user.cmp"
@@ -16,15 +17,17 @@ require "user.lsp"
 require "user.telescope"
 require "user.treesitter"
 require "user.autopairs"
+require "user.surround"
 require "user.comment"
 require "user.gitsigns"
-require "user.nvim-tree"
+require "user.nerd-tree"
 require "user.lualine"
 require "user.toggleterm"
 require "user.impatient"
 require "user.indentline"
 require "user.startify"
 require "user.whichkey"
+require "user.rooter"
 require "user.autocommands"
 -- }}}
 
@@ -33,6 +36,7 @@ require "user.autocommands"
 -- require "user.bufferline"
 -- require "user.project"
 -- require "user.alpha"
+-- require "user.nvim-tree"
 -- }}}
 
 -- Setup cmdheight to support several lines of messages but not force to do
@@ -62,5 +66,6 @@ end
 
 -- Restore cmdheight
 opt.cmdheight=cmdheight
+
 
 -- vim: ts=2 ft=lua nowrap fdm=marker 

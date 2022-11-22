@@ -46,16 +46,19 @@ return packer.startup(function(use)
 	use("wbthomason/packer.nvim") -- Have packer manage itself
 	use("nvim-lua/popup.nvim") -- An implementation of the Popup API from vim in Neovim
 	use("nvim-lua/plenary.nvim") -- Useful lua functions used ny lots of plugins
+	--- }}}
 
 	-- Basic plugins {{{
 	use("tpope/vim-unimpaired") -- All famous unimpaired :)
 	use("vim-scripts/HelpClose") -- Close all Help windows
 	use("tpope/vim-obsession") -- Manage sessions
 	use("windwp/nvim-autopairs") -- Autopairs, integrates with both cmp and treesitter
+	use("kylechui/nvim-surround") -- Add, remove or change pairs of surrounding charatcers1,  like ""()[]{},
 	use("lewis6991/impatient.nvim")
 	use("dstein64/vim-startuptime")
 	use({ "kyazdani42/nvim-web-devicons", commit = "563f3635c2d8a7be7933b9e547f7c178ba0d4352" }) -- Devicons, nvim version
 	use("ryanoasis/vim-devicons") -- Devicons, vim version for startify
+	use("airblade/vim-rooter") -- Change location to current project (git, svn, etc)
 
 	-- Basic plugins }}}
 
@@ -65,6 +68,9 @@ return packer.startup(function(use)
 	-- use "akinsho/bufferline.nvim"
 	use("moll/vim-bbye")
 	use("nvim-lualine/lualine.nvim")
+	-- use("akinsho/bufferline.nvim")
+	-- use("romgrk/barbar.nvim")
+	-- use("kdheepak/tabline.nvim")
 	-- }}}
 
 	-- Telescope {{{2
@@ -72,8 +78,11 @@ return packer.startup(function(use)
 	-- use 'nvim-telescope/telescope-media-files.nvim'
 	-- }}}
 
-	-- Nvim Tree
-	use({ "kyazdani42/nvim-tree.lua", commit = "7282f7de8aedf861fe0162a559fc2b214383c51c" })
+	-- Explorer
+	-- use({ "kyazdani42/nvim-tree.lua", commit = "7282f7de8aedf861fe0162a559fc2b214383c51c" }) -- nvim tree
+	use("preservim/nerdtree") -- All famous Nerd Tree
+	use("Xuyuanp/nerdtree-git-plugin") -- Git support for NerdTree
+	-- use ("tiagofumo/vim-nerdtree-syntax-highlight") -- Syntax highlighting per file1 type1 for1 NerdTtree
 
 	-- Toggle Term
 	use("akinsho/toggleterm.nvim")
@@ -82,8 +91,8 @@ return packer.startup(function(use)
 	-- use 'goolord/alpha-nvim' -- alpha
 	use("mhinz/vim-startify") -- Startify
 
-  -- Which Key
-  use "folke/which-key.nvim"
+	-- Which Key
+	use("folke/which-key.nvim")
 
 	-- UI }}}
 
@@ -174,9 +183,21 @@ return packer.startup(function(use)
 	-- Indent Lines
 	use("lukas-reineke/indent-blankline.nvim")
 
+	-- Color nested code blocks
 	use("p00f/nvim-ts-rainbow")
 	--use "nvim-treesitter/playground"
 
+	-- Winbar LSP context. Show current context according to LSP in the winbar
+	use({
+		"utilyre/barbecue.nvim",
+		requires = {
+			"neovim/nvim-lspconfig",
+			"smiteshp/nvim-navic",
+		},
+		config = function()
+			require("barbecue").setup()
+		end,
+	})
 	-- Developmemt }}}
 
 	-- Automatically set up your configuration after cloning packer.nvim

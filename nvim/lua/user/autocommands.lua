@@ -13,7 +13,12 @@ vim.cmd [[
   augroup tdvimAfterStartUp
     " Loaded message
     autocmd VimEnter * echomsg "TDVim " . $TDVIMVERSION . " loaded"
-    autocmd VimEnter  * let &titlestring = "TDVim " . $TDVIMVERSION 
+    autocmd VimEnter * let &titlestring = "TDVim " . $TDVIMVERSION 
+  augroup end
+
+  augroup tdvimUIAttach
+    "au UIAttach * ++once lua require('ginit')
+    "au UIEnter * ++once lua require('ginit')
   augroup end
 
   augroup tdvimAfterSessionLoad

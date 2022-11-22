@@ -7,9 +7,9 @@ bufferline.setup {
   options = {
     -- numbers = "none", -- | "ordinal" | "buffer_id" | "both" | function({ ordinal, id, lower, raise }): string,
     -- numbers = "buffer_id", -- | "ordinal" | "buffer_id" | "both" | function({ ordinal, id, lower, raise }): string,
-    numbers = function(opts)
+    --[[ numbers = function(opts)
       return string.format('%s%s', opts.ordinal, opts.lower(opts.id))
-    end,
+    end, ]]
     close_command = "Bdelete! %d", -- can be a string | function, see "Mouse actions"
     right_mouse_command = "Bdelete! %d", -- can be a string | function, see "Mouse actions"
     left_mouse_command = "buffer %d", -- can be a string | function, see "Mouse actions"
@@ -74,7 +74,7 @@ bufferline.setup {
     -- can also be a table containing 2 custom separators
     -- [focused and unfocused]. eg: { '|', '|' }
     -- separator_style = "slant", -- | "thick" | "thin" | { 'any', 'any' },
-    separator_style = "thin",
+    separator_style = "slant",
     enforce_regular_tabs = true,
     always_show_bufferline = false,
     -- sort_by = 'id' | 'extension' | 'relative_directory' | 'directory' | 'tabs' | function(buffer_a, buffer_b)

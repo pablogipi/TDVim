@@ -1166,14 +1166,19 @@ endfunction
 " is triggered usinh autocommands.
 " Close NERDtree window using - or Esc.
 function! utils#SetupNERDTreeBuffer(  )
-    " Check we are actually in a NERDTree buffer
-    if &syntax !~ "nerdtree"
-        echoerr "We are NOT in a NERDtree buffer!!!: " . curbuf
-        return
-    endif
-    "echomsg "We are in a NERDtree buffer!!!"
+  " Check we are actually in a NERDTree buffer
+  " if &syntax !~ "nerdtree"
+  if &filetype == "nerdtree"
     nmap <buffer> -        :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
-    nmap <buffer> <silent> <Esc> :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
+    " nmap <buffer> <silent> <Esc> :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
+    nmap <buffer> <silent> <Esc> q
+    echomsg "Setup NERDTree buffer"
+    " echoerr "We are NOT in a NERDtree buffer!!!: " . curbuf
+    " echoerr "We are NOT in a NERDtree buffer!!!: "
+    " Just do nothing if this is not a NERDTree window
+    return
+  endif
+  "echomsg "We are in a NERDtree buffer!!!"
 
 
 

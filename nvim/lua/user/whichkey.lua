@@ -77,6 +77,14 @@ local opts = {
   noremap = true, -- use `noremap` when creating keymaps
   nowait = true, -- use `nowait` when creating keymaps
 }
+local nopts = {
+  mode = "n", -- NORMAL mode
+  prefix = "<leader>",
+  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+  silent = false, -- use `silent` when creating keymaps
+  noremap = false, -- use `noremap` when creating keymaps
+  nowait = false, -- use `nowait` when creating keymaps
+}
 
 local mappings = {
   ["/"] = { "<cmd>lua require(\"Comment.api\").toggle_current_linewise()<CR>", "Comment" },
@@ -85,10 +93,11 @@ local mappings = {
     "<cmd>lua require('telescope.builtin').buffers(require('telescope.themes').get_dropdown{previewer = false})<cr>",
     "Buffers",
   },
-  ["e"] = { "<cmd>NvimTreeToggle<cr>", "Explorer" },
+  ["e"] = { "<cmd>NERDTreeToggle<cr>", "Explorer" },
+  ["-"] = { "<cmd>e .<cr>", "In Buffer Explorer" },
   ["w"] = { "<cmd>w!<CR>", "Save" },
   ["q"] = { "<cmd>q!<CR>", "Quit" },
-  ["c"] = { "<cmd>Bdelete!<CR>", "Close Buffer" },
+  ["x"] = { "<cmd>Bdelete!<CR>", "Close Buffer" },
   ["h"] = { "<cmd>nohlsearch<CR>", "No Highlight" },
   ["f"] = {
     "<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown{previewer = false})<cr>",
@@ -97,11 +106,10 @@ local mappings = {
   ["F"] = { "<cmd>Telescope live_grep theme=ivy<cr>", "Find Text" },
   ["P"] = { "<cmd>Telescope projects<cr>", "Projects" },
 
-  c = {
-    name = "Comment",
-    t = { "gcc", "Toggle Comment" },
-    b = { "gbc", "Toggle Block Comment" },
-    y = { "yygcc", "Yank and Comment" },
+
+  j = {
+    name = "Jumps",
+    e = { "<cmd>NERDTreeFocus<cr>", "Jump to Explorer" },
   },
 
   p = {
@@ -194,6 +202,17 @@ local mappings = {
     v = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", "Vertical" },
   },
 }
+local mappingsnopts = {
+  ["C-PageUp"] = { "gg", "Document Start" },
+  ["C-PageDown"] = { "G", "Document End" },
+  c = {
+    name = "Comment",
+    c = { "gcc", "Toggle Comment" },
+    t = { "gcc", "Toggle Comment" },
+    b = { "gbc", "Toggle Block Comment" },
+    y = { "yygcc", "Yank and Comment" },
+  },
+}
 
 local vopts = {
   mode = "v", -- VISUAL mode
@@ -216,6 +235,14 @@ local fopts = {
   silent = false, -- use `silent` when creating keymaps
   noremap = true, -- use `noremap` when creating keymaps
   nowait = true, -- use `nowait` when creating keymaps
+}
+local fnopts = {
+  mode = "n", -- NORMAL mode
+  prefix = "",
+  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+  silent = false, -- use `silent` when creating keymaps
+  noremap = false, -- use `noremap` when creating keymaps
+  nowait = false, -- use `nowait` when creating keymaps
 }
 --[[ - <F1>:                help
    - <Shift-F1>:       Help for word under the cursor
@@ -243,7 +270,7 @@ local fopts = {
 - <F7>:                Open Terminal
    - <Shift-F7>:       LeaderF Search Commands Menu
 - <F8>:                Open file browser
-   - <Ctrl-F8>:        Enable/disable menu bar
+   - <Ctrl-F8>:        Find current buffer in Explorer
    - <Shift-F8>:       Tags Explorer
    - <Ctrl-Shift-F8>:  Tasks list
 - <F9>:                Git Status
@@ -252,8 +279,8 @@ local fopts = {
    - <Ctrl-Shift-F9>:  Git File Log
 - <F10>:               Diagnostic for current line
    - <Shift F10>:      Send diagnostics to location list
-- <F11>:               NOT USED
-- <F12>:               Build Tags ]]
+- <F11>:               Build Tags  
+- <F12>:               Save and Quit]]
 local fmappings = {
   -- F1
   ["<S-F1>"] = { "<cmd>lua require'telescope.builtin'.help_tags(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", "Search In Help" },
@@ -262,19 +289,32 @@ local fmappings = {
   ["<F2>"] = { ":", "Normal Mode" },
   -- F3
   ["<F3>"] = { "<cmd>lua require'telescope.builtin'.buffers(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", "Buffers" },
+  -- ["S-<F3>"] = { "<cmd>lua require'telescope.builtin'.buffers(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", "Files in Project" },
   -- F4
   ["<F4>"] = { "<cmd>Telescope grep_string<cr>", "Grep" },
-  ["<S-F4>"] = { "<cmd>Telescope live_string<cr>", "Live Grep" },
-  -- F5
-  ["<F5>"] = { "gcc", "Toggle Comment" },
-  ["<C-F5>"] = { "gcc", "Toggle Block Comment" },
-  ["<S-F5>"] = { "gcc", "Copy & Comment" },
+  ["<S-F4>"] = { "<cmd>Telescope live_grep<cr>", "Live Grep" },
   -- F6
   ["<F6>"] = { "<cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", "Symbols" },
+  -- F8
+  ["<F8>"] = { "<cmd>NERDTreeToggle<cr>", "Explorer" },
+  ["C-<F8>"] = { "<cmd>NERDTreeFind<cr>", "Find in Explorer" },
+  -- F9
+  ["<F9>"] = { "<cmd>lua _LAZYGIT_TOGGLE()<cr>", "Lazygit" },
+  ["<S-F9>"] = { "<cmd>lua require'telescope.builtin'.git_status(require('telescope.themes').get_dropdown({}))<cr>", "Git Status" },
+  ["<C-F9>"] = { "<cmd>Gitsigns diffthis HEAD<cr>", "Git Diff" },
   -- F10
   ["<F10>"] = { "<cmd>lua vim.diagnostic.open_float({buffer=0})<cr>", "Show Line Diagnistics" },
   ["<S-F10>"] = { "<cmd>lua vim.diagnostic.setloclist()<cr>", "Send Diagnistics to Location List" },
   ["<C-F10>"] = { "<cmd>lua require'telescope.builtin'.diagnostics(require('telescope.themes').get_ivy({ bufnr=0 }))<cr>", "Diagnostics" },
+  -- F12
+  ["<F12>"] = { "<cmd>xa<cr>", "Save & Quit" },
+}
+local fmappingsnopts = {
+  -- F5
+  ["<F5>"] = { "gcc", "Toggle Comment" },
+  ["<C-F5>"] = { "gbc", "Toggle Block Comment" },
+  ["<S-F5>"] = { "yygcc", "Copy & Comment" },
+
 }
 --
 
@@ -302,6 +342,8 @@ local immappings = {
 
 which_key.setup(setup)
 which_key.register(mappings, opts)
+which_key.register(mappingsnopts, nopts)
 which_key.register(vmappings, vopts)
 which_key.register(fmappings, fopts)
+which_key.register(fmappingsnopts, fnopts)
 which_key.register(immappings, imopts)

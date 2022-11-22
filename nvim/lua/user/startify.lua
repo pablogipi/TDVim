@@ -66,17 +66,17 @@ vim.cmd [[
               \ ]
 
   let g:startify_commands = [
-              \ {'f': ['Explorer', 'NvimTreeOpen']},
+              \ {'f': ['Explorer', 'NERDTreeToggle']},
               \ {'t': ['Terminal', 'ToggleTerm']},
               \ ]
 
   if has('win32') 
       "Windows
       "let g:startify_bookmarks = [ {'c': ['TDVim user Config', '~/_myvimrc']} ]
-      let g:startify_bookmarks = [ {'c': '~/_myinit.lua'} ]
+      let g:startify_bookmarks = [ {'c': '~/myinit.lua'} ]
   else
       " Anything other OS, assumed UNIX
-      let g:startify_bookmarks = [ {'c': '~/.myinit.lua'} ]
+      let g:startify_bookmarks = [ {'c': '~/myinit.lua'} ]
   endif
 
   let g:startify_files_number = 5

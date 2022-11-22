@@ -68,6 +68,10 @@ local location = {
 	padding = 0,
 }
 
+local windows = {
+	"windows",
+  mode=2,
+}
 -- Buffers components
 local buffers = {
 	"buffers",
@@ -92,6 +96,7 @@ local buffers = {
 		alpha = "Alpha",
 		startify = "Startify",
 		NvimTree = "Explorer",
+		toggleterm = "Terminal",
 	}, -- Shows specific buffer name for that filetype ( { `filetype` = `buffer_name`, ... } )
 
 	--[[ buffers_color = {
@@ -132,18 +137,18 @@ lualine.setup({
 		section_separators = { left = "", right = "" },
 		-- section_separators = { left = "", right = "" },
 		-- disabled_filetypes = { "dashboard", "NvimTree", "Outline", "startify", "NerdTree", "Prompt", "TelescopePrompt"  },
-		disabled_filetypes = { "dashboard", "Outline", "startify", "NerdTree", "Prompt", "TelescopePrompt"  },
+		disabled_filetypes = { "dashboard", "Outline", "startify", "NerdTree", "Prompt", "TelescopePrompt", "toggleterm"  },
 		always_divide_middle = true,
 	},
 	sections = {
 		lualine_a = { mode },
-		lualine_b = { branch, diagnostics },
-		lualine_c = { filename },
+		lualine_b = { filename },
+		lualine_c = { diff, diagnostics },
 		-- lualine_x = { "encoding", "fileformat", "filetype" },
 		-- lualine_x = { diff, spaces, "encoding", filetype },
-		lualine_x = { diff, filetype },
+		lualine_x = { branch, filetype },
 		-- lualine_y = { location },
-		lualine_y = { windows },
+		lualine_y = { },
 		lualine_z = { location, progress },
 	},
 	inactive_sections = {
@@ -163,7 +168,7 @@ lualine.setup({
 		lualine_z = { 'o:titlestring' },
 	},
 	--[[ winbar = {
-		lualine_a = {},
+		lualine_a = {windows},
 		lualine_b = {},
 		lualine_c = {},
 		lualine_x = {},
@@ -173,14 +178,15 @@ lualine.setup({
 	inactive_winbar = {
 		lualine_a = {},
 		lualine_b = {},
-		lualine_c = { filename },
+		lualine_c = { },
 		lualine_x = {},
 		lualine_y = {},
 		lualine_z = {},
 	}, ]]
 	extensions = {
     'quickfix',
-    'nvim-tree',
+    -- 'nvim-tree',
+    'nerdtree',
     'toggleterm',
   },
 })

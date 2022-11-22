@@ -62,7 +62,7 @@ keymap("n", "<leader>wa", ":wa<CR>", opts_nosilent)
 -- Fuzzy Open File - S-F3, <leader>f, C-P
 keymap("n", "<leader>f", "<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
 keymap("v", "<leader>f", "<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
-keymap("n", "<S-F3>", "<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
+keymap("n", "<S-F3>", "<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false, cwd=vim.fn.FindRootDirectory() }))<cr>", opts)
 keymap("v", "<S-F3>", "<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
 keymap("i", "<S-F3>", "<c-o><cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
 keymap("n", "<C-P>", "<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
@@ -77,6 +77,9 @@ keymap("i", "<C-S-F3>", "<c-o><cmd>lua require'telescope.builtin'.oldfiles(requi
 keymap("n", "<A-C-P>", "<cmd>lua require'telescope.builtin'.oldfiles(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
 keymap("v", "<A-C-P>", "<cmd>lua require'telescope.builtin'.oldfiles(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
 keymap("i", "<A-C-P>", "<c-o><cmd>lua require'telescope.builtin'.oldfiles(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
+
+-- Save & Quit
+keymap("n", "<F12>", "<cmd>xa<cr>", opts)
 
 
 
@@ -115,6 +118,9 @@ keymap("n", "<S-F4>", "<cmd>Telescope grep_string<cr>", opts)
 -- Fuzzy Grep word under cursor - F4, C-t
 keymap("n", "<F4>", "<cmd>Telescope live_grep<cr>", opts)
 keymap("n", "<c-t>", "<cmd>Telescope live_grep<cr>", opts)
+-- Jump to start/end of the document
+keymap("n", "<C-PageUp>", "gg", opts)
+keymap("n", "<C-PageDown>", "G", opts)
 
 
 -- }}}
@@ -159,11 +165,22 @@ keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 -- Explorer - F8, <leader>e
 -- keymap("n", "<F8>", ":Lex 10<cr>", opts)
 -- keymap("n", "<leader>e", ":Lex 10<cr>", opts)
-keymap("n", "<F8>", ":NvimTreeToggle<cr>", opts) -- Nvimtree
+-- keymap("n", "<F8>", ":NvimTreeToggle<cr>", opts) -- Nvimtree
 -- keymap("n", "<leader>e", ":NvimTreeToggle<cr>", opts)
+keymap("n", "<F8>", ":NERDTreeToggle<cr>", opts) -- NERDTree
+keymap("n", "<leader>e", ":NERDTreeToggle<cr>", opts)
+keymap("i", "<F8>", "<C-O>:NERDTreeToggle<cr>i", opts) -- NERDTree
+keymap("i", "<leader>e", "<C-O>:NERDTreeToggle<cr>i", opts)
+keymap("v", "<F8>", ":NERDTreeToggle<cr>v", opts) -- NERDTree
+keymap("v", "<leader>e", ":NERDTreeToggle<cr>v", opts)
+keymap("x", "<F8>", ":NERDTreeToggle<cr>", opts) -- NERDTree
+keymap("x", "<leader>e", ":NERDTreeToggle<cr>", opts)
+-- Find in Explorer - C-F8
+keymap("n", "<C-F8>", ":NERDTreeFind<cr>", opts) -- NERDTree Find
 -- In Explorer - -
--- keymap("n", "-", ":Explore<CR>", opts)
--- keymap("n", "-", "<cmd>lua require'user.nvim-tree'.toggle_replace()<CR>", opts)
+keymap("n", "-", ":e .<CR>", opts)
+-- Jump to Explorer
+keymap("n", "<leader>je", "<cmd>NERDTreeFocus<cr>", opts) -- Jump to Explorer
 
 -- Resize with arrows - Ctrl[Up|Down|Left|Right]
 keymap("n", "<C-Up>", ":resize -2<CR>", opts)
@@ -201,6 +218,7 @@ keymap("x", "<F3>", "<cmd>lua require'telescope.builtin'.buffers(require('telesc
 keymap("i", "<F3>", "<c-o><cmd>lua require'telescope.builtin'.buffers(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
 
 
+
 -- }}}
 
 -- CommandLine {{{
@@ -228,6 +246,8 @@ keymap("v", "<F5>", "gc", noopts)
 keymap("i", "<F5>", "<c-o>gcc", noopts)
 keymap("n", "<leader>ct", "gcc", noopts)
 keymap("v", "<leader>ct", "gc", noopts)
+keymap("n", "<leader>cc", "gcc", noopts)
+keymap("v", "<leader>cc", "gc", noopts)
 -- Block Comments - C-F5, <leader>cb
 keymap("n", "<C-F5>", "gbc", noopts)
 keymap("v", "<C-F5>", "gb", noopts)
@@ -245,8 +265,10 @@ keymap("v", "<leader>cy", "ygvgb", noopts)
 -- }}}
 
 -- GIT {{{2
+-- Lazygit
+keymap("n", "<F9>", "<cmd>lua _LAZYGIT_TOGGLE()<cr>", opts)
 -- Git status fuzzy search
-keymap("n", "<F9>", "<cmd>lua require'telescope.builtin'.git_status(require('telescope.themes').get_dropdown({}))<cr>", opts)
+keymap("n", "<C-F9>", "<cmd>lua require'telescope.builtin'.git_status(require('telescope.themes').get_dropdown({}))<cr>", opts)
 -- Implemented in user/gitsigns.lua
 -- Diff this - S-F9, <leader>hd
 -- Navigate Previous/Next hunk - []c 
