@@ -289,6 +289,10 @@ keymap("n", "<C-F9>", "<cmd>lua require'telescope.builtin'.git_status(require('t
 --
 -- }}}
 
+-- Symbols  Explorer  
+keymap("n", "<S-F8>", "<cmd>AerialToggle<cr>", opts)
+
+
 -- }}}
 
 -- Terminal {{{

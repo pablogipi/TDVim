@@ -28,6 +28,7 @@ require "user.indentline"
 require "user.startify"
 require "user.whichkey"
 require "user.rooter"
+require "user.aerial"
 require "user.autocommands"
 -- }}}
 
@@ -52,7 +53,7 @@ if fn.has('windows') then
 else
 	package.path = env.HOME .. "/?.lua;" .. package.path
 end
-local res, packer = pcall(require, "myinit")
+local res, myinit = pcall(require, "myinit")
 local overridemsg = ""
 if res then
   -- TODO: This is missing getting the path to the loaded myinit.lua script and

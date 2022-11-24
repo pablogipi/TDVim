@@ -149,7 +149,19 @@ return packer.startup(function(use)
 		commit = "0051870dd728f4988110a1b2d47f4a4510213e31",
 	})
 	use("antoinemadec/FixCursorHold.nvim") -- This is needed to fix lsp doc highlight
-	-- }}}
+	use({
+		"glepnir/lspsaga.nvim",
+		branch = "main",
+		config = function()
+			local saga = require("lspsaga")
+
+			saga.init_lsp_saga({
+				-- your configuration
+			})
+		end,
+	})
+
+	-- LSP }}}
 
 	-- Null-ls {{{2
 	use({ "jose-elias-alvarez/null-ls.nvim", commit = "c0c19f32b614b3921e17886c541c13a72748d450" }) -- for formatters and linters
@@ -161,6 +173,8 @@ return packer.startup(function(use)
 		"nvim-treesitter/nvim-treesitter",
 		commit = "8e763332b7bf7b3a426fd8707b7f5aa85823a5ac",
 	})
+	use("nvim-treesitter/nvim-treesitter-textobjects") -- Define text objects based1 on1 treesiter,1 define1 [[, ]],1 [m,]m, etc ...
+	use("RRethy/nvim-treesitter-textsubjects") -- Growth or shrink selection based1 o1 treesiter
 	--[[
   use {
     "nvim-treesitter/nvim-treesitter",
@@ -168,6 +182,16 @@ return packer.startup(function(use)
   }
   ]]
 	-- }}}
+
+  -- Symbols  Explorer
+	-- use({"stevearc/aerial.nvim"})
+	use({
+		"stevearc/aerial.nvim",
+		--[[ config = function()
+			require("aerial").setup()
+		end, ]]
+	})
+
 
 	-- Comments {{{2
 	use("numToStr/Comment.nvim") -- Easily comment stuff

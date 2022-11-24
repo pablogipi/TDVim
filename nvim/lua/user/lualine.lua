@@ -188,5 +188,6 @@ lualine.setup({
     -- 'nvim-tree',
     'nerdtree',
     'toggleterm',
+    'aerial',
   },
 })

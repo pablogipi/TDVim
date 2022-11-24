@@ -36,7 +36,7 @@ vim.cmd [[
     \   exe "normal! g`\"" |
     \ endif
     " Change local path to the folder containing the current buffer:
-    autocmd BufRead * call utils#SetLocalPath()
+    " autocmd BufRead * call utils#SetLocalPath()
     au BufRead,BufNewFile *.py,*.pyw,*.c,*.cpp,*.vim,*.h match ExtraWhitespace  /\s\+$/
   augroup end
 
@@ -59,6 +59,7 @@ vim.cmd [[
 
   augroup tdvimFileTypes
     autocmd FileType nerdtree call utils#SetupNERDTreeBuffer()
+    autocmd FileType lspsagafinder setlocal nofoldenable  | setlocal nohlsearch
     autocmd! BufRead,BufNewFile *.usd set filetype=usd
     autocmd! BufRead,BufNewFile *.usda set filetype=usda
   augroup END

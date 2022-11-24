@@ -198,7 +198,7 @@ set.foldcolumn="auto:5"
 -- Minimum lines in a  fold to consider it a a proper fold
 set.foldminlines=3
 -- Fold starting level, set to 1 to have only level 1 folds ready
-set.foldlevelstart=-1
+-- set.foldlevelstart=-1
 -- Max nested level
 set.foldnestmax = 3
 -- }}}
