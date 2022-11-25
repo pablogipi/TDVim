@@ -166,10 +166,6 @@ local mappings = {
       "<cmd>lua vim.lsp.diagnostic.goto_prev({buffer=0})<cr>",
       "Prev Diagnostic",
     },
-    d = {
-      "<cmd>lua vim.lsp.diagnostic.open_float({buffer=0})<cr>",
-      "Show Line Diagnostic",
-    },
     l = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens Action" },
     q = { "<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>", "Quickfix" },
     r = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
@@ -227,7 +223,6 @@ local vmappings = {
 }
 
 -- Test Function Keys mappings in whichkey
- 
 local fopts = {
   mode = "n", -- NORMAL mode
   prefix = "",
@@ -263,9 +258,9 @@ local fnopts = {
 - <F5>:                Toggle line comment
    - <Shift-F5>:       Yank and comment line
    - <Ctrl-F5>:        Multi-line comment
-- <F6>:                Browse Functions
-   - <Ctrl-F6>:        Show tag for current word in Preview Window.
-   - <Shift-F6>:       Echo current function
+- <F6>:                Browse Symbols
+   - <Ctrl-F6>:        Symbol Finder
+   - <Shift-F6>:       
    - <Ctrl-Shift-F6>:  Tags Finder
 - <F7>:                Open Terminal
    - <Shift-F7>:       LeaderF Search Commands Menu
@@ -273,10 +268,10 @@ local fnopts = {
    - <Ctrl-F8>:        Find current buffer in Explorer
    - <Shift-F8>:       Tags Explorer
    - <Ctrl-Shift-F8>:  Tasks list
-- <F9>:                Git Status
-   - <Ctrl-F9>:        Git Log
-   - <Shift-F9>:       Git Diff
-   - <Ctrl-Shift-F9>:  Git File Log
+- <F9>:                Lazygit
+   - <Ctrl-F9>:        Git Diff
+   - <Shift-F9>:       Git Status
+   - <Ctrl-Shift-F9>:  Mundo
 - <F10>:               Diagnostic for current line
    - <Shift F10>:      Send diagnostics to location list
 - <F11>:               Build Tags  
@@ -295,6 +290,7 @@ local fmappings = {
   ["<S-F4>"] = { "<cmd>Telescope live_grep<cr>", "Live Grep" },
   -- F6
   ["<F6>"] = { "<cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", "Symbols" },
+  ["<C-F6>"] = { "<cmd>Lspsaga lsp_finder<cr>", "Symbols" },
   -- F8
   ["<F8>"] = { "<cmd>NERDTreeToggle<cr>", "Explorer" },
   ["C-<F8>"] = { "<cmd>NERDTreeFind<cr>", "Find in Explorer" },
@@ -303,12 +299,14 @@ local fmappings = {
   ["<F9>"] = { "<cmd>lua _LAZYGIT_TOGGLE()<cr>", "Lazygit" },
   ["<S-F9>"] = { "<cmd>lua require'telescope.builtin'.git_status(require('telescope.themes').get_dropdown({}))<cr>", "Git Status" },
   ["<C-F9>"] = { "<cmd>Gitsigns diffthis HEAD<cr>", "Git Diff" },
+  ["<C-S-F9>"] = { "<cmd>MundoToggle<cr>", "Undo Tree" },
   -- F10
   ["<F10>"] = { "<cmd>lua vim.diagnostic.open_float({buffer=0})<cr>", "Show Line Diagnistics" },
   ["<S-F10>"] = { "<cmd>lua vim.diagnostic.setloclist()<cr>", "Send Diagnistics to Location List" },
   ["<C-F10>"] = { "<cmd>lua require'telescope.builtin'.diagnostics(require('telescope.themes').get_ivy({ bufnr=0 }))<cr>", "Diagnostics" },
   -- F12
   ["<F12>"] = { "<cmd>xa<cr>", "Save & Quit" },
+  ["<C-F12>"] = { "<cmd>qa<cr>", "Close & Quit" },
 }
 local fmappingsnopts = {
   -- F5

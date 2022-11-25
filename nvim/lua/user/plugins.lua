@@ -59,6 +59,7 @@ return packer.startup(function(use)
 	use({ "kyazdani42/nvim-web-devicons", commit = "563f3635c2d8a7be7933b9e547f7c178ba0d4352" }) -- Devicons, nvim version
 	use("ryanoasis/vim-devicons") -- Devicons, vim version for startify
 	use("airblade/vim-rooter") -- Change location to current project (git, svn, etc)
+	use("antoinemadec/FixCursorHold.nvim") -- This is needed to fix lsp doc highlight
 
 	-- Basic plugins }}}
 
@@ -93,6 +94,9 @@ return packer.startup(function(use)
 
 	-- Which Key
 	use("folke/which-key.nvim")
+
+  -- Undo History
+	use("simnalamburt/vim-mundo")
 
 	-- UI }}}
 
@@ -148,7 +152,6 @@ return packer.startup(function(use)
 		"williamboman/mason-lspconfig.nvim",
 		commit = "0051870dd728f4988110a1b2d47f4a4510213e31",
 	})
-	use("antoinemadec/FixCursorHold.nvim") -- This is needed to fix lsp doc highlight
 	use({
 		"glepnir/lspsaga.nvim",
 		branch = "main",
@@ -158,6 +161,12 @@ return packer.startup(function(use)
 			saga.init_lsp_saga({
 				-- your configuration
 			})
+		end,
+	})
+	use({
+		"folke/lsp-colors.nvim",
+		config = function()
+			require("lsp-colors").setup({})
 		end,
 	})
 
@@ -175,23 +184,35 @@ return packer.startup(function(use)
 	})
 	use("nvim-treesitter/nvim-treesitter-textobjects") -- Define text objects based1 on1 treesiter,1 define1 [[, ]],1 [m,]m, etc ...
 	use("RRethy/nvim-treesitter-textsubjects") -- Growth or shrink selection based1 o1 treesiter
-	--[[
-  use {
-    "nvim-treesitter/nvim-treesitter",
-    run = ":TSUpdate",
-  }
-  ]]
-	-- }}}
+	-- Treesitter }}}
 
-  -- Symbols  Explorer
-	-- use({"stevearc/aerial.nvim"})
-	use({
-		"stevearc/aerial.nvim",
-		--[[ config = function()
+	-- Symbols  Explorer
+	use({ "stevearc/aerial.nvim" })
+	-- use({
+	-- "stevearc/aerial.nvim",
+	--[[ config = function()
 			require("aerial").setup()
 		end, ]]
+	-- })
+	use({
+		"simrat39/symbols-outline.nvim",
+		config = function()
+			require("symbols-outline").setup()
+		end,
 	})
 
+	-- Diagnostics Explorer
+	use({
+		"folke/trouble.nvim",
+		requires = "kyazdani42/nvim-web-devicons",
+		config = function()
+			require("trouble").setup({
+				-- your configuration comes here
+				-- or leave it empty to use the default settings
+				-- refer to the configuration section below
+			})
+		end,
+	})
 
 	-- Comments {{{2
 	use("numToStr/Comment.nvim") -- Easily comment stuff

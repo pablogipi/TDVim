@@ -7,6 +7,7 @@ aerial.setup({
   -- Priority list of preferred backends for aerial.
   -- This can be a filetype map (see :help aerial-filetype-map)
   backends = { "treesitter", "lsp", "markdown", "man" },
+  -- backends = { "lsp", "treesitter", "markdown", "man" },
 
   layout = {
     -- These control the width of the aerial window.
@@ -29,13 +30,15 @@ aerial.setup({
     -- Determines where the aerial window will be opened
     --   edge   - open aerial at the far right/left of the editor
     --   window - open aerial to the right/left of the current window
-    placement = "window",
+    -- placement = "window",
+    placement = "edge",
   },
 
   -- Determines how the aerial window decides which buffer to display symbols for
   --   window - aerial window will display symbols for the buffer in the window from which it was opened
   --   global - aerial window will display symbols for the current window
-  attach_mode = "window",
+  -- attach_mode = "window",
+  attach_mode = "global",
 
   -- List of enum values that configure when to auto-close the aerial window
   --   unfocus       - close aerial when you leave the original source window
@@ -119,7 +122,7 @@ aerial.setup({
   highlight_mode = "split_width",
 
   -- Highlight the closest symbol if the cursor is not exactly on one.
-  highlight_closest = true,
+  highlight_closest = false,
 
   -- Highlight the symbol in the source buffer when cursor is in the aerial win
   highlight_on_hover = false,

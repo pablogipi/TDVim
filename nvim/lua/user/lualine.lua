@@ -189,5 +189,6 @@ lualine.setup({
     'nerdtree',
     'toggleterm',
     'aerial',
+    'symbols-outline',
   },
 })

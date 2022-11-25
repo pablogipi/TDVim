@@ -80,6 +80,8 @@ keymap("i", "<A-C-P>", "<c-o><cmd>lua require'telescope.builtin'.oldfiles(requir
 
 -- Save & Quit
 keymap("n", "<F12>", "<cmd>xa<cr>", opts)
+-- close & Quit
+keymap("n", "<C-F12>", "<cmd>qa<cr>", opts)
 
 
 
@@ -217,6 +219,9 @@ keymap("v", "<F3>", "<cmd>lua require'telescope.builtin'.buffers(require('telesc
 keymap("x", "<F3>", "<cmd>lua require'telescope.builtin'.buffers(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
 keymap("i", "<F3>", "<c-o><cmd>lua require'telescope.builtin'.buffers(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
 
+-- Undo Tree
+keymap("n", "<C-S-F9>", "<cmd>MundoToggle<cr>", opts)
+
 
 
 -- }}}
@@ -232,8 +237,8 @@ keymap("i", "<F3>", "<c-o><cmd>lua require'telescope.builtin'.buffers(require('t
 -- Current file symbols fuzzy search
 -- keymap("n", "<F6>", "<cmd>lua require'telescope.builtin'.lsp_document_symbols(require('telescope.themes').get_dropdown({}))<cr>", opts)
 keymap("n", "<F6>", "<cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", opts)
--- Current file diagnostics fuzzy search
-keymap("n", "<C-F6>", "<cmd>lua require'telescope.builtin'.diagnostics(require('telescope.themes').get_ivy({}))<cr>", opts)
+-- Current symbol finder
+keymap("n", "<C-F6>", "<cmd>Lspsaga lsp_finder<cr>", opts)
 
 -- Format using LSP
 keymap("n", "<leader>f", ":Format<cr>", opts)
@@ -268,7 +273,9 @@ keymap("v", "<leader>cy", "ygvgb", noopts)
 -- Lazygit
 keymap("n", "<F9>", "<cmd>lua _LAZYGIT_TOGGLE()<cr>", opts)
 -- Git status fuzzy search
-keymap("n", "<C-F9>", "<cmd>lua require'telescope.builtin'.git_status(require('telescope.themes').get_dropdown({}))<cr>", opts)
+keymap("n", "<S-F9>", "<cmd>lua require'telescope.builtin'.git_status(require('telescope.themes').get_dropdown({}))<cr>", opts)
+-- Git Diff
+keymap("n", "<C-F9>", "<cmd>Gitsigns diffthis HEAD<cr>", opts)
 -- Implemented in user/gitsigns.lua
 -- Diff this - S-F9, <leader>hd
 -- Navigate Previous/Next hunk - []c 
@@ -286,7 +293,11 @@ keymap("n", "<C-F9>", "<cmd>lua require'telescope.builtin'.git_status(require('t
 -- Show diagnostics - gl
 -- Navigate diagnostics = []k
 -- Send diagnostics to local list window - <leader>lq
---
+-- Diagnostics
+keymap("n", "<F10>", "<cmd>lua vim.diagnostic.open_float({buffer=0})<cr>", opts)
+keymap("n", "<C-F10>", "<cmd>lua require'telescope.builtin'.diagnostics(require('telescope.themes').get_ivy({ bufnr=0 }))<cr>", opts)
+keymap("n", "<S-F10>", "<cmd>lua vim.diagnostic.setloclist()<cr>", opts)
+keymap("n", "<C-S-F10>", "<cmd>TroubleToggle workspace_diagnostics<cr>", opts)
 -- }}}
 
 -- Symbols  Explorer  
