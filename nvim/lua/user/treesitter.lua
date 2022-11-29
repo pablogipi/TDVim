@@ -14,7 +14,7 @@ configs.setup({
 	autopairs = {
 		enable = true,
 	},
-	indent = { enable = true, disable = { "yaml" } },
+	indent = { enable = true, disable = { "yaml", "lspsagafinder" } },
 	rainbow = {
 		enable = true,
 		-- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for

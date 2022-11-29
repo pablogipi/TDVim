@@ -59,7 +59,7 @@ vim.cmd [[
 
   augroup tdvimFileTypes
     autocmd FileType nerdtree call utils#SetupNERDTreeBuffer()
-    autocmd FileType lspsagafinder setlocal nofoldenable  | setlocal nohlsearch
+    autocmd FileType lspsagafinder setlocal foldmethod=manual
     autocmd! BufRead,BufNewFile *.usd set filetype=usd
     autocmd! BufRead,BufNewFile *.usda set filetype=usda
   augroup END

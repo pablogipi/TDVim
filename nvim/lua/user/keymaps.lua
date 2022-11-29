@@ -301,8 +301,7 @@ keymap("n", "<C-S-F10>", "<cmd>TroubleToggle workspace_diagnostics<cr>", opts)
 -- }}}
 
 -- Symbols  Explorer  
-keymap("n", "<S-F8>", "<cmd>AerialToggle<cr>", opts)
-
+keymap("n", "<S-F8>", "<cmd>SymbolsOutline<cr>", opts)
 
 -- }}}
 

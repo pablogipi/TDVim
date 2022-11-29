@@ -294,7 +294,7 @@ local fmappings = {
   -- F8
   ["<F8>"] = { "<cmd>NERDTreeToggle<cr>", "Explorer" },
   ["C-<F8>"] = { "<cmd>NERDTreeFind<cr>", "Find in Explorer" },
-  ["S-<F8>"] = { "<cmd>AerialToggle<cr>", "Symbols Explorer" },
+  ["S-<F8>"] = { "<cmd>SymbolsOutline<cr>", "Symbols Explorer" },
   -- F9
   ["<F9>"] = { "<cmd>lua _LAZYGIT_TOGGLE()<cr>", "Lazygit" },
   ["<S-F9>"] = { "<cmd>lua require'telescope.builtin'.git_status(require('telescope.themes').get_dropdown({}))<cr>", "Git Status" },
