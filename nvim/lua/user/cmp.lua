@@ -52,9 +52,9 @@ cmp.setup({
     end,
   }, ]]
 	snippet = {
-    -- This disable the snippet engine in cmp, if you are not using any snippet
-    -- engine this avoid nvim-cmp to return errors.
-    -- Seems that nvim-cmp requires a snippets engine to work
+		-- This disable the snippet engine in cmp, if you are not using any snippet
+		-- engine this avoid nvim-cmp to return errors.
+		-- Seems that nvim-cmp requires a snippets engine to work
 		-- We recommend using *actual* snippet engine.
 		-- It's a simple implementation so it might not work in some of the cases.
 		expand = function(args)
@@ -161,15 +161,37 @@ cmp.setup({
 		-- { name = "luasnip" },
 		{ name = "nvim_lsp" },
 		{ name = "nvim_lua" },
-		{ name = "buffer",
-      option = {
-        get_bufnrs = function()
-          return vim.api.nvim_list_bufs()
-        end
-      }
-    },
+		{
+			name = "buffer",
+			option = {
+				get_bufnrs = function()
+					return vim.api.nvim_list_bufs()
+				end,
+			},
+		},
 		{ name = "path" },
 	},
+  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline({ '/', '?' }, {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+  }),
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  }),
+  -- Set configuration for specific filetype.
+  -- Disable for sagarename
+  cmp.setup.filetype('sagarename', {
+    enabled = false,
+  }),
 	confirm_opts = {
 		behavior = cmp.ConfirmBehavior.Replace,
 		select = false,

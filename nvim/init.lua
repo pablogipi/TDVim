@@ -10,7 +10,6 @@ local fn = vim.fn
 -- Load modules/plugins {{{
 require "user.options"
 require "user.utils"
-require "user.keymaps"
 require "user.plugins"
 require "user.cmp"
 require "user.lsp"
@@ -31,14 +30,17 @@ require "user.whichkey"
 require "user.rooter"
 require "user.aerial"
 require "user.autocommands"
+
+require "user.keymaps"
 -- }}}
 
 -- DEPRECATED: {{{
---require "user.colorscheme"
+-- require "user.colorscheme"
 -- require "user.bufferline"
 -- require "user.project"
 -- require "user.alpha"
 -- require "user.nvim-tree"
+-- require "user.focus"
 -- }}}
 
 -- Setup cmdheight to support several lines of messages but not force to do

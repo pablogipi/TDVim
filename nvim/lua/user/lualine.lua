@@ -164,7 +164,7 @@ lualine.setup({
 		lualine_b = {},
 		lualine_c = {},
 		lualine_x = {},
-		lualine_y = { 'tabs' },
+		lualine_y = { 'tabs' , "windows" },
 		lualine_z = { 'o:titlestring' },
 	},
 	--[[ winbar = {

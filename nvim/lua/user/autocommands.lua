@@ -24,7 +24,8 @@ vim.cmd [[
   augroup tdvimAfterSessionLoad
     autocmd SessionLoadPost * silent !title "DEV"
     " Set window title
-    autocmd SessionLoadPost  * let &titlestring = "❰" . fnamemodify(v:this_session, ':t') . "❱" . "TDVim " . $TDVIMVERSION
+    " autocmd SessionLoadPost  * let &titlestring = "❰" . fnamemodify(v:this_session, ':t') . "❱" . "TDVim " . $TDVIMVERSION
+    autocmd SessionLoadPost  * let &titlestring = "❰" . fnamemodify(v:this_session, ':t') . "❱ " . "TDVim " . $TDVIMVERSION
   augroup end
 
   augroup tdvim_AftertBufferRead
@@ -58,7 +59,7 @@ vim.cmd [[
   augroup END
 
   augroup tdvimFileTypes
-    autocmd FileType nerdtree call utils#SetupNERDTreeBuffer()
+    " autocmd FileType nerdtree call utils#SetupNERDTreeBuffer()
     autocmd FileType lspsagafinder setlocal foldmethod=manual
     autocmd! BufRead,BufNewFile *.usd set filetype=usd
     autocmd! BufRead,BufNewFile *.usda set filetype=usda

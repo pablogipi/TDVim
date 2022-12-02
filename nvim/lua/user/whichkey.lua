@@ -290,7 +290,8 @@ local fmappings = {
   ["<S-F4>"] = { "<cmd>Telescope live_grep<cr>", "Live Grep" },
   -- F6
   ["<F6>"] = { "<cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", "Symbols" },
-  ["<C-F6>"] = { "<cmd>Lspsaga lsp_finder<cr>", "Symbols" },
+  ["<S-F6>"] = { "<cmd>Lspsaga peek_definition<cr>", "Preview Definition" },
+  ["<C-F6>"] = { "<cmd>Lspsaga lsp_finder<cr>", "Symbol Info" },
   -- F8
   ["<F8>"] = { "<cmd>NERDTreeToggle<cr>", "Explorer" },
   ["C-<F8>"] = { "<cmd>NERDTreeFind<cr>", "Find in Explorer" },
@@ -301,9 +302,11 @@ local fmappings = {
   ["<C-F9>"] = { "<cmd>Gitsigns diffthis HEAD<cr>", "Git Diff" },
   ["<C-S-F9>"] = { "<cmd>MundoToggle<cr>", "Undo Tree" },
   -- F10
-  ["<F10>"] = { "<cmd>lua vim.diagnostic.open_float({buffer=0})<cr>", "Show Line Diagnistics" },
+  -- ["<F10>"] = { "<cmd>lua vim.diagnostic.open_float({buffer=0})<cr>", "Show Line Diagnistics" },
+  ["<F10>"] = { "<cmd>Lspsaga show_line_diagnostics<cr>", "Show Line Diagnistics" },
   ["<S-F10>"] = { "<cmd>lua vim.diagnostic.setloclist()<cr>", "Send Diagnistics to Location List" },
   ["<C-F10>"] = { "<cmd>lua require'telescope.builtin'.diagnostics(require('telescope.themes').get_ivy({ bufnr=0 }))<cr>", "Diagnostics" },
+  ["<C-S-F10>"] = { "<cmd>Trouble workspace_diagnostics<cr>", "Project Diagnostics" },
   -- F12
   ["<F12>"] = { "<cmd>xa<cr>", "Save & Quit" },
   ["<C-F12>"] = { "<cmd>qa<cr>", "Close & Quit" },
@@ -339,6 +342,61 @@ local immappings = {
 }
 --
 
+-- DWM (window management)
+local dwmopts = {
+  mode = "n", -- VISUAL mode
+  prefix = "",
+  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+  silent = true, -- use `silent` when creating keymaps
+  noremap = true, -- use `noremap` when creating keymaps
+  nowait = true, -- use `nowait` when creating keymaps
+}
+local dwmmappings = {
+  -- []k - Diagnostics
+  ["]w"] = {
+    "<C-w>w",
+    "Next Window",
+  },
+  ["[w"] = {
+    "<C-w>W",
+    "Prev Window",
+  },
+  ["C-Tab"] = {
+    "<C-w>w",
+    "Next Window",
+  },
+  ["C-n"] = {
+    "<cmd>lua require'dwm'.new()<cr>",
+    "Creates a new window and place it in the master pane [M] & stacks all previous windows in the stacked pane [S]",
+  },
+  ["C-c"] = {
+    "<cmd>lua require'dwm'.close()<cr>",
+    "Close the current window if no unsaved changes",
+  },
+  ["C-Space"] = {
+    "<cmd>lua require'dwm'.focus()<cr>",
+    "Focus the current window, that is, place it in the master pane [M] & stacks all other windows in the stacked pane [S]",
+  },
+  ["C-Up"] = {
+    "<cmd>lua require'dwm'.rotate()<cr>",
+    "Rotate windows clockwise",
+  },
+  ["C-Down"] = {
+    "<cmd>lua require'dwm'.rotateLeft()<cr>",
+    "Rotate windows anti-clockwise",
+  },
+  ["C-Left"] = {
+    "<cmd>lua require'dwm'.shrink()<cr>",
+    "Shrink master window",
+  },
+  ["C-Right"] = {
+    "<cmd>lua require'dwm'.grow()<cr>",
+    "Growth master window",
+  },
+}
+
+-- print("En which key")
+
 which_key.setup(setup)
 which_key.register(mappings, opts)
 which_key.register(mappingsnopts, nopts)
@@ -346,3 +404,4 @@ which_key.register(vmappings, vopts)
 which_key.register(fmappings, fopts)
 which_key.register(fmappingsnopts, fnopts)
 which_key.register(immappings, imopts)
+which_key.register(dwmmappings, dwmopts)

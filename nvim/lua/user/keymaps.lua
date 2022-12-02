@@ -130,6 +130,13 @@ keymap("n", "<C-PageDown>", "G", opts)
 -- WindowManagement {{{
 -- Operations to work with windows, tabs, etc ...
 
+-- Jump to next window   
+keymap("n", "<C-Tab>", "<C-w>w", opts)
+keymap("n", "]w", "<C-w>w", opts)
+-- Jump to prev window   
+keymap("n", "<C-S-Tab>", "<C-w>W", opts)
+keymap("n", "[w", "<C-w>W", opts)
+
 -- Close Window - <leader>q
 keymap("n", "<leader>q", "<C-w>c", opts)
 keymap("v", "<leader>q", "<C-w>c", opts)
@@ -149,10 +156,10 @@ keymap("n", "<leader>sh", "<C-w>s", opts)
 keymap("v", "<leader>sh", "<C-w>s", opts)
 
 -- Better window navigation - <leader>[Up|Down|Left|Right]
-keymap("n", "<C-h>", "<C-w>h", opts)
-keymap("n", "<C-j>", "<C-w>j", opts)
-keymap("n", "<C-k>", "<C-w>k", opts)
-keymap("n", "<C-l>", "<C-w>l", opts)
+-- keymap("n", "<C-h>", "<C-w>h", opts)
+-- keymap("n", "<C-j>", "<C-w>j", opts)
+-- keymap("n", "<C-k>", "<C-w>k", opts)
+-- keymap("n", "<C-l>", "<C-w>l", opts)
 keymap("n", "<leader><Left>", "<C-w>h", opts)
 keymap("n", "<leader><Up>", "<C-w>j", opts)
 keymap("n", "<leader><Down>", "<C-w>k", opts)
@@ -185,14 +192,33 @@ keymap("n", "-", ":e .<CR>", opts)
 keymap("n", "<leader>je", "<cmd>NERDTreeFocus<cr>", opts) -- Jump to Explorer
 
 -- Resize with arrows - Ctrl[Up|Down|Left|Right]
-keymap("n", "<C-Up>", ":resize -2<CR>", opts)
-keymap("n", "<C-Down>", ":resize +2<CR>", opts)
-keymap("n", "<C-Left>", ":vertical resize -2<CR>", opts)
-keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
+keymap("n", "<A-Up>", ":resize -2<CR>", opts)
+keymap("n", "<A-Down>", ":resize +2<CR>", opts)
+keymap("n", "<A-Left>", ":vertical resize -2<CR>", opts)
+keymap("n", "<A-Right>", ":vertical resize +2<CR>", opts)
 
 -- Reset windows sizes - <leader>=
 keymap("n", "<leader>=", "<C-w>=", opts)
 keymap("v", "<leader>=", "<C-w>=", opts)
+
+-- Dwm. Keymaps set by cwm.vim, window management plugins
+-- C-N Creates a new window and place it in the master pane [M] & stacks all previous windows in the stacked pane [S]
+-- C-C Close the current window if no unsaved changes
+-- C-Space Focus the current window, that is, place it in the master pane [M] & stacks all other windows in the stacked pane [S]
+-- C-Tab Jumps to next window (clockwise)
+-- C-S-Tab Jumps to previous window (anti-clockwise)
+-- C-Left Shrink main window
+-- C-Right Growth main window
+-- C-Up Rotate windows clockwise
+-- C-Down Rotate windows anti-clockwise
+keymap("n", "<C-n>", "<cmd>lua require'dwm'.new()<cr>", opts)
+keymap("n", "<C-c>", "<cmd>lua require'dwm'.close()<cr>", opts)
+keymap("n", "<C-Space>", "<cmd>lua require'dwm'.focus()<cr>", opts)
+keymap("n", "<C-Up>", "<cmd>lua require'dwm'.rotate()<cr>", opts)
+keymap("n", "<C-Down>", "<cmd>lua require'dwm'.rotateLeft()<cr>", opts)
+keymap("n", "<C-Left>", "<cmd>lua require'dwm'.shrink()<cr>", opts)
+keymap("n", "<C-Right>", "<cmd>lua require'dwm'.grow()<cr>", opts)
+
 
 -- Switch to Previous window
 keymap("n", "<leader>p", "<C-w>p", opts)
@@ -239,6 +265,8 @@ keymap("n", "<C-S-F9>", "<cmd>MundoToggle<cr>", opts)
 keymap("n", "<F6>", "<cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", opts)
 -- Current symbol finder
 keymap("n", "<C-F6>", "<cmd>Lspsaga lsp_finder<cr>", opts)
+-- Current symbol definition
+keymap("n", "<S-F6>", "<cmd>Lspsaga peek_definition<cr>", opts)
 
 -- Format using LSP
 keymap("n", "<leader>f", ":Format<cr>", opts)
@@ -294,7 +322,8 @@ keymap("n", "<C-F9>", "<cmd>Gitsigns diffthis HEAD<cr>", opts)
 -- Navigate diagnostics = []k
 -- Send diagnostics to local list window - <leader>lq
 -- Diagnostics
-keymap("n", "<F10>", "<cmd>lua vim.diagnostic.open_float({buffer=0})<cr>", opts)
+-- keymap("n", "<F10>", "<cmd>lua vim.diagnostic.open_float({buffer=0})<cr>", opts)
+keymap("n", "<F10>", "<cmd>Lspsaga show_line_diagnostics<cr>", opts)
 keymap("n", "<C-F10>", "<cmd>lua require'telescope.builtin'.diagnostics(require('telescope.themes').get_ivy({ bufnr=0 }))<cr>", opts)
 keymap("n", "<S-F10>", "<cmd>lua vim.diagnostic.setloclist()<cr>", opts)
 keymap("n", "<C-S-F10>", "<cmd>TroubleToggle workspace_diagnostics<cr>", opts)

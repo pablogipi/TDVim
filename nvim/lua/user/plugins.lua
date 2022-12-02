@@ -51,7 +51,6 @@ return packer.startup(function(use)
 	-- Basic plugins {{{
 	use("tpope/vim-unimpaired") -- All famous unimpaired :)
 	use("vim-scripts/HelpClose") -- Close all Help windows
-	use("tpope/vim-obsession") -- Manage sessions
 	use("windwp/nvim-autopairs") -- Autopairs, integrates with both cmp and treesitter
 	use("kylechui/nvim-surround") -- Add, remove or change pairs of surrounding charatcers1,  like ""()[]{},
 	use("lewis6991/impatient.nvim")
@@ -64,7 +63,32 @@ return packer.startup(function(use)
 	-- Basic plugins }}}
 
 	-- UI {{{
-	--
+
+	-- Windows Management
+
+	-- DWM
+	-- use("spolu/dwm.vim")
+	use({
+		"delphinus/dwm.nvim",
+		config = function()
+			local dwm = require("dwm")
+			dwm.setup({
+				key_maps = false,
+				master_pane_count = 1,
+				master_pane_width = "60%",
+			})
+			-- When b:dwm_disabled is set, all features are disabled.
+			vim.cmd([[au BufRead * if &previewwindow | let b:dwm_disabled = 1 | endif]])
+		end,
+	})
+	-- Windows separation
+	use({
+		"nvim-zh/colorful-winsep.nvim",
+		config = function()
+			require("colorful-winsep").setup()
+		end,
+	})
+
 	-- Buffers {{{2
 	-- use "akinsho/bufferline.nvim"
 	use("moll/vim-bbye")
@@ -95,7 +119,7 @@ return packer.startup(function(use)
 	-- Which Key
 	use("folke/which-key.nvim")
 
-  -- Undo History
+	-- Undo History
 	use("simnalamburt/vim-mundo")
 
 	-- UI }}}
@@ -105,6 +129,7 @@ return packer.startup(function(use)
 	use("lunarvim/darkplus.nvim")
 	use("ellisonleao/gruvbox.nvim")
 	use("folke/tokyonight.nvim")
+	use("yorik1984/newpaper.nvim")
 
 	-- Colorschemes }}}
 
@@ -123,6 +148,7 @@ return packer.startup(function(use)
 	use({ "hrsh7th/nvim-cmp", commit = "b0dff0ec4f2748626aae13f011d1a47071fe9abc" }) -- The completion plugin
 	use({ "hrsh7th/cmp-buffer", commit = "3022dbc9166796b644a841a02de8dd1cc1d311fa" }) -- buffer completions
 	use({ "hrsh7th/cmp-path", commit = "447c87cdd6e6d6a1d2488b1d43108bfa217f56e1" }) -- path completions
+	use({ "hrsh7th/cmp-cmdline" }) -- command line completions
 	-- use { "saadparwaiz1/cmp_luasnip", commit = "a9de941bcbda508d0a45d28ae366bb3f08db2e36" } -- snippet completions
 	use({ "hrsh7th/cmp-nvim-lsp", commit = "affe808a5c56b71630f17aa7c38e15c59fd648a8" }) -- LSP completions
 	use({ "hrsh7th/cmp-nvim-lua", commit = "d276254e7198ab7d00f117e88e223b4bd8c02d21" }) -- Lua completions
@@ -160,6 +186,8 @@ return packer.startup(function(use)
 
 			saga.init_lsp_saga({
 				-- your configuration
+				-- "single" | "double" | "rounded" |
+				border_style = "rounded",
 			})
 		end,
 	})
@@ -197,10 +225,9 @@ return packer.startup(function(use)
 	use({
 		"simrat39/symbols-outline.nvim",
 		config = function()
-			require("symbols-outline").setup( {
-        symbol_blacklist = { "Fragment", "TypeParameter"},
-      }
-      )
+			require("symbols-outline").setup({
+				symbol_blacklist = { "Fragment", "TypeParameter" },
+			})
 		end,
 	})
 
@@ -243,7 +270,9 @@ return packer.startup(function(use)
 			"smiteshp/nvim-navic",
 		},
 		config = function()
-			require("barbecue").setup()
+			require("barbecue").setup({
+				-- exclude_filetypes = { "toggleterm", "nerdtree", "Outline", "Prompt", "TelescopePrompt", "Trouble" },
+			})
 		end,
 	})
 	-- Developmemt }}}
