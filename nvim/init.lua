@@ -28,9 +28,8 @@ require "user.indentline"
 require "user.startify"
 require "user.whichkey"
 require "user.rooter"
-require "user.aerial"
 require "user.autocommands"
-
+--
 require "user.keymaps"
 -- }}}
 
@@ -41,6 +40,7 @@ require "user.keymaps"
 -- require "user.alpha"
 -- require "user.nvim-tree"
 -- require "user.focus"
+-- require "user.aerial"
 -- }}}
 
 -- Setup cmdheight to support several lines of messages but not force to do

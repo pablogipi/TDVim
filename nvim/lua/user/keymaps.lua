@@ -263,10 +263,13 @@ keymap("n", "<C-S-F9>", "<cmd>MundoToggle<cr>", opts)
 -- Current file symbols fuzzy search
 -- keymap("n", "<F6>", "<cmd>lua require'telescope.builtin'.lsp_document_symbols(require('telescope.themes').get_dropdown({}))<cr>", opts)
 keymap("n", "<F6>", "<cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", opts)
+keymap("i", "<F6>", "<c-o><cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", opts)
 -- Current symbol finder
 keymap("n", "<C-F6>", "<cmd>Lspsaga lsp_finder<cr>", opts)
+keymap("n", "<C-F6>", "<c-o><cmd>Lspsaga lsp_finder<cr>", opts)
 -- Current symbol definition
 keymap("n", "<S-F6>", "<cmd>Lspsaga peek_definition<cr>", opts)
+keymap("n", "<S-F6>", "<c-o><cmd>Lspsaga peek_definition<cr>", opts)
 
 -- Format using LSP
 keymap("n", "<leader>f", ":Format<cr>", opts)

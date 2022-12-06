@@ -69,16 +69,20 @@ return packer.startup(function(use)
 	-- DWM
 	-- use("spolu/dwm.vim")
 	use({
-		"delphinus/dwm.nvim",
+		"pablogipi/dwm.nvim",
+    branch="pgp",
 		config = function()
 			local dwm = require("dwm")
 			dwm.setup({
+				-- autocmd = false,
 				key_maps = false,
 				master_pane_count = 1,
 				master_pane_width = "60%",
 			})
 			-- When b:dwm_disabled is set, all features are disabled.
 			vim.cmd([[au BufRead * if &previewwindow | let b:dwm_disabled = 1 | endif]])
+			vim.cmd([[au Filetype packer let b:dwm_disabled = 1]])
+			vim.cmd([[au Filetype nerdtree let b:dwm_disabled = 1]])
 		end,
 	})
 	-- Windows separation
@@ -149,14 +153,14 @@ return packer.startup(function(use)
 	use({ "hrsh7th/cmp-buffer", commit = "3022dbc9166796b644a841a02de8dd1cc1d311fa" }) -- buffer completions
 	use({ "hrsh7th/cmp-path", commit = "447c87cdd6e6d6a1d2488b1d43108bfa217f56e1" }) -- path completions
 	use({ "hrsh7th/cmp-cmdline" }) -- command line completions
-	-- use { "saadparwaiz1/cmp_luasnip", commit = "a9de941bcbda508d0a45d28ae366bb3f08db2e36" } -- snippet completions
+	use { "saadparwaiz1/cmp_luasnip", commit = "a9de941bcbda508d0a45d28ae366bb3f08db2e36" } -- snippet completions
 	use({ "hrsh7th/cmp-nvim-lsp", commit = "affe808a5c56b71630f17aa7c38e15c59fd648a8" }) -- LSP completions
 	use({ "hrsh7th/cmp-nvim-lua", commit = "d276254e7198ab7d00f117e88e223b4bd8c02d21" }) -- Lua completions
 	-- }}}
 
 	-- snippets {{{2
-	-- use "L3MON4D3/LuaSnip" --snippet engine
-	-- use "rafamadriz/friendly-snippets" -- a bunch of snippets to use
+	use "L3MON4D3/LuaSnip" --snippet engine
+	use "rafamadriz/friendly-snippets" -- a bunch of snippets to use
 	-- }}}
 
 	-- LSP {{{2

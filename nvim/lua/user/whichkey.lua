@@ -222,7 +222,7 @@ local vmappings = {
   ["/"] = { "<ESC><CMD>lua require(\"Comment.api\").toggle_linewise_op(vim.fn.visualmode())<CR>", "Comment" },
 }
 
--- Test Function Keys mappings in whichkey
+-- Function Keys mappings in whichkey
 local fopts = {
   mode = "n", -- NORMAL mode
   prefix = "",
@@ -238,6 +238,15 @@ local fnopts = {
   silent = false, -- use `silent` when creating keymaps
   noremap = false, -- use `noremap` when creating keymaps
   nowait = false, -- use `nowait` when creating keymaps
+}
+
+local fiopts = {
+  mode = "i", -- NORMAL mode
+  prefix = "",
+  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+  silent = false, -- use `silent` when creating keymaps
+  noremap = true, -- use `noremap` when creating keymaps
+  nowait = true, -- use `nowait` when creating keymaps
 }
 --[[ - <F1>:                help
    - <Shift-F1>:       Help for word under the cursor
@@ -316,6 +325,13 @@ local fmappingsnopts = {
   ["<F5>"] = { "gcc", "Toggle Comment" },
   ["<C-F5>"] = { "gbc", "Toggle Block Comment" },
   ["<S-F5>"] = { "yygcc", "Copy & Comment" },
+
+}
+local fimappings = {
+  -- F6
+  ["<F6>"] = { "<c-o><cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", "Symbols" },
+  ["<S-F6>"] = { "<c-o><cmd>Lspsaga peek_definition<cr>", "Preview Definition" },
+  ["<C-F6>"] = { "<c-o><cmd>Lspsaga lsp_finder<cr>", "Symbol Info" },
 
 }
 --
@@ -403,5 +419,6 @@ which_key.register(mappingsnopts, nopts)
 which_key.register(vmappings, vopts)
 which_key.register(fmappings, fopts)
 which_key.register(fmappingsnopts, fnopts)
+which_key.register(fimappings, fiopts)
 which_key.register(immappings, imopts)
 which_key.register(dwmmappings, dwmopts)
