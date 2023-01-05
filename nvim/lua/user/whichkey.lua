@@ -280,10 +280,12 @@ local fiopts = {
 - <F9>:                Lazygit
    - <Ctrl-F9>:        Git Diff
    - <Shift-F9>:       Git Status
-   - <Ctrl-Shift-F9>:  Mundo
+   - <Ctrl-Shift-F9>:  
 - <F10>:               Diagnostic for current line
-   - <Shift F10>:      Send diagnostics to location list
-- <F11>:               Build Tags  
+   - <Shift-F10>:      Send diagnostics to location list
+   - <Ctrl-F10>:       Diagnostics Finder
+   - <Ctrl-Shift-F10>: Project Diagnostics
+- <F11>:               Mundo
 - <F12>:               Save and Quit]]
 local fmappings = {
   -- F1
@@ -302,20 +304,22 @@ local fmappings = {
   ["<S-F6>"] = { "<cmd>Lspsaga peek_definition<cr>", "Preview Definition" },
   ["<C-F6>"] = { "<cmd>Lspsaga lsp_finder<cr>", "Symbol Info" },
   -- F8
-  ["<F8>"] = { "<cmd>NERDTreeToggle<cr>", "Explorer" },
+  ["<F8>"] = { "<cmd>NERDTreeToggleVCS<cr>", "Explorer" },
   ["C-<F8>"] = { "<cmd>NERDTreeFind<cr>", "Find in Explorer" },
   ["S-<F8>"] = { "<cmd>SymbolsOutline<cr>", "Symbols Explorer" },
   -- F9
   ["<F9>"] = { "<cmd>lua _LAZYGIT_TOGGLE()<cr>", "Lazygit" },
   ["<S-F9>"] = { "<cmd>lua require'telescope.builtin'.git_status(require('telescope.themes').get_dropdown({}))<cr>", "Git Status" },
   ["<C-F9>"] = { "<cmd>Gitsigns diffthis HEAD<cr>", "Git Diff" },
-  ["<C-S-F9>"] = { "<cmd>MundoToggle<cr>", "Undo Tree" },
+  ["<C-S-F9>"] = { "<cmd>DiffviewOpen<cr>", "Git Diff View" },
   -- F10
   -- ["<F10>"] = { "<cmd>lua vim.diagnostic.open_float({buffer=0})<cr>", "Show Line Diagnistics" },
   ["<F10>"] = { "<cmd>Lspsaga show_line_diagnostics<cr>", "Show Line Diagnistics" },
   ["<S-F10>"] = { "<cmd>lua vim.diagnostic.setloclist()<cr>", "Send Diagnistics to Location List" },
   ["<C-F10>"] = { "<cmd>lua require'telescope.builtin'.diagnostics(require('telescope.themes').get_ivy({ bufnr=0 }))<cr>", "Diagnostics" },
   ["<C-S-F10>"] = { "<cmd>Trouble workspace_diagnostics<cr>", "Project Diagnostics" },
+  -- F11
+  ["<F11>"] = { "<cmd>MundoToggle<cr>", "Undo Tree" },
   -- F12
   ["<F12>"] = { "<cmd>xa<cr>", "Save & Quit" },
   ["<C-F12>"] = { "<cmd>qa<cr>", "Close & Quit" },

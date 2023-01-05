@@ -193,6 +193,7 @@ cmp.setup({
 			return vim_item
 		end,
 	},
+
 	sources = {
 		{ name = "luasnip" },
 		{ name = "nvim_lsp" },

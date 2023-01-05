@@ -81,15 +81,25 @@ return packer.startup(function(use)
 			})
 			-- When b:dwm_disabled is set, all features are disabled.
 			vim.cmd([[au BufRead * if &previewwindow | let b:dwm_disabled = 1 | endif]])
+			vim.cmd([[au Filetype quickfix,qf let b:dwm_disabled = 1]])
 			vim.cmd([[au Filetype packer let b:dwm_disabled = 1]])
 			vim.cmd([[au Filetype nerdtree let b:dwm_disabled = 1]])
+			vim.cmd([[au Filetype Outline let b:dwm_disabled = 1]])
 		end,
 	})
 	-- Windows separation
-	use({
+	--[[ use({
 		"nvim-zh/colorful-winsep.nvim",
 		config = function()
 			require("colorful-winsep").setup()
+		end,
+	}) ]]
+
+  -- Dim inactive windows
+	use({
+		"levouh/tint.nvim",
+		config = function()
+			require("tint").setup()
 		end,
 	})
 
@@ -231,6 +241,7 @@ return packer.startup(function(use)
 		config = function()
 			require("symbols-outline").setup({
 				symbol_blacklist = { "Fragment", "TypeParameter" },
+        width = 10,
 			})
 		end,
 	})
@@ -255,6 +266,7 @@ return packer.startup(function(use)
 
 	-- Git
 	use("lewis6991/gitsigns.nvim")
+  use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' }
 
 	-- Project
 	-- use "ahmedkhalf/project.nvim"

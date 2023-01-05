@@ -284,6 +284,11 @@ set.titlestring='TDVim'
 --------------------------- }}}
 
 
+-- vim.cmd "set fillchars+=vert:\\|"
+-- vim.cmd "hi vertsplit guifg=fg guibg=bg"
+-- vim.cmd "hi! VertSplit guifg=fg guibg=bg gui=NONE"
+
+
 -- TDVim version
 vim.env.TDVIMVERSION="0.4dev"
 

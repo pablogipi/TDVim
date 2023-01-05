@@ -90,6 +90,8 @@ vim.cmd [[
   " let g:startify_session_before_save = [
               " \ 'echo "Cleaning up before saving.."',
               " \ 'silent! NERDTreeTabsClose',
+              " \ 'silent! SymbolsOutlineClose',
+              " \ 'silent! TroubleClose',
               " \ 'silent! cclose',
               " \ 'silent! call utils#CloseAllWindowsByType( "quickfix" )',
               " \ 'silent! call utils#CloseAllWindowsByType( "preview" )',

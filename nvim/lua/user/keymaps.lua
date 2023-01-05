@@ -176,14 +176,14 @@ keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 -- keymap("n", "<leader>e", ":Lex 10<cr>", opts)
 -- keymap("n", "<F8>", ":NvimTreeToggle<cr>", opts) -- Nvimtree
 -- keymap("n", "<leader>e", ":NvimTreeToggle<cr>", opts)
-keymap("n", "<F8>", ":NERDTreeToggle<cr>", opts) -- NERDTree
-keymap("n", "<leader>e", ":NERDTreeToggle<cr>", opts)
-keymap("i", "<F8>", "<C-O>:NERDTreeToggle<cr>i", opts) -- NERDTree
-keymap("i", "<leader>e", "<C-O>:NERDTreeToggle<cr>i", opts)
-keymap("v", "<F8>", ":NERDTreeToggle<cr>v", opts) -- NERDTree
-keymap("v", "<leader>e", ":NERDTreeToggle<cr>v", opts)
-keymap("x", "<F8>", ":NERDTreeToggle<cr>", opts) -- NERDTree
-keymap("x", "<leader>e", ":NERDTreeToggle<cr>", opts)
+keymap("n", "<F8>", ":NERDTreeToggleVCS<cr>", opts) -- NERDTree
+keymap("n", "<leader>e", ":NERDTreeToggleVCS<cr>", opts)
+keymap("i", "<F8>", "<C-O>:NERDTreeToggleVCS<cr>i", opts) -- NERDTree
+keymap("i", "<leader>e", "<C-O>:NERDTreeToggleVCS<cr>i", opts)
+keymap("v", "<F8>", ":NERDTreeToggleVCS<cr>v", opts) -- NERDTree
+keymap("v", "<leader>e", ":NERDTreeToggleVCS<cr>v", opts)
+keymap("x", "<F8>", ":NERDTreeToggleVCS<cr>", opts) -- NERDTree
+keymap("x", "<leader>e", ":NERDTreeToggleVCS<cr>", opts)
 -- Find in Explorer - C-F8
 keymap("n", "<C-F8>", ":NERDTreeFind<cr>", opts) -- NERDTree Find
 -- In Explorer - -
@@ -246,7 +246,7 @@ keymap("x", "<F3>", "<cmd>lua require'telescope.builtin'.buffers(require('telesc
 keymap("i", "<F3>", "<c-o><cmd>lua require'telescope.builtin'.buffers(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
 
 -- Undo Tree
-keymap("n", "<C-S-F9>", "<cmd>MundoToggle<cr>", opts)
+keymap("n", "<F11>", "<cmd>MundoToggle<cr>", opts)
 
 
 
@@ -307,6 +307,8 @@ keymap("n", "<F9>", "<cmd>lua _LAZYGIT_TOGGLE()<cr>", opts)
 keymap("n", "<S-F9>", "<cmd>lua require'telescope.builtin'.git_status(require('telescope.themes').get_dropdown({}))<cr>", opts)
 -- Git Diff
 keymap("n", "<C-F9>", "<cmd>Gitsigns diffthis HEAD<cr>", opts)
+-- Git Diff View
+keymap("n", "<C-S-F9>", "<cmd>DiffviewOpen<cr>", opts)
 -- Implemented in user/gitsigns.lua
 -- Diff this - S-F9, <leader>hd
 -- Navigate Previous/Next hunk - []c 
