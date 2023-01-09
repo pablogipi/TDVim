@@ -142,6 +142,14 @@ local mappings = {
       "<cmd>Gitsigns diffthis HEAD<cr>",
       "Diff",
     },
+    f = {
+      "<cmd>DiffviewFileHistory<cr>",
+      "File Diff History",
+    },
+    v = {
+      "<cmd>DiffviewOpen<cr>",
+      "Diff View",
+    },
   },
 
   l = {
@@ -199,54 +207,55 @@ local mappings = {
   },
 }
 local mappingsnopts = {
-  ["C-PageUp"] = { "gg", "Document Start" },
+  ["C-PageUp"]   = { "gg", "Document Start" },
   ["C-PageDown"] = { "G", "Document End" },
   c = {
     name = "Comment",
-    c = { "gcc", "Toggle Comment" },
-    t = { "gcc", "Toggle Comment" },
-    b = { "gbc", "Toggle Block Comment" },
-    y = { "yygcc", "Yank and Comment" },
+    c    = { "gcc",         "Toggle Comment" },
+    t    = { "gcc",         "Toggle Comment" },
+    b    = { "gbc",   "Toggle Block Comment" },
+    y    = { "yygcc",     "Yank and Comment" },
   },
 }
 
-local vopts = {
-  mode = "v", -- VISUAL mode
-  prefix = "<leader>",
-  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-  silent = true, -- use `silent` when creating keymaps
+local xopts = {
+  mode    = "x", -- VISUAL mode
+  prefix  = "<leader>",
+  buffer  = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+  silent  = true, -- use `silent` when creating keymaps
   noremap = true, -- use `noremap` when creating keymaps
-  nowait = true, -- use `nowait` when creating keymaps
+  nowait  = true, -- use `nowait` when creating keymaps
 }
-local vmappings = {
+local xmappings = {
   ["/"] = { "<ESC><CMD>lua require(\"Comment.api\").toggle_linewise_op(vim.fn.visualmode())<CR>", "Comment" },
+  ["a"] = { "<CMD>LiveEasyAlign<CR>", "Align Selection" },
 }
 
 -- Function Keys mappings in whichkey
 local fopts = {
-  mode = "n", -- NORMAL mode
-  prefix = "",
-  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-  silent = false, -- use `silent` when creating keymaps
+  mode    = "n", -- NORMAL mode
+  prefix  = "",
+  buffer  = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+  silent  = false, -- use `silent` when creating keymaps
   noremap = true, -- use `noremap` when creating keymaps
-  nowait = true, -- use `nowait` when creating keymaps
+  nowait  = true, -- use `nowait` when creating keymaps
 }
 local fnopts = {
-  mode = "n", -- NORMAL mode
-  prefix = "",
-  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-  silent = false, -- use `silent` when creating keymaps
+  mode    = "n", -- NORMAL mode
+  prefix  = "",
+  buffer  = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+  silent  = false, -- use `silent` when creating keymaps
   noremap = false, -- use `noremap` when creating keymaps
-  nowait = false, -- use `nowait` when creating keymaps
+  nowait  = false, -- use `nowait` when creating keymaps
 }
 
 local fiopts = {
-  mode = "i", -- NORMAL mode
-  prefix = "",
-  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-  silent = false, -- use `silent` when creating keymaps
+  mode    = "i", -- NORMAL mode
+  prefix  = "",
+  buffer  = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+  silent  = false, -- use `silent` when creating keymaps
   noremap = true, -- use `noremap` when creating keymaps
-  nowait = true, -- use `nowait` when creating keymaps
+  nowait  = true, -- use `nowait` when creating keymaps
 }
 --[[ - <F1>:                help
    - <Shift-F1>:       Help for word under the cursor
@@ -289,51 +298,51 @@ local fiopts = {
 - <F12>:               Save and Quit]]
 local fmappings = {
   -- F1
-  ["<S-F1>"] = { "<cmd>lua require'telescope.builtin'.help_tags(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", "Search In Help" },
-  ["<C-F1>"] = { "<cmd>WhichKey<cr>", "WhichKey" },
+  ["<S-F1>"]    = { "<cmd>lua require'telescope.builtin'.help_tags(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", "Search In Help" },
+  ["<C-F1>"]    = { "<cmd>WhichKey<cr>", "WhichKey" },
   -- F2
-  ["<F2>"] = { ":", "Normal Mode" },
+  ["<F2>"]      = { ":", "Normal Mode" },
   -- F3
-  ["<F3>"] = { "<cmd>lua require'telescope.builtin'.buffers(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", "Buffers" },
+  ["<F3>"]      = { "<cmd>lua require'telescope.builtin'.buffers(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", "Buffers" },
   -- ["S-<F3>"] = { "<cmd>lua require'telescope.builtin'.buffers(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", "Files in Project" },
   -- F4
-  ["<F4>"] = { "<cmd>Telescope grep_string<cr>", "Grep" },
-  ["<S-F4>"] = { "<cmd>Telescope live_grep<cr>", "Live Grep" },
+  ["<F4>"]      = { "<cmd>Telescope grep_string<cr>", "Grep" },
+  ["<S-F4>"]    = { "<cmd>Telescope live_grep<cr>", "Live Grep" },
   -- F6
-  ["<F6>"] = { "<cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", "Symbols" },
-  ["<S-F6>"] = { "<cmd>Lspsaga peek_definition<cr>", "Preview Definition" },
-  ["<C-F6>"] = { "<cmd>Lspsaga lsp_finder<cr>", "Symbol Info" },
+  ["<F6>"]      = { "<cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", "Symbols" },
+  ["<S-F6>"]    = { "<cmd>Lspsaga peek_definition<cr>", "Preview Definition" },
+  ["<C-F6>"]    = { "<cmd>Lspsaga lsp_finder<cr>", "Symbol Info" },
   -- F8
-  ["<F8>"] = { "<cmd>NERDTreeToggleVCS<cr>", "Explorer" },
-  ["C-<F8>"] = { "<cmd>NERDTreeFind<cr>", "Find in Explorer" },
-  ["S-<F8>"] = { "<cmd>SymbolsOutline<cr>", "Symbols Explorer" },
+  ["<F8>"]      = { "<cmd>NERDTreeToggleVCS<cr>", "Explorer" },
+  ["C-<F8>"]    = { "<cmd>NERDTreeFind<cr>", "Find in Explorer" },
+  ["S-<F8>"]    = { "<cmd>SymbolsOutline<cr>", "Symbols Explorer" },
   -- F9
-  ["<F9>"] = { "<cmd>lua _LAZYGIT_TOGGLE()<cr>", "Lazygit" },
-  ["<S-F9>"] = { "<cmd>lua require'telescope.builtin'.git_status(require('telescope.themes').get_dropdown({}))<cr>", "Git Status" },
-  ["<C-F9>"] = { "<cmd>Gitsigns diffthis HEAD<cr>", "Git Diff" },
-  ["<C-S-F9>"] = { "<cmd>DiffviewOpen<cr>", "Git Diff View" },
+  ["<F9>"]      = { "<cmd>lua _LAZYGIT_TOGGLE()<cr>", "Lazygit" },
+  ["<S-F9>"]    = { "<cmd>lua require'telescope.builtin'.git_status(require('telescope.themes').get_dropdown({}))<cr>", "Git Status" },
+  ["<C-F9>"]    = { "<cmd>Gitsigns diffthis HEAD<cr>", "Git Diff" },
+  ["<C-S-F9>"]  = { "<cmd>DiffviewOpen<cr>", "Git Diff View" },
   -- F10
   -- ["<F10>"] = { "<cmd>lua vim.diagnostic.open_float({buffer=0})<cr>", "Show Line Diagnistics" },
-  ["<F10>"] = { "<cmd>Lspsaga show_line_diagnostics<cr>", "Show Line Diagnistics" },
-  ["<S-F10>"] = { "<cmd>lua vim.diagnostic.setloclist()<cr>", "Send Diagnistics to Location List" },
-  ["<C-F10>"] = { "<cmd>lua require'telescope.builtin'.diagnostics(require('telescope.themes').get_ivy({ bufnr=0 }))<cr>", "Diagnostics" },
+  ["<F10>"]     = { "<cmd>Lspsaga show_line_diagnostics<cr>", "Show Line Diagnistics" },
+  ["<S-F10>"]   = { "<cmd>lua vim.diagnostic.setloclist()<cr>", "Send Diagnistics to Location List" },
+  ["<C-F10>"]   = { "<cmd>lua require'telescope.builtin'.diagnostics(require('telescope.themes').get_ivy({ bufnr=0 }))<cr>", "Diagnostics" },
   ["<C-S-F10>"] = { "<cmd>Trouble workspace_diagnostics<cr>", "Project Diagnostics" },
   -- F11
-  ["<F11>"] = { "<cmd>MundoToggle<cr>", "Undo Tree" },
+  ["<F11>"]     = { "<cmd>MundoToggle<cr>", "Undo Tree" },
   -- F12
-  ["<F12>"] = { "<cmd>xa<cr>", "Save & Quit" },
-  ["<C-F12>"] = { "<cmd>qa<cr>", "Close & Quit" },
+  ["<F12>"]     = { "<cmd>xa<cr>", "Save & Quit" },
+  ["<C-F12>"]   = { "<cmd>qa<cr>", "Close & Quit" },
 }
 local fmappingsnopts = {
   -- F5
-  ["<F5>"] = { "gcc", "Toggle Comment" },
+  ["<F5>"]   = { "gcc", "Toggle Comment" },
   ["<C-F5>"] = { "gbc", "Toggle Block Comment" },
   ["<S-F5>"] = { "yygcc", "Copy & Comment" },
 
 }
 local fimappings = {
   -- F6
-  ["<F6>"] = { "<c-o><cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", "Symbols" },
+  ["<F6>"]   = { "<c-o><cmd>lua require'telescope.builtin'.treesitter(require('telescope.themes').get_dropdown({}))<cr>", "Symbols" },
   ["<S-F6>"] = { "<c-o><cmd>Lspsaga peek_definition<cr>", "Preview Definition" },
   ["<C-F6>"] = { "<c-o><cmd>Lspsaga lsp_finder<cr>", "Symbol Info" },
 
@@ -342,12 +351,12 @@ local fimappings = {
 
 -- Impaired
 local imopts = {
-  mode = "n", -- VISUAL mode
-  prefix = "",
-  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-  silent = true, -- use `silent` when creating keymaps
+  mode    = "n", -- VISUAL mode
+  prefix  = "",
+  buffer  = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+  silent  = true, -- use `silent` when creating keymaps
   noremap = true, -- use `noremap` when creating keymaps
-  nowait = true, -- use `nowait` when creating keymaps
+  nowait  = true, -- use `nowait` when creating keymaps
 }
 local immappings = {
   -- []k - Diagnostics
@@ -364,12 +373,12 @@ local immappings = {
 
 -- DWM (window management)
 local dwmopts = {
-  mode = "n", -- VISUAL mode
-  prefix = "",
-  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-  silent = true, -- use `silent` when creating keymaps
+  mode    = "n", -- VISUAL mode
+  prefix  = "",
+  buffer  = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+  silent  = true, -- use `silent` when creating keymaps
   noremap = true, -- use `noremap` when creating keymaps
-  nowait = true, -- use `nowait` when creating keymaps
+  nowait  = true, -- use `nowait` when creating keymaps
 }
 local dwmmappings = {
   -- []k - Diagnostics
@@ -420,7 +429,7 @@ local dwmmappings = {
 which_key.setup(setup)
 which_key.register(mappings, opts)
 which_key.register(mappingsnopts, nopts)
-which_key.register(vmappings, vopts)
+which_key.register(xmappings, xopts)
 which_key.register(fmappings, fopts)
 which_key.register(fmappingsnopts, fnopts)
 which_key.register(fimappings, fiopts)

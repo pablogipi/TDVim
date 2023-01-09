@@ -53,6 +53,7 @@ return packer.startup(function(use)
 	use("vim-scripts/HelpClose") -- Close all Help windows
 	use("windwp/nvim-autopairs") -- Autopairs, integrates with both cmp and treesitter
 	use("kylechui/nvim-surround") -- Add, remove or change pairs of surrounding charatcers1,  like ""()[]{},
+	use("junegunn/vim-easy-align") -- Add, remove or change pairs of surrounding charatcers1,  like ""()[]{},
 	use("lewis6991/impatient.nvim")
 	use("dstein64/vim-startuptime")
 	use({ "kyazdani42/nvim-web-devicons", commit = "563f3635c2d8a7be7933b9e547f7c178ba0d4352" }) -- Devicons, nvim version
