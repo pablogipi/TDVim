@@ -30,28 +30,34 @@ syntax on
 filetype plugin indent on
 
 if exists("$TDVIMROOT")
-    " Only load TDVim if cetain criteria is sathisfied
-    "if (v:version >= 800)
-	if (v:version >= 800 && (has('pythonx') || has('python3_dynamic')))
-        let s:tdvimroot = substitute($TDVIMROOT, "\\", "/", "g")
-        "Add TDVim to runtim path
-        execute "set rtp^=" . s:tdvimroot
-        execute "set rtp+=" . s:tdvimroot . "/after"
+  " Install vim-plug:
+  let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+  if empty(glob(data_dir . '/autoload/plug.vim'))
+    silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
+  " Only load TDVim if cetain criteria is sathisfied
+  "if (v:version >= 800)
+  if (v:version >= 800 && (has('pythonx') || has('python3_dynamic')))
+    let s:tdvimroot = substitute($TDVIMROOT, "\\", "/", "g")
+    "Add TDVim to runtim path
+    execute "set rtp^=" . s:tdvimroot
+    execute "set rtp+=" . s:tdvimroot . "/after"
 
-        " Load TDVim !!
-        "let s:loadScriptPath =  $TDVIMROOT . "/vimrc"
-        let s:loadScriptPath =  s:tdvimroot . "/vimrc"
-        exec "source " . s:loadScriptPath
-        "echomsg "TDVim " . s:tdvimroot . " loaded"
-    else
-        echohl ErrorMsg
-        echoerr "TDVim needs at least VIM v8 with Python support"
-        echohl Normal
-    endif
-else
+    " Load TDVim !!
+    "let s:loadScriptPath =  $TDVIMROOT . "/vimrc"
+    let s:loadScriptPath =  s:tdvimroot . "/vimrc"
+    exec "source " . s:loadScriptPath
+    "echomsg "TDVim " . s:tdvimroot . " loaded"
+  else
     echohl ErrorMsg
-    echoerr "TDVIMROOT not defined.Please set an environment variable called TDVIMROOT to the TDVim install location"
+    echoerr "TDVim needs at least VIM v8 with Python support"
     echohl Normal
+  endif
+else
+  echohl ErrorMsg
+  echoerr "TDVIMROOT not defined.Please set an environment variable called TDVIMROOT to the TDVim install location"
+  echohl Normal
 endif
 
 " vim: ts=8 ft=vim nowrap fdm=marker ff=unix

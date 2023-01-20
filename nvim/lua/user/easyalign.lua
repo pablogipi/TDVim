@@ -1,4 +1,5 @@
 -- Setup EasyAlign
+-- https://github.com/junegunn/vim-easy-align/blob/master/EXAMPLES.md
 local set = vim.opt
 local cmd = vim.cmd
 local fn = vim.fn
