@@ -1,0 +1,571 @@
+"
+" Main Vim setup in single file without any external plugin dependencies
+"
+" Mantainer:	Pablo Gimenez <pablogipi@gmail.com>
+" Last change:	2009 Dec 9
+"
+"
+
+" Sections:
+" - Init settings
+" - Terminal Settings
+" - Search settings
+" - Keyboard mappings
+" - Interface settings
+" - Edit options and Language specific options
+" - Diff mode specific options
+" - Autocommands
+" - Custom commands
+" - Global variables
+"
+
+" Custom setup needed for initialization
+" XXX: I think this should be done at the end
+let g:tdvim_before_start = 1
+call utils#SourceUserSettings()
+let g:tdvim_before_start = 0
+
+
+" Global variables {{{
+
+" TDVim version
+let $TDVIMVERSION="0.4"
+
+" }}}
+
+" Init settings {{{
+"
+" When started as "evim", evim.vim will already have done these settings.
+if v:progname =~? "evim"
+    finish
+endif
+
+" Use Vim settings, rather then Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+set nocompatible
+
+" Allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+" Do not keep a backup file for VMS
+if has("vms")
+    set nobackup
+else
+    set backup                               " keep a backup file
+endif
+" Backup and swap files
+let vimbackuppath = $HOME . '/.vim/tmp'
+if has('win32') || has('win64')
+    "Windows
+    let vimbackuppath = $HOME . '/vimfiles/tmp'
+endif
+let &backupdir = vimbackuppath . '//,.'
+let &directory = vimbackuppath . '//,.'
+silent call mkdir (vimbackuppath , 'p')
+
+set history=50                           " keep 50 lines of command line history
+set ruler                                " show the cursor position all the time
+set showcmd                              " display incomplete commands
+set wildmode=full                        " Complete the next full match
+" Ignores patterns in autocomplete
+if  == 1
+    "Linux
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.swp,*.bak,*~
+elseif s:GetOS() == 2
+    "Mac
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.swp,*.bak,*~
+elseif s:GetOS() == 3
+    "Windows
+    set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*,*.swp,*.bak,*~
+endif
+
+" Check terminals colors, if is not a 256 color terminal make a warning
+if !has('gui_running') && &t_Co < 256
+    silent echomsg "Current terminal doesn't support 256 colors. Some colors and the status line won't look correctly"
+endif
+
+" Set viminfo. Mainly set history limits
+" File history: 25
+" Maximum lines per registry: 100
+" Maximum sze of a register: 10KB
+" Disable hlsearch
+set viminfo='25,<100,s10,h
+if s:GetOS() == 3
+    "Windows
+    set viminfo+=rA:
+    set viminfo+=rB:
+endif
+
+" Always run mswin at the end
+" Load more conventional editors options, MSWin mode:
+source $VIMRUNTIME/mswin.vim
+" Fix mswin, it enters in select mode rather than visual.
+set selectmode=""
+
+" Auto change directory
+set autochdir
+
+" Use OS clipboard:
+set clipboard^=unnamed,unnamedplus
+
+" }}}
+
+" Sessions {{{
+" Options for what to save in the sessions file:
+let &sessionoptions='buffers,curdir,folds,resize,winsize'
+"let &sessionoptions-='help'
+"let &sessionoptions+='resize'
+" View, restore file state options:
+let &viewoptions='cursor,folds,slash,unix'
+
+" }}}
+
+" Terminal settings {{{
+set ttyfast
+
+" }}}
+
+" Edit options and Language specific options {{{
+"
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+    syntax on
+    set hlsearch
+endif
+
+" Set buffers to be hidden for easy switching
+set hidden
+
+" Activate showmatch
+set showmatch
+
+" Consider windows in other tabs when opening a buffer
+set switchbuf=usetab
+
+" Default editing setup:
+" Settings common for all file types:
+
+" Tabs width
+let &shiftwidth  = 4
+let &softtabstop = 4
+let &shiftwidth  = 4
+" Size for the TAB
+let &tabstop=&shiftwidth
+set expandtab
+
+" Always round indent to shiftwidth
+set shiftround
+
+" Line numbering for all file formats:
+set nonumber
+
+" Better folding:
+set foldtext=s:NeatFoldText()
+
+" Search settings {{{
+
+" Do incremental searching
+set incsearch
+
+" Switch on search pattern highlighting.
+set hlsearch
+
+" Search case mode:
+set ignorecase
+set smartcase
+
+" Global search by default
+set gdefault
+
+" Better grep
+if executable("ag")
+    "set grepprg=ag\ --nogroup\ --nocolor\ --vimgrep
+    set grepprg=ag\ --vimgrep\ --ignore\ *~\ --ignore\ *.swp\ --ignore\ *.diff\ --ignore\ tags\ --ignore\ *.tags
+endif
+
+" }}}
+
+" }}}
+
+" Interface settings {{{
+"
+"Encoding {{{2
+" UTF-8 encoding has been disabled due to several compatibility problems
+" Spacially with terminals.
+if has("multi_byte")
+    if &termencoding == ""
+        let &termencoding = &encoding
+    endif
+    set encoding=utf-8
+    "setglobal fileencoding=utf-8 bomb
+    setglobal fileencoding=utf-8
+    set fileencodings=ucs-bom,utf-8,latin1
+endif
+"}}}
+
+" In many terminal emulators the mouse works just fine, thus enable it.
+set mouse=a
+
+" Color Theme
+" Leave this for the user settings, use default
+
+" Command line height
+set cmdheight=2
+" Preview Window Height
+set previewheight=8
+
+" Folding options: {{{2
+" Default folding method id indent
+set foldmethod=indent
+" Folds margin width
+set foldcolumn=2
+" Minimum lines in a  fold to consider it a a proper fold
+set foldminlines=3
+" Fold starting level, set to 1 to have only level 1 folds ready
+set foldlevelstart=-1
+" Max nested level
+let &foldnestmax = 3
+" }}}
+
+" Tabs label format:
+"set guitablabel=%{utils#GuiTabLabel()}
+
+" Completion {{{
+" Completion options
+set noshowmode
+"set shortmess+=c
+set shortmess=aTt
+set noinfercase
+set belloff+=ctrlg " If Vim beeps during completion
+set belloff+=cursor " If Vim beeps during scrolling
+set belloff+=all " If Vim beeps during scrolling
+set completeopt-=preview
+set completeopt+=menuone
+set completeopt+=noinsert
+"set completeopt+=noselect
+" Protect certain keymaps
+"inoremap <expr> <c-e> mucomplete#popup_exit("\<c-e>")
+"inoremap <expr> <c-y> mucomplete#popup_exit("\<c-y>")
+"inoremap <expr>  <cr> mucomplete#popup_exit("\<cr>")
+
+" Sources for searching in completion mode
+" Only include current buffer and buffer in other windows only
+set complete=.,w,b
+
+" Set window splits to be at bottom by default, used by preview window and
+" quckfix
+set splitbelow
+" }}}
+
+" Status Line {{{2
+" Always show status line:
+set laststatus=2
+" Defaul status line
+set statusline=%-f%m%r%h%w%q\ %y\ %=[POS=%l,%v][%p%%]
+" Disable show mode, not needed when using lighline or any other status line
+" plugin
+set noshowmode
+
+
+" }}}
+
+" Preview window {{{2
+set pvh=5
+" }}}
+
+" Invisible character {{{2
+"set listchars=tab:▸\ ,eol:¬
+set listchars=tab:>-,eol:¬,space:.,trail:.
+" }}}
+
+" Lines wraping and formatting {{{2
+set wrap
+set textwidth=79
+set formatoptions=qrn1
+" }}}
+
+
+" FoldDigest {{{2
+if exists("$FOLDDIGEST_POS")
+    let g:FoldDigest_Pos=$FOLDDIGEST_POS
+else
+    let g:FoldDigest_Pos="right"
+endif
+
+" }}}
+
+" Netrw {{{2
+let g:netrw_banner        = 0
+let g:netrw_sort_sequence = '[\/]$,*'
+"let g:netrw_browse_split  = 4
+" }}}
+
+"""""""""""""""""""""""""""
+""""""""""""""""""""""""""" }}}
+
+" GUI {{{
+if has("gui_running")
+    set mousehide		" Hide the mouse when typing text
+    set mousemodel=popup	" Enable popup menu using mouse
+
+    " Set GUI font and general options
+    if has('gui_gtk2') || has('gui_gtk3')
+        set gfn=DejaVu\ Sans\ Mono\ 10
+        "set guioptions = "agimrLtT"
+        set guioptions += "aAgimrLt"
+    elseif has('gui_photon')
+        set gfn=DejaVu\ Sans\ Mono:s10
+    elseif has('gui_kde')
+        " the obsolete kvim
+        " just make sure it works correctly if it hits our vimrc
+        set gfn=DejaVu\ Sans\ Mono/10/-1/5/50/0/0/0/1/0
+    elseif has('x11')
+        " I'm guessing the following (other-X11 including GTK1)
+        " please check, and correct if necessary.
+        " On GTK1 (and maybe some others) you can use :set gfn=*
+        " Replace by asterisks like here
+        " to make it a little more general:
+        set gfn=-*-dejavu-medium-r-normal-*-*-10-*-*-m-*-*
+        " add another elseif here
+        " if you want DejaVu on mac-without-x11
+    elseif has("gui_macvim") || has("gui_mac")
+        set gfn=DejaVu\ Sans\ Mono:h13
+    elseif has("win32")
+        set guioptions+="gmrLtT"
+        set guifont=Consolas:h11:cANSI:qDRAFT
+    else
+        " system not detected
+    endif
+
+    " Better updatetime for GUI
+    set updatetime=1000
+
+
+endif
+" }}}
+
+" Keyboard mappings {{{
+" Leader key
+"let mapleader = ","
+"let mapleader = "`"
+let mapleader = "\<Space>"
+let maplocalleader = ","
+" Load keymaps mapings for TDVim
+" TODO
+
+" }}}
+
+
+" Diff mode specific options {{{
+set diffopt=filler,vertical
+
+if &diff
+    "	setup for diff mode
+endif
+
+" }}}
+
+" Autocommands and Events {{{
+"
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+    " Enable file type detection.
+    filetype plugin indent on
+
+    " Setup events autocommands
+    " Misc
+    augroup tdvimMisc
+        " Highlight type for extra white spaces at the end of a line
+        autocmd ColorScheme * highlight ExtraWhitespace ctermbg=lightred guibg=lightred
+        autocmd Syntax python,cpp,c,sh,csh,vim highlight ExtraWhitespace ctermbg=lightred guibg=lightred
+    augroup END
+        " TODO
+	"autocmd VimEnter * call utils#SourceUserSettings()
+        autocmd VimEnter * echomsg "TDVim " . $TDVIMVERSION . " loaded"
+    augroup END
+    " AfterBufferRead
+    augroup tdvimAftertBufferRead
+        " When editing a file, always jump to the last known cursor position.
+        " Don't do it when the position is invalid or when inside an event handler
+        " (happens when dropping a file on gvim).
+        autocmd BufRead *
+                    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+                    \   exe "normal! g`\"" |
+                    \ endif
+        " Change local path to the folder containing the current buffer:
+        autocmd BufRead * call s:SetLocalPath()
+        autocmd BufRead quickfix call s:SetupAuxBuffer()
+        " Show bad spaces at the end of code lines:
+        au BufRead,BufNewFile *.py,*.pyw,*.c,*.cpp,*.vim,*.h match ExtraWhitespace  /\s\+$/
+    augroup END
+    " BufEnter
+    augroup tdvimBufEnter
+        " Set local path to path of current file
+        autocmd BufEnter * call s:SetLocalPath()
+        " Call TDVim Project
+        "autocmd BufEnter * call utils#ProjectSettings(expand("<afile>:p:h"), 0)
+    augroup END
+    " BufLeave
+    "augroup tdvimBufLeave
+    "augroup END
+    " BufWinEnter
+    augroup tdvimWinNew
+        autocmd WinNew * call s:PreviewWindowSetup()
+    augroup END
+    augroup tdvimWinEnter
+        autocmd WinEnter * call s:PreviewWindowSetup()
+    augroup END
+    " BufWinLeave
+    augroup tdvimWinLeave
+        autocmd WinLeave * call s:LeavePreviewWindowSetup()
+    augroup END
+    " BufAdd
+    "augroup tdvimBufAdd
+        " Setup quickfix and preview windows keymaps
+        "autocmd BufAdd  * if &buftype == 'quickfix' | echo 'winenter' | endif
+        "autocmd BufAdd  * echomsg "Adding buffer " . &buftype
+        "autocmd BufAdd qf call utils#SetupAuxBuffer()
+    "augroup END
+     "FileTypes
+     "
+    augroup tdvimFileTypes
+	"autocmd Filetype *
+		    "\	if &omnifunc == "" |
+		    "\		setlocal omnifunc=syntaxcomplete#Complete |
+		    "\	endif
+        "autocmd FileType nerdtree call utils#SetupNERDTreeBuffer()
+        autocmd! BufRead,BufNewFile *.usd set filetype=usd
+        autocmd! BufRead,BufNewFile *.usda set filetype=usda
+    augroup END
+    " SessionLoadPost
+    "augroup tdvimSessionLoadPost
+    "augroup END
+
+    " CursorHold
+    "augroup tdvimCursorHold
+        "autocmd! CursorHold * ++nested call utils#UpdateDevIconFileType()
+        "autocmd! CursorHold leaderf ++nested normal <C-I>
+    "augroup END
+
+else
+    set autoindent		" always set autoindenting on
+endif " has("autocmd")
+
+" }}}
+
+" Custom commands {{{
+# TODO
+call commands#InitCommands()
+" }}}
+
+" Functions {{{
+
+" GetOS {{{2
+" Get host OS: 
+" 0: Unkmown OS
+" 1: UNIX (usually Linux), no Mac
+" 2: MacOS
+" 3: Windows
+function! s:GetOS()
+    if has("win32") || has("win64") || has("win32unix")
+        return 3
+    elseif has("mac") || has("macunix")
+        return 2
+    elseif has("unix")
+        return 1
+    else
+        return 0
+    endif
+endf
+" }}}
+
+" NeatFoldText {{{2
+" Improve text for folding line
+function! s:NeatFoldText()
+    let line = ' ' . substitute(getline(v:foldstart), '^\s*"\?\s*\|\s*"\?\s*{{' . '{\d*\s*', '', 'g') . ' '
+    let lines_count = v:foldend - v:foldstart + 1
+    let lines_count_text = '| ' . printf("%10s", lines_count . ' lines') . ' |'
+    let foldchar = matchstr(&fillchars, 'fold:\zs.')
+    let foldtextstart = strpart('+' . repeat(foldchar, v:foldlevel*2) . line, 0, (winwidth(0)*2)/3)
+    let foldtextend = lines_count_text . repeat(foldchar, 8)
+    let foldtextlength = strlen(substitute(foldtextstart . foldtextend, '.', 'x', 'g')) + &foldcolumn
+    return foldtextstart . repeat(foldchar, winwidth(0)-foldtextlength) . foldtextend
+endfunction
+" }}}
+
+" SetLocalPath {{{2
+" Set the local path for the current buffer to the folder that contains the
+" loaded file
+function! s:SetLocalPath ()
+    " Current basename for the buffer
+    let baseName = expand("%:p:h")
+    if isdirectory(baseName)
+        silent! exe 'lcd ' . fnameescape(baseName)
+    endif
+endfunction
+" }}}
+
+" SetupAuxBuffer {{{
+" Setup common settings for auxiliary windows like quickfix and preview
+" Setups done:
+" Set q and <Esc> as keymaps to close the window
+function! s:SetupAuxBuffer( )
+     "echomsg "Calling setup for qickfix buffer"
+    " Aux buffers local maps
+    " Close window with Esc or q
+    map <silent> <buffer> <Esc> :bdelete <bar> wincmd p<CR>
+    map <silent> <buffer> q :bdelete <bar> wincmd p<CR>
+
+    "For quickfix and location list disable buffer in buffers list
+    if 'quickfix' ==# &buftype
+        let wininfo = s:getWinInfo( -1 )
+        " Move quickfix to the bottom
+        if wininfo['quickfix'] && !wininfo['loclist']
+            wincmd J
+        endif
+        setlocal nobuflisted
+        setlocal cursorline
+    endif
+
+endfunction
+" }}}
+
+" PreviewWindowSetup {{{2
+" Setup preview window depending based on previous window type.
+" This is mainly used to offer a better preview for tags and other
+" development help.
+" Usage: call this using a BufWinEnter autocommand
+function! utils#PreviewWindowSetup()
+    if &previewwindow			" if we really are at the preview window
+        "echomsg "In Preview window!!"
+        if &filetype == ""
+            " Tags preview
+            set filetype=passwd 
+        else
+            " Preview jump to tag
+                                " silent! foldopen!   " Disable folds
+            set nofoldenable
+            setlocal cursorline " Highlight current line
+            set number          " Set line numbers
+            set ro              " Force Read-Only
+        endif
+        " Preview buffers local maps
+        map <silent> <buffer> <Esc> :bdelete <bar> wincmd p<CR>
+        map <silent> <buffer> q :bdelete <bar> wincmd p<CR>
+        " Move preview window to the very bottom
+        wincmd J
+        " But keep Quickfix window at the bottom :)
+        call utils#JumpToWindowsByType( 'quickfix' )
+        wincmd J
+        " Go back to preview
+        wincmd P
+    endif
+endfunction
+" }}}
+
+
+
+" }}}
+
+" vim: ts=8 ft=vim nowrap fdm=marker
