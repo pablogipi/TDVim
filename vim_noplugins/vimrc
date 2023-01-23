@@ -7,6 +7,7 @@
 "
 
 " Sections:
+" - Functions
 " - Init settings
 " - Terminal Settings
 " - Search settings
@@ -19,19 +20,187 @@
 " - Global variables
 "
 
-" Custom setup needed for initialization
-" XXX: I think this should be done at the end
-let g:tdvim_before_start = 1
-call utils#SourceUserSettings()
-let g:tdvim_before_start = 0
-
-
 " Global variables {{{
 
 " TDVim version
 let $TDVIMVERSION="0.4"
 
 " }}}
+
+" Functions {{{
+
+" GetOS {{{2
+" Get host OS: 
+" 0: Unkmown OS
+" 1: UNIX (usually Linux), no Mac
+" 2: MacOS
+" 3: Windows
+function! s:GetOS()
+    if has("win32") || has("win64") || has("win32unix")
+        return 3
+    elseif has("mac") || has("macunix")
+        return 2
+    elseif has("unix")
+        return 1
+    else
+        return 0
+    endif
+endf
+" }}}
+
+" NeatFoldText {{{2
+" Improve text for folding line
+function! s:NeatFoldText()
+    let line = ' ' . substitute(getline(v:foldstart), '^\s*"\?\s*\|\s*"\?\s*{{' . '{\d*\s*', '', 'g') . ' '
+    let lines_count = v:foldend - v:foldstart + 1
+    let lines_count_text = '| ' . printf("%10s", lines_count . ' lines') . ' |'
+    let foldchar = matchstr(&fillchars, 'fold:\zs.')
+    let foldtextstart = strpart('+' . repeat(foldchar, v:foldlevel*2) . line, 0, (winwidth(0)*2)/3)
+    let foldtextend = lines_count_text . repeat(foldchar, 8)
+    let foldtextlength = strlen(substitute(foldtextstart . foldtextend, '.', 'x', 'g')) + &foldcolumn
+    return foldtextstart . repeat(foldchar, winwidth(0)-foldtextlength) . foldtextend
+endfunction
+" }}}
+
+" SetLocalPath {{{2
+" Set the local path for the current buffer to the folder that contains the
+" loaded file
+function! s:SetLocalPath ()
+    " Current basename for the buffer
+    let baseName = expand("%:p:h")
+    if isdirectory(baseName)
+        silent! exe 'lcd ' . fnameescape(baseName)
+    endif
+endfunction
+" }}}
+
+" SetupAuxBuffer {{{
+" Setup common settings for auxiliary windows like quickfix and preview
+" Setups done:
+" Set q and <Esc> as keymaps to close the window
+function! s:SetupAuxBuffer( )
+     "echomsg "Calling setup for qickfix buffer"
+    " Aux buffers local maps
+    " Close window with Esc or q
+    map <silent> <buffer> <Esc> :bdelete <bar> wincmd p<CR>
+    map <silent> <buffer> q :bdelete <bar> wincmd p<CR>
+
+    "For quickfix and location list disable buffer in buffers list
+    if 'quickfix' ==# &buftype
+        let wininfo = s:getWinInfo( -1 )
+        " Move quickfix to the bottom
+        if wininfo['quickfix'] && !wininfo['loclist']
+            wincmd J
+        endif
+        setlocal nobuflisted
+        setlocal cursorline
+    endif
+
+endfunction
+" }}}
+
+" JumpToWindowsByType {{{2
+" Given a buffer type, jump to it.
+" Used to jump to quickfix, preview or location windows
+" Check against:
+" - Buffer type
+" - File Type
+" - Preview Window
+function! s:JumpToWindowsByType ( buffertype )
+  " Save current window number to revert.
+  let save_winnr = winnr()
+  let nwin = 1
+  while 1
+      let nbuf = winbufnr(nwin)
+      " After all window processed, finish.
+      if nbuf == -1
+          break
+      endif
+      " Close window if its buftype is same as buffertype argument.  If not help, go to next window.
+      "echo "Look into window " . nwin . ", buffer type: " . getbufvar(nbuf, '&buftype')
+      let cond1 = getbufvar(nbuf, '&buftype') ==# a:buffertype
+      let cond2 = getbufvar(nbuf, '&filetype') ==# a:buffertype
+      let cond3 = "preview" ==# a:buffertype ? getwinvar(nwin, '&previewwindow') : 0
+      " quickfix buffer type is a special case, it can be quickfix or location
+      " list
+      if "quickfix" ==# a:buffertype || "location" ==# a:buffertype
+          " Get current window info
+          let wininfo = s:getWinInfo( nwin )
+          let islocwin = wininfo['loclist']
+          let cond1 = 0
+          if "quickfix" ==# a:buffertype && wininfo['quickfix'] && !wininfo['loclist']
+              let cond1 = 1
+          endif
+          if "location" ==# a:buffertype && wininfo['quickfix'] && wininfo['loclist']
+              let cond1 = 1
+          endif
+          "echomsg "Type: " . a:buffertype . " ,Condition: " . cond1
+      endif
+      if "qf" ==# a:buffertype
+          " Get current window info
+          let wininfo = s:getWinInfo( nwin )
+          let cond2 = wininfo['quickfix'] && !wininfo['loclist']
+      endif
+      if cond1 || cond2 || cond3
+          "echomsg "Correct!, jump to window " . nwin
+          " Correct saved window number if younger window will be closed.
+          if save_winnr > nbuf
+              let save_winnr = save_winnr - 1
+          endif
+          execute nwin.'wincmd w'
+          break
+      "elseif cond3
+          "" For preview window
+          "let buffervars = getbufvar(nbuf, '&')
+          "echo Vars:
+          "echo buffervars
+          "let cond = getwinvar(nwin, '&previewwindow')
+          "echo "Window condition: " . cond
+          "pclose
+          "break
+      else
+          let nwin = nwin + 1
+      endif
+  endwhile
+endfunction
+" }}}
+
+" PreviewWindowSetup {{{2
+" Setup preview window depending based on previous window type.
+" This is mainly used to offer a better preview for tags and other
+" development help.
+" Usage: call this using a BufWinEnter autocommand
+function! s:PreviewWindowSetup()
+    if &previewwindow			" if we really are at the preview window
+        "echomsg "In Preview window!!"
+        if &filetype == ""
+            " Tags preview
+            set filetype=passwd 
+        else
+            " Preview jump to tag
+                                " silent! foldopen!   " Disable folds
+            set nofoldenable
+            setlocal cursorline " Highlight current line
+            set number          " Set line numbers
+            set ro              " Force Read-Only
+        endif
+        " Preview buffers local maps
+        map <silent> <buffer> <Esc> :bdelete <bar> wincmd p<CR>
+        map <silent> <buffer> q :bdelete <bar> wincmd p<CR>
+        " Move preview window to the very bottom
+        wincmd J
+        " But keep Quickfix window at the bottom :)
+        call s:JumpToWindowsByType( 'quickfix' )
+        wincmd J
+        " Go back to preview
+        wincmd P
+    endif
+endfunction
+" }}}
+
+" }}}
+
+
 
 " Init settings {{{
 "
@@ -68,7 +237,7 @@ set ruler                                " show the cursor position all the time
 set showcmd                              " display incomplete commands
 set wildmode=full                        " Complete the next full match
 " Ignores patterns in autocomplete
-if  == 1
+if s:GetOS() == 1
     "Linux
     set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.swp,*.bak,*~
 elseif s:GetOS() == 2
@@ -455,117 +624,8 @@ endif " has("autocmd")
 " }}}
 
 " Custom commands {{{
-# TODO
-call commands#InitCommands()
+" TODO:
 " }}}
 
-" Functions {{{
-
-" GetOS {{{2
-" Get host OS: 
-" 0: Unkmown OS
-" 1: UNIX (usually Linux), no Mac
-" 2: MacOS
-" 3: Windows
-function! s:GetOS()
-    if has("win32") || has("win64") || has("win32unix")
-        return 3
-    elseif has("mac") || has("macunix")
-        return 2
-    elseif has("unix")
-        return 1
-    else
-        return 0
-    endif
-endf
-" }}}
-
-" NeatFoldText {{{2
-" Improve text for folding line
-function! s:NeatFoldText()
-    let line = ' ' . substitute(getline(v:foldstart), '^\s*"\?\s*\|\s*"\?\s*{{' . '{\d*\s*', '', 'g') . ' '
-    let lines_count = v:foldend - v:foldstart + 1
-    let lines_count_text = '| ' . printf("%10s", lines_count . ' lines') . ' |'
-    let foldchar = matchstr(&fillchars, 'fold:\zs.')
-    let foldtextstart = strpart('+' . repeat(foldchar, v:foldlevel*2) . line, 0, (winwidth(0)*2)/3)
-    let foldtextend = lines_count_text . repeat(foldchar, 8)
-    let foldtextlength = strlen(substitute(foldtextstart . foldtextend, '.', 'x', 'g')) + &foldcolumn
-    return foldtextstart . repeat(foldchar, winwidth(0)-foldtextlength) . foldtextend
-endfunction
-" }}}
-
-" SetLocalPath {{{2
-" Set the local path for the current buffer to the folder that contains the
-" loaded file
-function! s:SetLocalPath ()
-    " Current basename for the buffer
-    let baseName = expand("%:p:h")
-    if isdirectory(baseName)
-        silent! exe 'lcd ' . fnameescape(baseName)
-    endif
-endfunction
-" }}}
-
-" SetupAuxBuffer {{{
-" Setup common settings for auxiliary windows like quickfix and preview
-" Setups done:
-" Set q and <Esc> as keymaps to close the window
-function! s:SetupAuxBuffer( )
-     "echomsg "Calling setup for qickfix buffer"
-    " Aux buffers local maps
-    " Close window with Esc or q
-    map <silent> <buffer> <Esc> :bdelete <bar> wincmd p<CR>
-    map <silent> <buffer> q :bdelete <bar> wincmd p<CR>
-
-    "For quickfix and location list disable buffer in buffers list
-    if 'quickfix' ==# &buftype
-        let wininfo = s:getWinInfo( -1 )
-        " Move quickfix to the bottom
-        if wininfo['quickfix'] && !wininfo['loclist']
-            wincmd J
-        endif
-        setlocal nobuflisted
-        setlocal cursorline
-    endif
-
-endfunction
-" }}}
-
-" PreviewWindowSetup {{{2
-" Setup preview window depending based on previous window type.
-" This is mainly used to offer a better preview for tags and other
-" development help.
-" Usage: call this using a BufWinEnter autocommand
-function! utils#PreviewWindowSetup()
-    if &previewwindow			" if we really are at the preview window
-        "echomsg "In Preview window!!"
-        if &filetype == ""
-            " Tags preview
-            set filetype=passwd 
-        else
-            " Preview jump to tag
-                                " silent! foldopen!   " Disable folds
-            set nofoldenable
-            setlocal cursorline " Highlight current line
-            set number          " Set line numbers
-            set ro              " Force Read-Only
-        endif
-        " Preview buffers local maps
-        map <silent> <buffer> <Esc> :bdelete <bar> wincmd p<CR>
-        map <silent> <buffer> q :bdelete <bar> wincmd p<CR>
-        " Move preview window to the very bottom
-        wincmd J
-        " But keep Quickfix window at the bottom :)
-        call utils#JumpToWindowsByType( 'quickfix' )
-        wincmd J
-        " Go back to preview
-        wincmd P
-    endif
-endfunction
-" }}}
-
-
-
-" }}}
 
 " vim: ts=8 ft=vim nowrap fdm=marker
