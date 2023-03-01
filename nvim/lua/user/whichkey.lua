@@ -331,7 +331,7 @@ local fmappings = {
   ["<F11>"]     = { "<cmd>MundoToggle<cr>", "Undo Tree" },
   -- F12
   ["<F12>"]     = { "<cmd>xa<cr>", "Save & Quit" },
-  ["<C-F12>"]   = { "<cmd>qa<cr>", "Close & Quit" },
+  ["<C-F12>"]   = { "<cmd>confirm qa<cr>", "Close & Quit" },
 }
 local fmappingsnopts = {
   -- F5

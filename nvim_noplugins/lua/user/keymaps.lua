@@ -27,6 +27,7 @@ vim.g.maplocalleader = " "
 keymap("n", "<F2>", ":", opts_nosilent)
 keymap("v", "<F2>", ":", opts_nosilent)
 keymap("i", "<F2>", "<ESC>:", opts_nosilent)
+keymap("t", "<F2>", "<C-W>:", opts_nosilent)
 
 -- Press jk fast exit Insert and enter Normal mode
 keymap("i", "jk", "<ESC>", opts)
@@ -46,14 +47,28 @@ keymap("i", "<S-F1>", "<ESC>:h <C-r><C-w><CR>", opts)
 -- MainOperations {{{
 -- Main operations like open, save, new, quit, etc ...
 
+-- Fuzzy Open File
+keymap("n", "<S-F3>", ":find ", opts_nosilent)
+keymap("v", "<S-F3>", ":find ", opts_nosilent)
+keymap("i", "<S-F3>", "<ESC>:find ", opts_nosilent)
+-- Open Recent Files - C-S-F3
+keymap("n", "<C-S-F3>", ":browse oldfiles<CR>", opts_nosilent)
+keymap("v", "<C-S-F3>", ":browse oldfiles<CR>", opts_nosilent)
+keymap("i", "<C-S-F3>", "<ESC>:browse oldfiles<CR> ", opts_nosilent)
 -- Save - <leader>w
 keymap("n", "<leader>w", ":w<CR>", opts_nosilent)
 -- Save All - <leader>wa
 keymap("n", "<leader>wa", ":wa<CR>", opts_nosilent)
--- Fuzzy Open File
-keymap("n", "<S-F3>", ":e ", opts_nosilent)
-keymap("v", "<S-F3>", ":e ", opts_nosilent)
-keymap("i", "<S-F3>", "<ESC>:e ", opts_nosilent)
+-- Save All  and Quit
+keymap("n", "<F12>", ":xa<CR>", opts_nosilent)
+keymap("x", "<F12>", ":xa<CR>", opts_nosilent)
+keymap("i", "<F12>", "<ESC>:xa<CR>", opts_nosilent)
+keymap("t", "<F12>", "<C-W>:xa<CR>", opts_nosilent)
+-- Close And Quit
+keymap("n", "<C-F12>", ":confirm qa<CR>", opts_nosilent)
+keymap("x", "<C-F12>", ":confirm qa<CR>", opts_nosilent)
+keymap("i", "<C-F12>", "<ESC>:confirm qa<CR>", opts_nosilent)
+keymap("t", "<C-F12>", "<C-W>:confirm qa<CR>", opts_nosilent)
 
 
 
@@ -124,6 +139,14 @@ keymap("n", "<leader><Left>", "<C-w>h", opts)
 keymap("n", "<leader><Up>", "<C-w>j", opts)
 keymap("n", "<leader><Down>", "<C-w>k", opts)
 keymap("n", "<leader><Right>", "<C-w>l", opts)
+keymap("t", "<C-h>", "<C-w>h", opts)
+keymap("t", "<C-j>", "<C-w>j", opts)
+keymap("t", "<C-k>", "<C-w>k", opts)
+keymap("t", "<C-l>", "<C-w>l", opts)
+keymap("t", "<leader><Left>", "<C-w>h", opts)
+keymap("t", "<leader><Up>", "<C-w>j", opts)
+keymap("t", "<leader><Down>", "<C-w>k", opts)
+keymap("t", "<leader><Right>", "<C-w>l", opts)
 
 -- Better terminal navigation
 keymap("t", "<C-h>", "<C-\\><C-N><C-w>h", term_opts)
@@ -155,6 +178,7 @@ keymap("n", "<]b>", ":bprevious<CR>", opts)
 
 -- Switch to Previous window
 keymap("n", "<leader>p", "<C-w>p", opts)
+keymap("t", "<leader>p", "<C-w>p", opts)
 -- Switch to Previous buffer - Ctrl-F3, <leader>TAB
 keymap("n", "<C-F3>", ":e #<CR>", opts)
 keymap("v", "<C-F3>", ":e #<CR>", opts)
@@ -186,7 +210,12 @@ keymap("i", "<s-tab>", "<c-r>=utils#TabAutocompleteWrapper(\"forward\")<cr>", op
 -- }}}
 
 -- Terminal {{{
--- Operations usaully used when programing
+-- Termnal keymaps
+-- Open terminal at bottom
+keymap("n", "<F7>", ":call utils#CreateOrJumpToTerminal()<CR>", opts)
+keymap("n", "<leader>t", ":botright terminal<CR>", opts)
+-- Minimise terminal window and jump to previous window
+keymap("t", "<F7>", "<C-W>1_<C-W>P", opts)
 
 
 

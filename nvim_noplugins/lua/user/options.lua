@@ -71,9 +71,10 @@ set.backup   = false                          -- creates a backup file
 set.history  = 50                           -- keep 50 lines of command line history
 set.ruler    = true                                -- show the cursor position all the time
 set.showcmd  = true                              -- display incomplete commands
-set.wildmode = 'full'                        -- Complete the next full match
 
-
+-- Command Line Complete Menu
+set.wildmenu = true
+set.wildmode = 'list:longest,full'                        -- Complete the next full match
 -- Ignores patterns in autocomplete
 if vim.fn.has('windows') then
     set.wildignore:append('*\\.git\\*,*\\.hg\\*,*\\.svn\\*,*.swp,*.bak,*~')

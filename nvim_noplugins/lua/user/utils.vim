@@ -38,4 +38,19 @@ function! utils#TabAutocompleteWrapper( direction)
 endfunction
 " }}}
 
+" CreateOrJumpToTerminal {{{
+" Try to jump to an existing terminal, if succesful then restore window size
+" If not then create a new terminal
+function! utils#CreateOrJumpToTerminal ( )
+  call s:JumpToWindowsByType("terminal")
+  if &buftype == "terminal"
+    wincmd =
+    " echo "In terminal"
+  else
+    " wincmd b | botright terminal<CR>
+    botright terminal
+  endif
+  " wincmd J
+endfunction
+" }}}
 " vim: ts=2 ft=vim nowrap fdm=marker
