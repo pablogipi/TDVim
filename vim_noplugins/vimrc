@@ -104,7 +104,7 @@ endfunction
 " - Buffer type
 " - File Type
 " - Preview Window
-function! s:JumpToWindowsByType ( buffertype )
+function! TDVimJumpToWindowsByType ( buffertype )
   " Save current window number to revert.
   let save_winnr = winnr()
   let nwin = 1
@@ -188,7 +188,7 @@ function! s:PreviewWindowSetup()
         " Move preview window to the very bottom
         wincmd J
         " But keep Quickfix window at the bottom :)
-        call s:JumpToWindowsByType( 'quickfix' )
+        call TDVimJumpToWindowsByType( 'quickfix' )
         wincmd J
         " Go back to preview
         wincmd P
@@ -212,7 +212,7 @@ endfunction
 " Function to call to Autocomplete when pressing TAB
 " Or insert a TAB if there is nothing in front of the cursor
 " From: https://stackoverflow.com/questions/2055417/mapping-tab-to-omicompletion-in-gvim 
-function! TabAutocompleteWrapper( direction)
+function! TDVimTabAutocompleteWrapper( direction)
   " Make TAB working in popup menu
   if pumvisible()
     if "backward" == a:direction
@@ -242,8 +242,8 @@ endfunction
 " CreateOrJumpToTerminal {{{2
 " Try to jump to an existing terminal, if succesful then restore window size
 " If not then create a new terminal
-function! CreateOrJumpToTerminal ( )
-  call s:JumpToWindowsByType("terminal")
+function! TDVimCreateOrJumpToTerminal ( )
+  call TDVimJumpToWindowsByType("terminal")
   if &buftype == "terminal"
     wincmd =
     " echo "In terminal"
@@ -292,6 +292,16 @@ function! TDVimCloseAllWindowsByType( buffertype )
   " Revert selected window.
   "execute save_winnr.'wincmd w' , silent!
   silent! sel_winnr.'wincmd w'
+endfunction
+" }}}
+
+" ClosePreviousWindow {{{2
+" Close previous window
+function! TDVimClosePreviousWindow()
+    let prevwindow = winnr('#')
+    if prevwindow > 0
+        execute prevwindow . 'wincmd c'
+    endif
 endfunction
 " }}}
 
@@ -611,7 +621,7 @@ endif
 " Create Tags file in current location
 command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --fields=+iaS --extras=+q --exclude='.git' --exclude='.svn' --exclude='*.so' --exclude='__pycache__' --exclude='*.pyc'  
 " Jump to existing terminal and restore or create a new terminal
-command! TDVimOpenTerminal call CreateOrJumpToTerminal()
+command! TDVimOpenTerminal call TDVimCreateOrJumpToTerminal()
 " }}}
 
 " Keyboard mappings {{{
@@ -732,7 +742,42 @@ inoremap  <silent> <leader>qq         <Esc>:cclose<CR>
 " Close Location Window - <leader>ql
 nnoremap  <silent> <leader>ql         :lclose<CR> 
 vnoremap  <silent> <leader>ql         <Esc>:lclose<CR> 
-inoremap  <silent> <leader>ql        <Esc>:lclose<CR> 
+inoremap  <silent> <leader>ql         <Esc>:lclose<CR> 
+" Close Previous Window - <leader>qw
+nnoremap  <silent> <leader>qw         :call TDVimClosePreviousWindow()<CR> 
+vnoremap  <silent> <leader>qw         <Esc>:call TDVimClosePreviousWindow()<CR> 
+inoremap  <silent> <leader>qw         <Esc>:call TDVimClosePreviousWindow()<CR> 
+
+" Jump to QuickFix Window - <leader>jq
+nnoremap  <silent> <leader>jq         :call utils#JumpToWindowsByType( "quickfix" )<CR> 
+xnoremap  <silent> <leader>jq         <ESC>:call utils#JumpToWindowsByType( "quickfix" )<CR> 
+inoremap  <silent> <leader>jq         <ESC>:call utils#JumpToWindowsByType( "quickfix" )<CR> 
+" Jump to Location Window - <leader>jl
+nnoremap  <silent> <leader>jl         :call utils#JumpToWindowsByType( "location" )<CR> 
+xnoremap  <silent> <leader>jl         <ESC>:call utils#JumpToWindowsByType( "location" )<CR> 
+inoremap  <silent> <leader>jl         <ESC>:call utils#JumpToWindowsByType( "location" )<CR> 
+" Jump to Preview Window - <leader>jl
+nnoremap  <silent> <leader>jp         :call utils#JumpToWindowsByType( "preview" )<CR> 
+xnoremap  <silent> <leader>jp         <ESC>:call utils#JumpToWindowsByType( "preview" )<CR> 
+inoremap  <silent> <leader>jp         <ESC>:call utils#JumpToWindowsByType( "preview" )<CR> 
+
+" Jump to Location List Window {{{2
+nnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow :call utils#JumpToWindowsByType( "location" )<CR>
+vnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow <Esc>:call utils#JumpToWindowsByType( "location" )<CR>
+inoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow <Esc>:call utils#JumpToWindowsByType( "location" )<CR>
+
+nmap <silent> <leader>jl <Plug>TdvimJumpToLocationWindow 
+vmap <silent> <leader>jl <Plug>TdvimJumpToLocationWindow
+" }}}
+
+" Jump to Preview Window {{{2
+nnoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow :call utils#JumpToWindowsByType( "preview" )<CR>
+vnoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow <Esc>:call utils#JumpToWindowsByType( "preview" )<CR>
+inoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow <Esc>:call utils#JumpToWindowsByType( "preview" )<CR>
+
+nmap <silent> <leader>jp <Plug>TdvimJumpToPreviewWindow 
+vmap <silent> <leader>jp <Plug>TdvimJumpToPreviewWindow
+" }}}
 
 " Close Window and Delete Buffer - <leader>x
 nnoremap  <leader>x        :bdelete<CR> 
@@ -830,8 +875,8 @@ nnoremap   <F11>   :TDVimMakeTags <CR>
 
 
 " Autocomplete using Previous and Next
-inoremap   <TAB>    <C-R>=TabAutocompleteWrapper("backward")<CR>
-inoremap   <S-TAB>  <C-R>=TabAutocompleteWrapper("forward")<CR>
+inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
+inoremap   <S-TAB>  <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
 " keymap("i", "<tab>", "<c-r>=utils#TabAutocompleteWrapper(\"backward\")<cr>", opts)
 " keymap("i", "<s-tab>", "<c-r>=utils#TabAutocompleteWrapper(\"forward\")<cr>", opts)
 
@@ -870,16 +915,14 @@ set belloff+=cursor " If Vim beeps during scrolling
 set belloff+=all " If Vim beeps during scrolling
 set completeopt-=preview
 set completeopt+=menuone
-set completeopt+=noinsert
-set completeopt+=noselect
-" Protect certain keymaps
-"inoremap <expr> <c-e> mucomplete#popup_exit("\<c-e>")
-"inoremap <expr> <c-y> mucomplete#popup_exit("\<c-y>")
-"inoremap <expr>  <cr> mucomplete#popup_exit("\<cr>")
+set completeopt-=popup
+" set completeopt+=noinsert
+" set completeopt+=noselect
+set completepopup=height:10,width:60,highlight:InfoPopu
 
 " Sources for searching in completion mode
 " Only include current buffer and buffer in other windows only
-set complete=.,w,b
+set complete=.,w,b,t
 " Set window splits to be at bottom by default, used by preview window and
 " quckfix
 set splitbelow
