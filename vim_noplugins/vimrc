@@ -72,7 +72,7 @@ function! s:SetLocalPath ()
 endfunction
 " }}}
 
-" SetupAuxBuffer {{{
+" SetupAuxBuffer {{{2
 " Setup common settings for auxiliary windows like quickfix and preview
 " Setups done:
 " Set q and <Esc> as keymaps to close the window
@@ -253,6 +253,48 @@ function! CreateOrJumpToTerminal ( )
   endif
   " wincmd J
 endfunction
+" }}}
+
+" CloseAllWindowsByType {{{2
+" Close all windows for a given buffertype
+function! TDVimCloseAllWindowsByType( buffertype )
+    " For preview window just run pclose and exit:
+    if "preview" ==# a:buffertype
+        pclose
+        return
+    endif
+  " Save current window number to revert.
+  let sel_winnr = winnr()
+  let nwin = 1
+  while 1
+      let nbuf = winbufnr(nwin)
+      " After all window processed, finish.
+      if nbuf == -1
+          break
+      endif
+      " Close window if its buftype is same as buffertype argument.  If not help, go to next window.
+      if getbufvar(nbuf, '&buftype') ==# a:buffertype
+          " Correct saved window number if younger window will be closed.
+          if sel_winnr > nbuf
+              let sel_winnr = sel_winnr - 1
+          endif
+          execute nwin.'wincmd w'
+          " If there is only one help window, quit.
+          if nwin == 1 && winbufnr(2) == -1
+              quit!
+          else
+              close!
+          endif
+      else
+          let nwin = nwin + 1
+      endif
+  endwhile
+  " Revert selected window.
+  "execute save_winnr.'wincmd w' , silent!
+  silent! sel_winnr.'wincmd w'
+endfunction
+" }}}
+
 " }}}
 
 " Init settings {{{
@@ -564,6 +606,14 @@ if has("gui_running")
 endif
 " }}}
 
+" Custom commands {{{
+" TODO:
+" Create Tags file in current location
+command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --fields=+iaS --extras=+q --exclude='.git' --exclude='.svn' --exclude='*.so' --exclude='__pycache__' --exclude='*.pyc'  
+" Jump to existing terminal and restore or create a new terminal
+command! TDVimOpenTerminal call CreateOrJumpToTerminal()
+" }}}
+
 " Keyboard mappings {{{
 " Leader key
 "let mapleader = ","
@@ -669,8 +719,20 @@ xnoremap  <silent> <A-Up>      :move '<-2<CR>gv-gv
 nnoremap  <silent> <leader>q          <C-w>c 
 vnoremap  <silent> <leader>q          <C-w>c 
 " Close All Help Windows - <leader>qh
-nnoremap  <silent> <leader>qh         :silent HelpAllClose<CR> 
-vnoremap  <silent> <leader>qh         :silent HelpAllClose<CR> 
+nnoremap  <silent> <leader>qh         :call TDVimCloseAllWindowsByType('help')<CR> 
+vnoremap  <silent> <leader>qh         :call TDVimCloseAllWindowsByType('help')<CR> 
+" Close Preview Window - <leader>qp
+nnoremap  <silent> <leader>qp         <C-W><C-Z> 
+vnoremap  <silent> <leader>qp         <C-W><C-Z> 
+inoremap  <silent> <leader>qp         <C-O><C-W><C-Z> 
+" Close QuickFix Window - <leader>qq
+nnoremap  <silent> <leader>qq         :cclose<CR> 
+vnoremap  <silent> <leader>qq         <Esc>:cclose<CR> 
+inoremap  <silent> <leader>qq         <Esc>:cclose<CR> 
+" Close Location Window - <leader>ql
+nnoremap  <silent> <leader>ql         :lclose<CR> 
+vnoremap  <silent> <leader>ql         <Esc>:lclose<CR> 
+inoremap  <silent> <leader>ql        <Esc>:lclose<CR> 
 
 " Close Window and Delete Buffer - <leader>x
 nnoremap  <leader>x        :bdelete<CR> 
@@ -752,6 +814,20 @@ inoremap   <F3>   <ESC>:files<cr>:b<space>
 
 " Development {{{2
 " Operations usually used when programing
+" Inspect and jump to tags
+nnoremap   <F6>   :tjump <C-r><C-w><space>
+xnoremap   <F6>   :tjump <C-r><C-w><space>
+" Unimpaired tags navigation style with []t
+nnoremap   ]t   :tjump <C-r><C-w><CR>
+nnoremap   [t   <C-t>
+" Inspect and preview tag
+nnoremap   <S-F6>   :ptjump <C-r><C-w><space>
+xnoremap   <S-F6>   :ptjump <C-r><C-w><space>
+
+
+" Create tags file
+nnoremap   <F11>   :TDVimMakeTags <CR>
+
 
 " Autocomplete using Previous and Next
 inoremap   <TAB>    <C-R>=TabAutocompleteWrapper("backward")<CR>
@@ -765,10 +841,10 @@ inoremap   <S-TAB>  <C-R>=TabAutocompleteWrapper("forward")<CR>
 " Termnal keymaps
 " nnoremap <F7>       :wincmd b \| botright terminal<CR>
 " Open terminal at bottom
-nnoremap <F7>       :call CreateOrJumpToTerminal()<CR>
+nnoremap <F7>       :TDVimOpenTerminal<CR>
 nnoremap <leader>t  :wincmd b \| botright terminal<CR>
 " Minimize terminal window and jump to previous window
-tnoremap <F7>       <C-W>1_<C-W>P
+tnoremap <F7>       <C-W>1_<C-W>W
 " }}}
 
 
@@ -901,9 +977,6 @@ endif " has("autocmd")
 
 " }}}
 
-" Custom commands {{{
-" TODO:
-" }}}
 
 " Always run mswin at the end {{{
 " Load more conventional editors options, MSWin mode:
@@ -913,6 +986,20 @@ set selectmode=""
 
 " Automatically change directory
 set autochdir
+
+" Project Mode {{{
+" If vim is opened in a directory then enable some special settings to
+" work in a project, assuming the current folder is the project root
+" TODO:
+" Disable autochdir
+" Try to load project.vim if exist
+" Create/Update tags file
+" Try to open session if exists
+" Set title to put project name
+" Set wildoptions+=tagfile
+" Set wildoptions+=fuzzy
+
+" }}}
 
 " TDVim version
 let $TDVIMVERSION="0.4"
