@@ -1,0 +1,20 @@
+"
+" User setup for TDVim
+"
+
+" Enable autowrite
+"set autowrite
+
+" Setup UI
+colorscheme gruvbox
+set background=dark
+if has( "gui_running" )
+    set guioptions-=m
+    set guioptions-=T
+    " call utils#SetFancyUI()
+    "set guifont=Consolas:h11:cANSI:qDRAFT
+	set  guifont=FiraCode_Nerd_Font_Mono:h10:W500:cANSI:qDRAFT
+endif
+
+" Personal plugins setup
+"let g:NERDTreeHijackNetrw=1

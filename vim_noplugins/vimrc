@@ -384,7 +384,7 @@ let &viewoptions='cursor,folds,slash,unix'
 " Terminal settings {{{
 set ttyfast
 " set term gui colors (most terminals support this)
-" set termguicolors
+set termguicolors
 
 " }}}
 
@@ -1026,10 +1026,13 @@ endif " has("autocmd")
 source $VIMRUNTIME/mswin.vim
 " Fix mswin, it enters in select mode rather than visual.
 set selectmode=""
+" }}}
 
+" XXX: Mmmm this is provably controversial
 " Automatically change directory
 set autochdir
 
+" TODO:
 " Project Mode {{{
 " If vim is opened in a directory then enable some special settings to
 " work in a project, assuming the current folder is the project root
@@ -1043,6 +1046,35 @@ set autochdir
 " Set wildoptions+=fuzzy
 
 " }}}
+
+" Load user settings {{{
+if has('unix')
+  " unix-like platform (including Cygwin)
+  if filereadable($HOME . "/myvimrc")
+    source $HOME/myvimrc
+  elseif filereadable($HOME . "/.myvimrc")
+    source $HOME/.myvimrc
+  elseif filereadable($HOME . "/_myvimrc")
+    source $HOME/_myvimrc
+  else
+    " Do nothing
+  endif
+else
+  " probably Windows
+  if has("win32")
+    if filereadable($HOME . "/myvimrc")
+      source $HOME/myvimrc
+    elseif filereadable($HOME . "/_myvimrc")
+      source $HOME/_myvimrc
+    elseif filereadable($HOME . "/.myvimrc")
+      source $HOME/.myvimrc
+    else
+      " Do nothing
+    endif
+  endif
+endif
+
+"}}}
 
 " TDVim version
 let $TDVIMVERSION="0.4"
