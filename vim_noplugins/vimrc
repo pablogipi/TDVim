@@ -875,8 +875,8 @@ nnoremap   <F11>   :TDVimMakeTags <CR>
 
 
 " Autocomplete using Previous and Next
-inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
-inoremap   <S-TAB>  <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
+inoremap   <TAB>  <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
+inoremap   <S-TAB>    <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
 " keymap("i", "<tab>", "<c-r>=utils#TabAutocompleteWrapper(\"backward\")<cr>", opts)
 " keymap("i", "<s-tab>", "<c-r>=utils#TabAutocompleteWrapper(\"forward\")<cr>", opts)
 
