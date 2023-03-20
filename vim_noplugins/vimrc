@@ -46,6 +46,25 @@ function! s:GetOS()
 endf
 " }}}
 
+
+" getWinInfo
+" winid: id of the window, if not passed then current window will be used
+"function! s:getWinInfo( winid=-1 )
+function! s:getWinInfo( winid )
+    let curwin = a:winid
+    if curwin == -1
+        let curwin = winnr()
+    endif
+    let wininfos = getwininfo()
+    for idx in range( len( wininfos ) )
+        let wininfo = wininfos[ idx ]
+        if wininfo['winnr'] == curwin
+            return wininfo
+        endif
+    endfor
+    return {}
+endfunction
+
 " NeatFoldText {{{2
 " Improve text for folding line
 function! s:NeatFoldText()
@@ -439,9 +458,12 @@ set smartindent
 " Global search by default
 set gdefault
 " Better grep
-if executable("ag")
-    "set grepprg=ag\ --nogroup\ --nocolor\ --vimgrep
-    set grepprg=ag\ --vimgrep\ --ignore\ *~\ --ignore\ *.swp\ --ignore\ *.diff\ --ignore\ tags\ --ignore\ *.tags
+if executable("rg")
+  set grepprg=rg\ --vimgrep
+  set grepformat=%f:%l:%c:%m
+elseif executable("ag")
+  set grepprg=ag\ --vimgrep\ --ignore\ *~\ --ignore\ *.swp\ --ignore\ *.diff\ --ignore\ tags\ --ignore\ *.tags
+  set grepformat=%f:%l:%c:%m
 endif
 
 " }}}
@@ -559,13 +581,13 @@ set wildmode=list:longest,full            " Complete the next full match
 " Ignores patterns in autocomplete
 if s:GetOS() == 1
     "Linux
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.swp,*.bak,*~
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.swp,*.bak,*~,*.o,*.obj,*.pyc,tags,cscope*
 elseif s:GetOS() == 2
     "Mac
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.swp,*.bak,*~
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.swp,*.bak,*~,*.o,*.obj,*.pyc,tags,cscope*
 elseif s:GetOS() == 3
     "Windows
-    set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*,*.swp,*.bak,*~
+    set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*,*.swp,*.bak,*~,*.o,*.obj,*.pyc,tags,cscope*
 endif
 " Search down into subfolders
 " Provides tab-completion for all file-related tasks
@@ -622,6 +644,8 @@ endif
 command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --fields=+iaS --extras=+q --exclude='.git' --exclude='.svn' --exclude='*.so' --exclude='__pycache__' --exclude='*.pyc'  
 " Jump to existing terminal and restore or create a new terminal
 command! TDVimOpenTerminal call TDVimCreateOrJumpToTerminal()
+" Run grep, allow user to mpdify initial pattern and then open quickfix window wit results
+command! -nargs=+ TDvimGrep execute 'silent grep! <args>' | copen
 " }}}
 
 " Keyboard mappings {{{
@@ -715,12 +739,39 @@ xnoremap  <silent> <A-Down>    :move '>+1<CR>gv-gv
 xnoremap  <silent> <A-Up>      :move '<-2<CR>gv-gv 
 
 
+" Grep/Search word under cursor - F4, leader-g
+" nnoremap  <F4>      :silent lgrep <C-R><C-W><CR>:lopen<CR>
+" inoremap  <F4>      :<C-O>silent lgrep <C-R><C-W><CR>:lopen<CR>
+" xnoremap  <F4>      :silent lgrep <C-R><C-W><CR>:lopen<CR>
+nnoremap  <F4>          :TDvimGrep <C-R><C-W>
+inoremap  <F4>          :<C-O>TDvimGrep  <C-R><C-W>
+xnoremap  <F4>          :TDvimGrep  <C-R><C-W>
+nnoremap  <leader>g     :TDvimGrep <C-R><C-W>
+inoremap  <leader>g     :<C-O>TDvimGrep  <C-R><C-W>
+xnoremap  <leader>g     :TDvimGrep  <C-R><C-W>
+
+" Navigate Grep results. Navigate Location list entries
+" Default mapped to []s
+nmap <silent> [s :cprev<CR>
+nmap <silent> ]s :cnext<CR>
+nmap <silent> [S :cfirst<CR>
+nmap <silent> ]S :clast<CR>
+
+" Navigate Changes
+" Default mapped to []c
+nmap <silent> [c    g;
+imap <silent> [c    <Esc>g;
+vmap <silent> [c    g;
+nmap <silent> ]c    g,
+imap <silent> ]c    <Esc>g,
+vmap <silent> ]c    g,
+
+
+
+
+
 " }}}
 
-" TextNavigation {{{2
-
-
-" }}}
 
 " WindowManagement {{{2
 " Operations to work with windows, tabs, etc ...
@@ -761,7 +812,7 @@ nnoremap  <silent> <leader>jp         :call utils#JumpToWindowsByType( "preview"
 xnoremap  <silent> <leader>jp         <ESC>:call utils#JumpToWindowsByType( "preview" )<CR> 
 inoremap  <silent> <leader>jp         <ESC>:call utils#JumpToWindowsByType( "preview" )<CR> 
 
-" Jump to Location List Window {{{2
+" Jump to Location List Window {{{3
 nnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow :call utils#JumpToWindowsByType( "location" )<CR>
 vnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow <Esc>:call utils#JumpToWindowsByType( "location" )<CR>
 inoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow <Esc>:call utils#JumpToWindowsByType( "location" )<CR>
@@ -770,7 +821,7 @@ nmap <silent> <leader>jl <Plug>TdvimJumpToLocationWindow
 vmap <silent> <leader>jl <Plug>TdvimJumpToLocationWindow
 " }}}
 
-" Jump to Preview Window {{{2
+" Jump to Preview Window {{{3
 nnoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow :call utils#JumpToWindowsByType( "preview" )<CR>
 vnoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow <Esc>:call utils#JumpToWindowsByType( "preview" )<CR>
 inoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow <Esc>:call utils#JumpToWindowsByType( "preview" )<CR>
