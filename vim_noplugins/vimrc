@@ -46,7 +46,6 @@ function! s:GetOS()
 endf
 " }}}
 
-
 " getWinInfo {{{2
 " winid: id of the window, if not passed then current window will be used
 "function! s:getWinInfo( winid=-1 )
@@ -405,7 +404,7 @@ set autochdir
 " Use OS clipboard:
 set clipboard^=unnamed,unnamedplus
 
-" }}}
+" Init Setting }}}
 
 " Sessions {{{
 " Options for what to save in the sessions file:
@@ -415,23 +414,17 @@ let &sessionoptions='buffers,curdir,folds,resize,winsize'
 " View, restore file state options:
 let &viewoptions='cursor,folds,slash,unix'
 
-" }}}
+" Sessions }}}
 
 " Terminal settings {{{
 set ttyfast
 " set term gui colors (most terminals support this)
 set termguicolors
 
-" }}}
+" Terminal settings }}}
 
 " Edit options and Language specific options {{{
 "
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
-if &t_Co > 2 || has("gui_running")
-    syntax on
-    set hlsearch
-endif
 
 " Set buffers to be hidden for easy switching
 set hidden
@@ -459,7 +452,11 @@ set whichwrap+=<,>,[,],h,l
 set iskeyword+=-
 set formatoptions-=cro
 
-" Search settings {{{
+" Search settings {{{2
+" Switch on highlighting the last used search pattern if colors  are supported
+if &t_Co > 2 || has("gui_running")
+    set hlsearch
+endif
 
 " Activate showmatch
 set showmatch
@@ -483,6 +480,17 @@ elseif executable("ag")
   set grepformat=%f:%l:%c:%m
 endif
 
+" }}}
+
+" Syntax highlighting {{{2
+" Switch syntax highlighting on, when the terminal has colors
+if &t_Co > 2 || has("gui_running")
+    syntax on
+endif
+set nocursorcolumn
+" set nocursorline
+set norelativenumber
+syntax sync minlines=256
 " }}}
 
 " }}}
@@ -802,32 +810,25 @@ vnoremap  <silent> <leader>qh         :call TDVimCloseAllWindowsByType('help')<C
 " Close Preview Window - <leader>qp
 nnoremap  <silent> <leader>qp         <C-W><C-Z> 
 vnoremap  <silent> <leader>qp         <C-W><C-Z> 
-inoremap  <silent> <leader>qp         <C-O><C-W><C-Z> 
 " Close QuickFix Window - <leader>qq
 nnoremap  <silent> <leader>qq         :cclose<CR> 
 vnoremap  <silent> <leader>qq         <Esc>:cclose<CR> 
-inoremap  <silent> <leader>qq         <Esc>:cclose<CR> 
 " Close Location Window - <leader>ql
 nnoremap  <silent> <leader>ql         :lclose<CR> 
 vnoremap  <silent> <leader>ql         <Esc>:lclose<CR> 
-inoremap  <silent> <leader>ql         <Esc>:lclose<CR> 
 " Close Previous Window - <leader>qw
 nnoremap  <silent> <leader>qw         :call TDVimClosePreviousWindow()<CR> 
 vnoremap  <silent> <leader>qw         <Esc>:call TDVimClosePreviousWindow()<CR> 
-inoremap  <silent> <leader>qw         <Esc>:call TDVimClosePreviousWindow()<CR> 
 
 " Jump to QuickFix Window - <leader>jq
 nnoremap  <silent> <leader>jq         :call utils#JumpToWindowsByType( "quickfix" )<CR> 
 xnoremap  <silent> <leader>jq         <ESC>:call utils#JumpToWindowsByType( "quickfix" )<CR> 
-inoremap  <silent> <leader>jq         <ESC>:call utils#JumpToWindowsByType( "quickfix" )<CR> 
 " Jump to Location Window - <leader>jl
 nnoremap  <silent> <leader>jl         :call utils#JumpToWindowsByType( "location" )<CR> 
 xnoremap  <silent> <leader>jl         <ESC>:call utils#JumpToWindowsByType( "location" )<CR> 
-inoremap  <silent> <leader>jl         <ESC>:call utils#JumpToWindowsByType( "location" )<CR> 
 " Jump to Preview Window - <leader>jl
 nnoremap  <silent> <leader>jp         :call utils#JumpToWindowsByType( "preview" )<CR> 
 xnoremap  <silent> <leader>jp         <ESC>:call utils#JumpToWindowsByType( "preview" )<CR> 
-inoremap  <silent> <leader>jp         <ESC>:call utils#JumpToWindowsByType( "preview" )<CR> 
 
 " Jump to Location List Window {{{3
 nnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow :call utils#JumpToWindowsByType( "location" )<CR>
