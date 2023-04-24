@@ -47,7 +47,7 @@ endf
 " }}}
 
 
-" getWinInfo
+" getWinInfo {{{2
 " winid: id of the window, if not passed then current window will be used
 "function! s:getWinInfo( winid=-1 )
 function! s:getWinInfo( winid )
@@ -64,6 +64,7 @@ function! s:getWinInfo( winid )
     endfor
     return {}
 endfunction
+" }}}
 
 " NeatFoldText {{{2
 " Improve text for folding line
@@ -321,6 +322,22 @@ function! TDVimClosePreviousWindow()
     if prevwindow > 0
         execute prevwindow . 'wincmd c'
     endif
+endfunction
+" }}}
+
+" SetupNERDTreeBuffer {{{
+" Functiom to do some custom setups in a NERDtree buffer when Syntax event
+" is triggered usinh autocommands.
+" Close NERDtree window using - or Esc.
+function! s:SetupNERDTreeBuffer(  )
+    " Check we are actually in a NERDTree buffer
+    if &syntax !~ "nerdtree"
+        echoerr "We are NOT in a NERDtree buffer!!!: " . curbuf
+        return
+    endif
+    "echomsg "We are in a NERDtree buffer!!!"
+    nmap <buffer> -        :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
+    nmap <buffer> <silent> <Esc> :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
 endfunction
 " }}}
 
@@ -841,7 +858,7 @@ vnoremap  <silent> <leader>s        <C-w>v
 nnoremap  <silent> <leader>sh       <C-w>s 
 vnoremap  <silent> <leader>sh       <C-w>s 
 
-" Better window navigation - <leader>[Up|Down|Left|Right]
+" Better window navigation - <leader>[Up|Down|Left|Right] {{{3
 nnoremap  <silent> <C-h>    <C-w>h 
 nnoremap  <silent> <C-l>    <C-w>l
 nnoremap  <silent> <C-j>    <C-w>j
@@ -858,12 +875,20 @@ tnoremap  <silent> <leader><Left>   <C-w>h
 tnoremap  <silent> <leader><Right>  <C-w>l
 tnoremap  <silent> <leader><Up>     <C-w>j 
 tnoremap  <silent> <leader><Down>   <C-w>k
+" }}}
 
 " Explorer - F8, <leader>e
-nnoremap  <silent> <F8>       :Lex 20<cr> 
-nnoremap  <silent> <leader>e  :Lex 20<cr> 
+" Netrw
+"nnoremap  <silent> <F8>       :Lex 20<cr> 
+"nnoremap  <silent> <leader>e  :Lex 20<cr> 
+" NErdtTree
+nnoremap  <silent> <F8>       :NERDTreeToggle<cr> 
+nnoremap  <silent> <leader>e  :NERDTreeToggle<cr> 
+inoremap  <silent> <F8>       <C-O>:NERDTreeToggle<cr> 
+xnoremap  <silent> <F8>       <ESC>:NERDTreeToggle<cr> 
 " In Explorer - -
-nnoremap  <silent> -       :Explore<CR> 
+"nnoremap  <silent> -       :Explore<CR> 
+"nnoremap  <silent> -       :Explore<CR> 
 
 " Resize with arrows - Ctrl[Up|Down|Left|Right]
 nnoremap  <silent> <C-Up>     :resize +2<CR> 
@@ -910,6 +935,14 @@ inoremap   <F3>   <ESC>:files<cr>:b<space>
 
 " Development {{{2
 " Operations usually used when programing
+
+" Toggel comments
+nmap <silent> <F5>       <Plug>NERDCommenterToggle
+vmap <silent> <F5>       <Plug>NERDCommenterToggle
+imap <silent> <F5>       <Esc>\c<Space>
+nmap <silent> <leader>ct <Plug>NERDCommenterToggle
+vmap <silent> <leader>ct <Plug>NERDCommenterToggle
+
 " Inspect and jump to tags
 nnoremap   <F6>   :tjump <C-r><C-w><space>
 xnoremap   <F6>   :tjump <C-r><C-w><space>
@@ -924,10 +957,9 @@ xnoremap   <S-F6>   :ptjump <C-r><C-w><space>
 " Create tags file
 nnoremap   <F11>   :TDVimMakeTags <CR>
 
-
 " Autocomplete using Previous and Next
-inoremap   <TAB>  <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
-inoremap   <S-TAB>    <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
+inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
+inoremap   <S-TAB>  <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
 " keymap("i", "<tab>", "<c-r>=utils#TabAutocompleteWrapper(\"backward\")<cr>", opts)
 " keymap("i", "<s-tab>", "<c-r>=utils#TabAutocompleteWrapper(\"forward\")<cr>", opts)
 
@@ -1051,7 +1083,7 @@ if has("autocmd")
 		    "\	if &omnifunc == "" |
 		    "\		setlocal omnifunc=syntaxcomplete#Complete |
 		    "\	endif
-        "autocmd FileType nerdtree call utils#SetupNERDTreeBuffer()
+        autocmd FileType nerdtree call s:SetupNERDTreeBuffer()
         autocmd! BufRead,BufNewFile *.usd set filetype=usd
         autocmd! BufRead,BufNewFile *.usda set filetype=usda
     augroup END
