@@ -492,10 +492,6 @@ function! TDVimLightlineGit()
       return w:currentgitbranch !=# '' ? '|/'.w:currentgitbranch : ''
     endif
   endif
-  "elseif exists('*gitbranch#name')
-      "let branch = gitbranch#name()
-      "return branch !=# '' ? ''.branch : ''
-  "endif
   return '-'
 endfunction
 
