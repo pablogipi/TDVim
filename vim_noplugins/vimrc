@@ -324,7 +324,7 @@ function! TDVimClosePreviousWindow()
 endfunction
 " }}}
 
-" SetupNERDTreeBuffer {{{
+" SetupNERDTreeBuffer {{{2
 " Functiom to do some custom setups in a NERDtree buffer when Syntax event
 " is triggered usinh autocommands.
 " Close NERDtree window using - or Esc.
@@ -339,6 +339,253 @@ function! s:SetupNERDTreeBuffer(  )
     nmap <buffer> <silent> <Esc> :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
 endfunction
 " }}}
+
+" UpdateCurrentGitBranch {{{2
+" Update current git branch from buffer in window. This function will use gitbranch#name() 
+" The intention is to call this function from the CursorHold autocommand.
+" This way we can update curent branch only when the cursor stops.
+" The function will set the window variable: w:currentgitbranch .
+" Only update if g:tdvim_update_git_branch is set
+function! TDVimUpdateCurrentGitBranch()
+  if exists('*gitbranch#name')
+      let w:currentgitbranch = gitbranch#name()
+  endif
+endfunction
+"}}}
+
+" Lightline Functions {{{2
+
+" LightlineMode {{{3
+" Custom version of original lightline mode function to return
+" mode string.
+" Customizations:
+" - Support preview window
+let s:LightLineModeMap = { 'n': 'NORMAL', 'i': 'INSERT', 'R': 'REPLACE', 'v': 'VISUAL', 'V': 'V-LINE', "\<C-v>": 'V-BLOCK',
+        \     'c': 'COMMAND', 's': 'SELECT', 'S': 'S-LINE', "\<C-s>": 'S-BLOCK', 't': 'TERMINAL'
+        \}
+function! TDVimLightlineMode() abort
+    " Get current window info
+    let wininfo = s:getWinInfo(-1)
+
+    if &previewwindow
+        return 'PREVIEW'
+    elseif &filetype == "ctrlp"
+        return 'CTRLP'
+    elseif &filetype == "help"
+        return 'HELP'
+    elseif &filetype == "qf"
+        if wininfo['loclist'] 
+            "let parentwinid = getloclist( winnr(), {'filewinid': -1} )['filewinid']
+            "let parentwinname = bufname( winbufnr( parentwinid ) )
+            "return 'LOCATIONLIST - ' . parentwinname
+            return 'LOCATIONLIST'
+        else
+            return 'QUICKFIX'
+        endif
+    elseif &filetype == "tagbar"
+        return 'SYMBOLS'
+    elseif &filetype == "nerdtree"
+        return 'EXPLORER'
+    elseif &filetype == "fugitive"
+        return 'GIT'
+    else
+        return get(s:LightLineModeMap, mode(), '')
+    endif
+endfunction
+" }}}
+
+" LightlineFilename {{{3
+" Custom version of original lightline filename function to return
+" filename string.
+" Customizations:
+" - return empty string for those filetypes where filename is not needed and
+"   mode is used instead.
+" - Fow Quickfix windows return empty name, for location windows return name of
+"   file associated to parent window
+function! TDVimLightlineFilename() abort
+    " Get current window info
+    let wininfo = s:getWinInfo(-1)
+
+    if &filetype == "help" || &filetype == "ctrlp" || &filetype == "tagbar" || &filetype == "nerdtree"
+        return ''
+    endif
+    " For quickfix windows:
+    "
+    if &filetype == "qf"
+        if wininfo['loclist'] 
+            let parentwinid = getloclist( winnr(), {'filewinid': -1} )['filewinid']
+            let parentwinname = bufname( winbufnr( parentwinid ) )
+            return parentwinname
+        else
+            return ''
+        endif
+    endif
+    return expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+endfunction
+" }}}
+
+" LightlineInactiveMode {{{3
+" Return PREVIEW string or nothing, used in lightline for inactive windows
+function! TDVimLightlineInactiveMode() abort
+    " Get current window info
+    let wininfo = s:getWinInfo(-1)
+
+    if &previewwindow
+        return 'PREVIEW'
+    elseif &filetype == "ctrlp"
+        return 'CTRLP'
+    elseif &filetype == "help"
+        return 'HELP'
+    elseif &filetype == "qf"
+        if wininfo['loclist'] 
+            "let parentwinid = getloclist( winnr(), {'filewinid': -1} )['filewinid']
+            "let parentwinname = bufname( winbufnr( parentwinid ) )
+            "return 'LOCATIONLIST - ' . parentwinname
+            return 'LOCATIONLIST'
+        else
+            return 'QUICKFIX'
+        endif
+    elseif &filetype == "tagbar"
+        return 'SYMBOLS'
+    elseif &filetype == "nerdtree"
+        return 'EXPLORER'
+    else
+        return ''
+    endif
+endfunction
+" }}}
+
+" LightLine utility functions {{{3
+function! TDVimLightlineReadonly()
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
+        return ''
+    else
+      if  exists('g:GuiLoaded') || has('gui_running')
+        return &readonly ? '' : ''
+      else
+        return &readonly ? 'RO' : ''
+      endif
+    endif
+endfunction
+
+function! TDVimLightlineModified()
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
+        return ''
+    else
+      if  exists('g:GuiLoaded') || has('gui_running')
+        return &modified ? '✗' : '✓'
+      else
+        return &modified ? 'x' : 'o'
+      endif
+    endif
+endfunction
+
+function! TDVimLightlineGit()
+  if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
+      return ''
+  elseif winwidth(0) < 100
+      return ''
+  elseif exists('w:currentgitbranch')
+    if  exists('g:GuiLoaded') || has('gui_running')
+      return w:currentgitbranch !=# '' ? ''.w:currentgitbranch : ''
+    else
+      return w:currentgitbranch !=# '' ? '|/'.w:currentgitbranch : ''
+    endif
+  endif
+  "elseif exists('*gitbranch#name')
+      "let branch = gitbranch#name()
+      "return branch !=# '' ? ''.branch : ''
+  "endif
+  return '-'
+endfunction
+
+" LightlineExtraInfo
+" Return some extra information at the center of lightline
+" - For programming file types return tag for current function
+" - For Quickfix and Location list windows return command used to generated the
+"   window entries
+function! TDVimLightlineExtraInfo() abort
+  " Only add extra info for wide enough windows
+  if winwidth(0) < 100
+      return ""
+  endif
+
+  " Get current window info
+  let wininfo = s:getWinInfo(-1)
+
+  " Quickfix and Location List windows
+  if &filetype == "qf"
+      if exists("w:quickfix_title")
+          return wininfo['variables']['quickfix_title']
+      endif
+  endif
+
+  " Programing 
+  " Using w:curenttag set by UpdateCurrentTag using CursorHold autocmd. This fixes the lagging due to calling tagbar#currenttag in every redraw
+" if exists("w:currenttag")
+"     let l:tag = w:currenttag
+"     if len(w:currenttag) > winwidth(0)
+"          " Give 75 characters margin to the left in order to [reserver the
+"          " left part of the status line
+"          let l:tag = l:tag[0:winwidth(0) - 75 ]
+"          let l:tag .= " ..."
+"      endif
+"      "return w:currenttag
+"      "return string(winwidth(0))
+"      return l:tag
+"  endif
+
+  return ""
+endfunction
+
+
+" Lightline Functions}}}
+
+" SetFancyUI {{{
+" Set fancy unicode symbols for UI. Mostly lightline.
+function! s:SetFancyUI()
+  " TODO: for some reason this is not called correctly this will setup:
+  " git in lightilint
+  " fancy UI using UTF and fancy icons
+
+  if  exists('g:GuiLoaded') || has('gui_running')
+    let g:lightline.component.lineinfo = '▤ %3l:%-2v'
+    let g:lightline.separator = { 'left': '', 'right': '' }
+    let g:lightline.subseparator = { 'left': '', 'right': '' }    
+  else
+    let g:lightline.component.lineinfo = '%3l:%-2v'
+  endif
+
+  " if exists('g:loaded_lightline') && exists('g:lightline')
+
+    " if has_key( g:lightline, 'component' )
+        " let g:lightline.component.lineinfo = '▤ %3l:%-2v'
+    " else
+        " let g:lightline.component = {}
+        " let g:lightline.component.lineinfo = '▤ %3l:%-2v'
+    " endif
+    " :au! CursorHold * ++nested call TDVimUpdateCurrentGitBranch()
+    " let g:lightline.separator = { 'left': '', 'right': '' }
+    " let g:lightline.subseparator = { 'left': '', 'right': '' }    
+  " endif
+  if exists('g:loaded_lightline_buffer')
+    "let g:lightline_buffer_logo = "\u233e"
+    let g:lightline_buffer_logo                     = "》"
+    let g:lightline_buffer_readonly_icon            = ''
+    let g:lightline_buffer_modified_icon            = '✗'
+    let g:lightline_buffer_git_icon                 = ' '
+    let g:lightline_buffer_ellipsis_icon            = '..'
+    let g:lightline_buffer_expand_left_icon         = "\u25c4"
+    let g:lightline_buffer_expand_right_icon        = "\u25ba"
+    let g:lightline_buffer_active_buffer_left_icon  = '▌'
+    let g:lightline_buffer_active_buffer_right_icon = '▐'
+    "let g:lightline_buffer_separator_icon = "\u25b9"
+    let g:lightline_buffer_separator_icon           = "╱"
+  endif
+  call lightline#disable()
+  call lightline#enable()
+endfunction
+"}}}
 
 " }}}
 
@@ -1032,6 +1279,7 @@ if has("autocmd")
     augroup END
         " TODO
 	"autocmd VimEnter * call utils#SourceUserSettings()
+	autocmd VimEnter * call s:SetFancyUI()
         autocmd VimEnter * echomsg "TDVim (vim noplugins)" . $TDVIMVERSION . " loaded"
     augroup END
     " AfterBufferRead
@@ -1084,19 +1332,23 @@ if has("autocmd")
 		    "\	if &omnifunc == "" |
 		    "\		setlocal omnifunc=syntaxcomplete#Complete |
 		    "\	endif
-        autocmd FileType nerdtree call s:SetupNERDTreeBuffer()
+        autocmd! FileType nerdtree call s:SetupNERDTreeBuffer()
         autocmd! BufRead,BufNewFile *.usd set filetype=usd
         autocmd! BufRead,BufNewFile *.usda set filetype=usda
+        autocmd! BufNewFile,BufRead *.hjson setlocal filetype=hjson
     augroup END
     " SessionLoadPost
     "augroup tdvimSessionLoadPost
     "augroup END
 
     " CursorHold
-    "augroup tdvimCursorHold
+    augroup tdvimCursorHold
+      if executable("git")
+        :au! CursorHold * ++nested call TDVimUpdateCurrentGitBranch()
+      endif
         "autocmd! CursorHold * ++nested call utils#UpdateDevIconFileType()
         "autocmd! CursorHold leaderf ++nested normal <C-I>
-    "augroup END
+    augroup END
 
 else
     set autoindent		" always set autoindenting on
@@ -1115,6 +1367,118 @@ set selectmode=""
 " XXX: Mmmm this is provably controversial
 " Automatically change directory
 set autochdir
+
+
+" Setup Plugins {{{
+
+
+" NERD Tree: {{{2
+" let g:NERDTreeHijackNetrw = 1 " Use NERD Tree instead of netrw
+
+" The next lines are really commented the rest are commented for testing.
+"let g:NERDTreeDisableFileExtensionHighlight = 1
+"let g:NERDTreeDisableExactMatchHighlight = 1
+"let g:NERDTreeDisablePatternMatchHighlight = 1
+
+" let g:NERDTreeFileExtensionHighlightFullName = 1
+" let g:NERDTreeExactMatchHighlightFullName = 1
+" let g:NERDTreePatternMatchHighlightFullName = 1
+" let g:NERDTreeLimitedSyntax = 1
+" let NERDTreeIgnore=['\.swo$', '\.swp$','\.pyc$', '\.o$','\~$']
+" let NERDTreeAutoDeleteBuffer = 1
+
+" NERDTree Git
+" let g:NERDTreeGitStatusIndicatorMapCustom = {
+    " \ "Modified"  : "✹",
+    " \ "Staged"    : "✚",
+    " \ "Untracked" : "✭",
+    " \ "Renamed"   : "➜",
+    " \ "Unmerged"  : "═",
+    " \ "Deleted"   : "✖",
+    " \ "Dirty"     : "✗",
+    " \ "Clean"     : "✔︎",
+    " \ 'Ignored'   : '☒',
+    " \ "Unknown"   : "?"
+    " \ }
+
+" NERD Commenter:
+let g:NERDMenuMode = 0 " Disable menu
+
+
+
+" Lightline: {{{2
+" use lightline-buffer in lightline
+let g:lightline = {
+  \ 'tabline': {
+          \ 'left': [ [ 'sessioninfo' ], [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+          \ 'right': [ [ 'close' ], ],
+          \ },
+  \ 'component_expand': {
+          \ 'buffercurrent': 'lightline#buffer#buffercurrent2',
+          \ },
+  \ 'component_type': {
+          \ 'buffercurrent': 'tabsel',
+          \ },
+  \ 'component_function': {
+          \ 'sessioninfo': 'utils#SessionName',
+          \ 'bufferbefore': 'lightline#buffer#bufferbefore',
+          \ 'bufferafter': 'lightline#buffer#bufferafter',
+          \ 'bufferinfo': 'lightline#buffer#bufferinfo',
+          \ 'filetypeicon': 'utils#LightlineDeviconsFiletype',
+          \ 'fileformat': 'utils#LightlineDeviconsFileformat',
+          \ 'modifiedicon': 'TDVimLightlineModified',
+          \ 'readonly': 'TDVimLightlineReadonly',
+          \ 'extrainfo': 'TDVimLightlineExtraInfo',
+          \ 'tagsgen': 'utils#LightlineGutentags',
+          \ 'git': 'TDVimLightlineGit',
+          \ },
+  \ 'component': {
+          \ 'filename': '%{TDVimLightlineFilename()}',
+          \ 'mode': '%{TDVimLightlineMode()}',
+          \ 'inactivemode': '%{TDVimLightlineInactiveMode()}',
+  \       },
+  \'subseparator' : { 'left': '|', 'right': '|' },
+  \ }
+                "\ 'lineinfo': '%{utils#LightlineLineInfo()}',
+          "\ 'lineinfo': '%{TDVimLightlineLineInfo()}',
+
+if has ('gui_running')
+    let g:lightline.active = {
+                \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
+                \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git' ] ]
+                \   }
+else
+    let g:lightline.active = {
+                \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
+                \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git', 'filetype' ] ]
+                \   }
+endif
+
+let g:lightline.inactive = {
+            \ 'left': [ [ 'inactivemode', 'filename', 'modifiedicon' ] ],
+            \ 'right': [ [ 'lineinfo' ],
+            \            [ 'git', 'percent' ] ] }
+" lightline-buffer
+" Always enable tabline, needed by lightline-bufferline
+set showtabline=2
+" Dont use GUI tabs in GUI mode, instead use text tabline. Needed by
+" tabline buffers plugins
+set guioptions-=e
+" lightline-buffer function settings
+let g:lightline_buffer_show_bufnr = 1
+let g:lightline_buffer_rotate     = 0
+let g:lightline_buffer_fname_mod  = ':t'
+let g:lightline_buffer_excludes   = ['vimfiler', 'nerdtree', 'tagbar', 'help', 'quickfix']
+let g:lightline_buffer_maxflen    = 30
+let g:lightline_buffer_maxfextlen = 3
+let g:lightline_buffer_minflen    = 16
+let g:lightline_buffer_minfextlen = 3
+let g:lightline_buffer_reservelen = 20
+let g:lightline#bufferline#enable_devicons = 1
+" Default color
+let g:lightline.colorscheme = "PaperColor"
+" Setup Plugins }}}
+
 
 " TODO:
 " Project Mode {{{
@@ -1159,6 +1523,7 @@ else
 endif
 
 "}}}
+
 
 " TDVim version
 let $TDVIMVERSION="0.4"
