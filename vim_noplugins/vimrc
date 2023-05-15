@@ -457,7 +457,7 @@ endfunction
 
 " LightLine utility functions {{{3
 function! TDVimLightlineReadonly()
-    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal"
         return ''
     else
       if  exists('g:GuiLoaded') || has('gui_running')
@@ -469,11 +469,12 @@ function! TDVimLightlineReadonly()
 endfunction
 
 function! TDVimLightlineModified()
-    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal"
         return ''
     else
       if  exists('g:GuiLoaded') || has('gui_running')
-        return &modified ? '✗' : '✓'
+        " return &modified ? '✗' : '✓'
+        return &modified ? '✎' : '✓'
       else
         return &modified ? 'x' : 'o'
       endif
@@ -481,7 +482,7 @@ function! TDVimLightlineModified()
 endfunction
 
 function! TDVimLightlineGit()
-  if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree"
+  if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal"
       return ''
   elseif winwidth(0) < 100
       return ''
@@ -540,14 +541,13 @@ endfunction
 " SetFancyUI {{{
 " Set fancy unicode symbols for UI. Mostly lightline.
 function! s:SetFancyUI()
-  " TODO: for some reason this is not called correctly this will setup:
-  " git in lightilint
   " fancy UI using UTF and fancy icons
 
   if  exists('g:GuiLoaded') || has('gui_running')
     let g:lightline.component.lineinfo = '▤ %3l:%-2v'
     let g:lightline.separator = { 'left': '', 'right': '' }
     let g:lightline.subseparator = { 'left': '', 'right': '' }    
+    let g:lightline#bufferline#unicode_symbols = 1
   else
     let g:lightline.component.lineinfo = '%3l:%-2v'
   endif
@@ -578,6 +578,7 @@ function! s:SetFancyUI()
     "let g:lightline_buffer_separator_icon = "\u25b9"
     let g:lightline_buffer_separator_icon           = "╱"
   endif
+  " Force lightline update
   call lightline#disable()
   call lightline#enable()
 endfunction
@@ -1406,20 +1407,16 @@ let g:NERDMenuMode = 0 " Disable menu
 " use lightline-buffer in lightline
 let g:lightline = {
   \ 'tabline': {
-          \ 'left': [ [ 'sessioninfo' ], [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+          \ 'left': [ [ 'buffers' ], ],
           \ 'right': [ [ 'close' ], ],
           \ },
   \ 'component_expand': {
-          \ 'buffercurrent': 'lightline#buffer#buffercurrent2',
+          \ 'buffers' : 'lightline#bufferline#buffers',
           \ },
   \ 'component_type': {
-          \ 'buffercurrent': 'tabsel',
+          \ 'buffers': 'tabsel',
           \ },
   \ 'component_function': {
-          \ 'sessioninfo': 'utils#SessionName',
-          \ 'bufferbefore': 'lightline#buffer#bufferbefore',
-          \ 'bufferafter': 'lightline#buffer#bufferafter',
-          \ 'bufferinfo': 'lightline#buffer#bufferinfo',
           \ 'filetypeicon': 'utils#LightlineDeviconsFiletype',
           \ 'fileformat': 'utils#LightlineDeviconsFileformat',
           \ 'modifiedicon': 'TDVimLightlineModified',
@@ -1437,6 +1434,11 @@ let g:lightline = {
   \ }
                 "\ 'lineinfo': '%{utils#LightlineLineInfo()}',
           "\ 'lineinfo': '%{TDVimLightlineLineInfo()}',
+  " \ 'tabline': {
+  "         \ 'left': [ [ 'sessioninfo' ], [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+  "         \ 'right': [ [ 'close' ], ],
+  "         \ },
+          " \ 'sessioninfo': 'utils#SessionName',
 
 if has ('gui_running')
     let g:lightline.active = {
@@ -1461,16 +1463,19 @@ set showtabline=2
 " tabline buffers plugins
 set guioptions-=e
 " lightline-buffer function settings
-let g:lightline_buffer_show_bufnr = 1
-let g:lightline_buffer_rotate     = 0
-let g:lightline_buffer_fname_mod  = ':t'
-let g:lightline_buffer_excludes   = ['vimfiler', 'nerdtree', 'tagbar', 'help', 'quickfix']
-let g:lightline_buffer_maxflen    = 30
-let g:lightline_buffer_maxfextlen = 3
-let g:lightline_buffer_minflen    = 16
-let g:lightline_buffer_minfextlen = 3
-let g:lightline_buffer_reservelen = 20
-let g:lightline#bufferline#enable_devicons = 1
+" let g:lightline_buffer_show_bufnr = 1
+" let g:lightline_buffer_rotate     = 0
+" let g:lightline_buffer_fname_mod  = ':t'
+" let g:lightline_buffer_excludes   = ['vimfiler', 'nerdtree', 'tagbar', 'help', 'quickfix', 'terminal']
+" let g:lightline_buffer_maxflen    = 30
+" let g:lightline_buffer_maxfextlen = 3
+" let g:lightline_buffer_minflen    = 16
+" let g:lightline_buffer_minfextlen = 3
+" let g:lightline_buffer_reservelen = 20
+" let g:lightline#bufferline#enable_devicons = 0
+let g:lightline#bufferline#disable_more_buffers_indicator = 1
+let g:lightline#bufferline#show_number = 2
+let g:lightline#bufferline#filter_by_tabpage = 1
 " Default color
 let g:lightline.colorscheme = "PaperColor"
 " Setup Plugins }}}
