@@ -18,6 +18,7 @@ GTAGS
 releases
 spell/
 .netrwhist
+sessions
 
 # Compiled Lua sources
 luac.out
