@@ -353,6 +353,17 @@ function! TDVimUpdateCurrentGitBranch()
 endfunction
 "}}}
 
+" UpdateDevIconFileType {{{2
+" Update current Dev Icon for buffer in window. This function use WebDevIconsGetFileTypeSymbol()
+" The intention is to call this function from the CursorHold autocommand.
+" The function will set the window variable: w:currentdeviconfiletype .
+function! TDVimUpdateDevIconFileType()
+    if exists('*WebDevIconsGetFileTypeSymbol')
+        let w:currentdeviconfiletype = WebDevIconsGetFileTypeSymbol()
+    endif
+endfunction
+"}}}
+
 " Lightline Functions {{{2
 
 " LightlineMode {{{3
@@ -481,6 +492,24 @@ function! TDVimLightlineModified()
     endif
 endfunction
 
+function! TDVimLightlineDeviconsFiletype()
+    "return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+    if &filetype == "help"
+        return 'ﬁ'
+    elseif &filetype == "qf"
+        return 'ί'
+    else
+        "return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
+        if exists('w:currentdeviconfiletype')
+            return winwidth(0) > 70 ? (strlen(&filetype) ? w:currentdeviconfiletype : '') : ''
+        endif
+    endif
+endfunction
+
+function! TDVimLightlineDeviconsFileformat()
+  return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+endfunction
+
 function! TDVimLightlineGit()
   if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal"
       return ''
@@ -544,10 +573,15 @@ function! s:SetFancyUI()
   " fancy UI using UTF and fancy icons
 
   if  exists('g:GuiLoaded') || has('gui_running')
+    let g:lightline.active = {
+          \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
+          \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ], [ 'git' ] ]
+          \   }
     let g:lightline.component.lineinfo = '▤ %3l:%-2v'
     let g:lightline.separator = { 'left': '', 'right': '' }
     let g:lightline.subseparator = { 'left': '', 'right': '' }    
     let g:lightline#bufferline#unicode_symbols = 1
+    let g:lightline#bufferline#enable_devicons = 1
   else
     let g:lightline.component.lineinfo = '%3l:%-2v'
   endif
@@ -581,6 +615,7 @@ function! s:SetFancyUI()
   " Force lightline update
   call lightline#disable()
   call lightline#enable()
+  call lightline#bufferline#reload()
 endfunction
 "}}}
 
@@ -1342,6 +1377,7 @@ if has("autocmd")
     augroup tdvimCursorHold
       if executable("git")
         :au! CursorHold * ++nested call TDVimUpdateCurrentGitBranch()
+        autocmd! CursorHold * ++nested call TDVimUpdateDevIconFileType()
       endif
         "autocmd! CursorHold * ++nested call utils#UpdateDevIconFileType()
         "autocmd! CursorHold leaderf ++nested normal <C-I>
@@ -1417,8 +1453,8 @@ let g:lightline = {
           \ 'buffers': 'tabsel',
           \ },
   \ 'component_function': {
-          \ 'filetypeicon': 'utils#LightlineDeviconsFiletype',
-          \ 'fileformat': 'utils#LightlineDeviconsFileformat',
+          \ 'filetypeicon': 'TDVimLightlineDeviconsFiletype',
+          \ 'fileformat': 'TDVimLightlineDeviconsFileformat',
           \ 'modifiedicon': 'TDVimLightlineModified',
           \ 'readonly': 'TDVimLightlineReadonly',
           \ 'extrainfo': 'TDVimLightlineExtraInfo',
