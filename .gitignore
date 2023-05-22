@@ -19,6 +19,7 @@ releases
 spell/
 .netrwhist
 sessions
+.tdvim
 
 # Compiled Lua sources
 luac.out

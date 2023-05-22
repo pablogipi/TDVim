@@ -985,21 +985,39 @@ imap  <silent> jk              <ESC>
 " }}}
 
 " Help {{{2
-nnoremap  <S-F1>             :h <C-r><C-w><CR> 
-xnoremap  <S-F1>             :h <C-r><C-w><CR> 
-inoremap  <S-F1>             <C-O>:h <C-r><C-w><CR> 
+if executable("fzf")
+    nnoremap  <S-F1>             :Helptags<CR> 
+    xnoremap  <S-F1>             :Helptags<CR> 
+    inoremap  <S-F1>             <C-O>:Helptags<CR> 
+else
+    nnoremap  <S-F1>             :h <C-r><C-w><CR> 
+    xnoremap  <S-F1>             :h <C-r><C-w><CR> 
+    inoremap  <S-F1>             <C-O>:h <C-r><C-w><CR> 
+endif
 " }}}
 
 " Main Operations {{{2
 " Main operations like open, save, new, quit, etc ...
 " Open Files in current location - S-F3, <leader>o
-nnoremap   <S-F3>   :find<space>
-vnoremap   <S-F3>   :find<space>
-inoremap   <S-F3>   <ESC>:find<space>
+if executable("fzf")
+    nnoremap   <S-F3>   :Files<CR>
+    vnoremap   <S-F3>   :Files<CR>
+    inoremap   <S-F3>   <ESC>:Files<CR>
+else
+    nnoremap   <S-F3>   :find<space>
+    vnoremap   <S-F3>   :find<space>
+    inoremap   <S-F3>   <ESC>:find<space>
+endif
 " Open Recent Files - C-S-F3
-nnoremap   <C-S-F3>   :browse oldfiles<CR>
-vnoremap   <C-S-F3>   :browse oldfiles<CR>
-inoremap   <C-S-F3>   <ESC>:browse oldfiles<CR>
+if executable("fzf")
+    nnoremap   <C-S-F3>   :History<CR>
+    vnoremap   <C-S-F3>   :History<CR>
+    inoremap   <C-S-F3>   <ESC>:History<CR>
+else
+    nnoremap   <C-S-F3>   :browse oldfiles<CR>
+    vnoremap   <C-S-F3>   :browse oldfiles<CR>
+    inoremap   <C-S-F3>   <ESC>:browse oldfiles<CR>
+endif
 " Save - <leader>w
 nnoremap   <leader>w    :w<CR>
 " Save All - <leader>wa
@@ -1047,12 +1065,32 @@ xnoremap  <silent> <A-Up>      :move '<-2<CR>gv-gv
 " nnoremap  <F4>      :silent lgrep <C-R><C-W><CR>:lopen<CR>
 " inoremap  <F4>      :<C-O>silent lgrep <C-R><C-W><CR>:lopen<CR>
 " xnoremap  <F4>      :silent lgrep <C-R><C-W><CR>:lopen<CR>
-nnoremap  <F4>          :TDvimGrep <C-R><C-W>
-inoremap  <F4>          :<C-O>TDvimGrep  <C-R><C-W>
-xnoremap  <F4>          :TDvimGrep  <C-R><C-W>
-nnoremap  <leader>g     :TDvimGrep <C-R><C-W>
-inoremap  <leader>g     :<C-O>TDvimGrep  <C-R><C-W>
-xnoremap  <leader>g     :TDvimGrep  <C-R><C-W>
+if executable("fzf") &&  executable("rg")
+    nnoremap  <F4>          :Rg <C-R><C-W><CR>
+    inoremap  <F4>          :<C-O>Rg  <C-R><C-W><CR>
+    xnoremap  <F4>          :Rg  <C-R><C-W><CR>
+    nnoremap  <leader>g     :Rg <C-R><C-W><CR>
+    inoremap  <leader>g     :<C-O>Rg  <C-R><C-W><CR>
+    xnoremap  <leader>g     :Rg  <C-R><C-W><CR>
+else
+    nnoremap  <F4>          :TDvimGrep <C-R><C-W>
+    inoremap  <F4>          :<C-O>TDvimGrep  <C-R><C-W>
+    xnoremap  <F4>          :TDvimGrep  <C-R><C-W>
+    nnoremap  <leader>g     :TDvimGrep <C-R><C-W>
+    inoremap  <leader>g     :<C-O>TDvimGrep  <C-R><C-W>
+    xnoremap  <leader>g     :TDvimGrep  <C-R><C-W>
+endif
+
+" Grep/Search in project - C-F4
+if executable("fzf") &&  executable("rg")
+    nnoremap  <S-F4>          :Rg<CR>
+    inoremap  <S-F4>          :<C-O>Rg<CR>
+    xnoremap  <S-F4>          :Rg<CR>
+else
+    nnoremap  <F4>          :TDvimGrep 
+    inoremap  <F4>          :<C-O>TDvimGrep  
+    xnoremap  <F4>          :TDvimGrep  
+endif
 
 " Navigate Grep results. Navigate Location list entries
 " Default mapped to []s
@@ -1202,9 +1240,15 @@ nnoremap  <silent> <leader><TAB>   :e #<CR>
 vnoremap  <silent> <leader><TAB>   :e #<CR>
 
 " Navigate Buffers - F3, <leader>b
-nnoremap   <F3>   :files<cr>:b<space>
-vnoremap   <F3>   :files<cr>:b<space>
-inoremap   <F3>   <ESC>:files<cr>:b<space>
+if executable("fzf")
+    nnoremap   <F3>   :Files<cr>
+    vnoremap   <F3>   :Files<cr>
+    inoremap   <F3>   <ESC>:Files<cr>
+else
+    nnoremap   <F3>   :files<cr>:b<space>
+    vnoremap   <F3>   :files<cr>:b<space>
+    inoremap   <F3>   <ESC>:files<cr>:b<space>
+endif
 
 " }}}
 
@@ -1216,12 +1260,26 @@ inoremap   <F3>   <ESC>:files<cr>:b<space>
 " Development {{{2
 " Operations usually used when programing
 
-" Toggel comments
+" Toggle comments
 nmap <silent> <F5>       <Plug>NERDCommenterToggle
 vmap <silent> <F5>       <Plug>NERDCommenterToggle
 imap <silent> <F5>       <Esc>\c<Space>
 nmap <silent> <leader>ct <Plug>NERDCommenterToggle
 vmap <silent> <leader>ct <Plug>NERDCommenterToggle
+
+" Toggle & Yank comments
+nmap <silent> <S-F5>       <Plug>NERDCommenterYank
+vmap <silent> <S-F5>       <Plug>NERDCommenterYank
+imap <silent> <S-F5>       <Esc>\c<Space>
+nmap <silent> <leader>cy <Plug>NERDCommenterYank
+vmap <silent> <leader>cy <Plug>NERDCommenterYank
+
+" Multiline Comments
+nmap <silent> <C-F5>     <Plug>NERDCommenterSexy
+vmap <silent> <C-F5>     <Plug>NERDCommenterSexy
+imap <silent> <C-F5>     <Esc>\cs
+nmap <silent> <leader>cs <Plug>NERDCommenterSexy
+vmap <silent> <leader>cs <Plug>NERDCommenterSexy
 
 " Inspect and jump to tags
 nnoremap   <F6>   :tjump <C-r><C-w><space>
@@ -1405,7 +1463,7 @@ set autochdir
 " Setup Plugins {{{
 
 
-" NERD Tree: {{{2
+" NERDTree {{{2
 " let g:NERDTreeHijackNetrw = 1 " Use NERD Tree instead of netrw
 
 " The next lines are really commented the rest are commented for testing.
@@ -1437,9 +1495,9 @@ let NERDTreeAutoDeleteBuffer = 1
 " NERD Commenter:
 let g:NERDMenuMode = 0 " Disable menu
 
+"}}}
 
-
-" Lightline: {{{2
+"Lightline {{{2
 " use lightline-buffer in lightline
 let g:lightline = {
   \ 'tabline': {
@@ -1514,10 +1572,36 @@ let g:lightline#bufferline#show_number = 2
 let g:lightline#bufferline#filter_by_tabpage = 1
 " Default color
 let g:lightline.colorscheme = "PaperColor"
+
+" }}}
+
+" FZF {{{2
+" Customize fzf colors to match your color scheme                                          
+" - fzf#wrap translates this to a set of `--color` options                                 
+let g:fzf_colors =                                                                         
+            \ { 'fg':      ['fg', 'Normal'],                                                           
+            \ 'bg':      ['bg', 'Normal'],                                                           
+            \ 'hl':      ['fg', 'Comment'],                                                          
+            \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],                             
+            \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],                                       
+            \ 'hl+':     ['fg', 'Statement'],                                                        
+            \ 'info':    ['fg', 'PreProc'],                                                          
+            \ 'border':  ['fg', 'Ignore'],                                                           
+            \ 'prompt':  ['fg', 'Conditional'],                                                      
+            \ 'pointer': ['fg', 'Exception'],                                                        
+            \ 'marker':  ['fg', 'Keyword'],                                                          
+            \ 'spinner': ['fg', 'Label'],                                                            
+            \ 'header':  ['fg', 'Comment'] } 
+" Improve colors in FZF in Gvim on windows:
+if s:GetOS() == 3
+    "Windows
+    set termwintype=conpty
+    let g:fzf_force_termguicolors = 1
+endif
+" }}}
 " Setup Plugins }}}
 
 
-" TODO:
 " Project Mode {{{
 " If vim is opened in a directory then enable some special settings to
 " work in a project, assuming the current folder is the project root
@@ -1560,7 +1644,6 @@ else
 endif
 
 "}}}
-
 
 " TDVim version
 let $TDVIMVERSION="0.4"
