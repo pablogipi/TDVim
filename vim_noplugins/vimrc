@@ -7,6 +7,7 @@
 "
 
 " Sections:
+" - Detect Project/Dev Mode
 " - Functions
 " - Init settings
 " - Terminal Settings
@@ -17,13 +18,26 @@
 " - Diff mode specific options
 " - Autocommands
 " - Custom commands
+" - Project Mode
 " - Global variables
 "
 
-" Global variables {{{
+" Project/Dev Mode {{{
+let g:tdvim_dev_mode = 0
 
+function! s:DetectDevMode()
+    if isdirectory(argv(0))
+        return 1
+    else
+        return 0
+    endif
+endfunction
 
+if s:DetectDevMode()
+    let g:tdvim_dev_mode = 1
+endif
 " }}}
+
 
 " Functions {{{
 
@@ -83,6 +97,11 @@ endfunction
 " Set the local path for the current buffer to the folder that contains the
 " loaded file
 function! s:SetLocalPath ()
+    " If in dev mode dont change location automatically
+    if g:tdvim_dev_mode
+       return
+    endif 
+
     " Current basename for the buffer
     let baseName = expand("%:p:h")
     if isdirectory(baseName)
@@ -181,6 +200,23 @@ function! TDVimJumpToWindowsByType ( buffertype )
   endwhile
 endfunction
 " }}}
+
+" OnlyReadSetup {{{2
+" Setup only read buffers
+" This is mainly used to offer a better experience for only read.
+" Usually used when vim is started as view
+" Setup actions
+" - Map q to close the buffer, in most cases this will close vim
+" Usage: call this using a BufEnter autocommand
+function! s:OnlyReadSetup()
+    if &ro
+        " Only work on read only buffers
+        nmap q :cq<CR>
+        return
+    endif
+endfunction
+" }}}
+
 
 " PreviewWindowSetup {{{2
 " Setup preview window depending based on previous window type.
@@ -563,11 +599,12 @@ function! TDVimLightlineExtraInfo() abort
 
   return ""
 endfunction
+" }}}
 
 
 " Lightline Functions}}}
 
-" SetFancyUI {{{
+" SetFancyUI {{{2
 " Set fancy unicode symbols for UI. Mostly lightline.
 function! s:SetFancyUI()
   " fancy UI using UTF and fancy icons
@@ -619,8 +656,13 @@ function! s:SetFancyUI()
 endfunction
 "}}}
 
-" }}}
 
+
+
+
+" Functions }}}
+
+"
 " Init settings {{{
 "
 " When started as "evim", evim.vim will already have done these settings.
@@ -695,20 +737,37 @@ let s:has_rg = 0
 if  executable('rg')
     let s:has_rg = 1
 endif
+" Detect fd
+let s:has_fd = 0
+if  executable('fd')
+    let s:has_fd = 1
+endif
 " Detect Git
 let s:has_git = 0
 if  executable('git')
     let s:has_git = 1
 endif
-" Detect Git
+" Detect Bash
 let s:has_bash = 0
 if  executable('bash')
     let s:has_bash = 1
 endif
+" Detect bat
+let s:has_bat = 0
+if  executable('bat')
+    let s:has_bat = 1
+endif
+" Detect cat
+let s:has_cat = 0
+if  executable('cat')
+    let s:has_cat = 1
+endif
 " }}}
+
 
 " Init Setting }}}
 
+"
 " Sessions {{{
 " Options for what to save in the sessions file:
 let &sessionoptions='buffers,curdir,folds,resize,winsize'
@@ -974,8 +1033,6 @@ command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --fields=+iaS --extras
 command! TDVimOpenTerminal call TDVimCreateOrJumpToTerminal()
 " Run grep, allow user to mpdify initial pattern and then open quickfix window wit results
 command! -nargs=+ TDvimGrep execute 'silent grep! <args>' | copen
-command! -bang -nargs=? -complete=dir Files
-        \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline']}, <bang>0)
 " }}}
 
 " Keyboard mappings {{{
@@ -1399,7 +1456,11 @@ if has("autocmd")
         " TODO
 	"autocmd VimEnter * call utils#SourceUserSettings()
 	autocmd VimEnter * call s:SetFancyUI()
-        autocmd VimEnter * echomsg "TDVim (vim noplugins)" . $TDVIMVERSION . " loaded"
+        if g:tdvim_dev_mode
+            autocmd VimEnter * echomsg "TDVim (Dev Mode)" . $TDVIMVERSION . " loaded"
+        else
+            autocmd VimEnter * echomsg "TDVim " . $TDVIMVERSION . " loaded"
+        endif
     augroup END
     " AfterBufferRead
     augroup tdvimAftertBufferRead
@@ -1422,6 +1483,8 @@ if has("autocmd")
         autocmd BufEnter * call s:SetLocalPath()
         " Call TDVim Project
         "autocmd BufEnter * call utils#ProjectSettings(expand("<afile>:p:h"), 0)
+        " Setup only read buffer
+        autocmd BufEnter * call s:OnlyReadSetup()
     augroup END
     " BufLeave
     "augroup tdvimBufLeave
@@ -1605,6 +1668,12 @@ let g:lightline.colorscheme = "PaperColor"
 " }}}
 
 " FZF {{{2
+" files command
+if s:has_fd
+    let $FZF_DEFAULT_COMMAND = 'fd'
+elseif s:has_rg
+    let $FZF_DEFAULT_COMMAND = 'rg --files'
+endif
 " Layout
 " Open using split at bottom. Faster than floating window
 let  fzf_layout = {'down':'~40%'}
@@ -1633,24 +1702,41 @@ endif
 " Enable preview based on availability of bash
 if !s:has_bash
     " Empty value to disable preview window altogether
-    echomsg "Bash not found"
+    "echomsg "Bash not found"
     let g:fzf_preview_window = []
+    " Files
+    if s:has_bat
+        command! -bang -nargs=? -complete=dir Files
+                    \ call fzf#vim#files(<q-args>, {'options': ['--prompt=Files:> ', '--layout=reverse', '--info=inline', '--preview', 'bat --color=always --pager=never --style=full {}']}, <bang>0)
+    elseif s:has_cat
+        command! -bang -nargs=? -complete=dir Files
+                    \ call fzf#vim#files(<q-args>, {'options': ['--prompt=Files:> ', '--layout=reverse', '--info=inline', '--preview', 'cat {}']}, <bang>0)
+    else
+        command! -bang -nargs=? -complete=dir Files
+                    \ call fzf#vim#files(<q-args>, {'options': ['--prompt=Files:> ', '--layout=reverse', '--info=inline']}, <bang>0)
+    endif
 endif
 " }}}
 " Setup Plugins }}}
 
 
 " Project Mode {{{
+" Overrides for Project Mode
 " If vim is opened in a directory then enable some special settings to
 " work in a project, assuming the current folder is the project root
-" TODO:
-" Disable autochdir
-" Try to load project.vim if exist
-" Create/Update tags file
-" Try to open session if exists
-" Set title to put project name
-" Set wildoptions+=tagfile
-" Set wildoptions+=fuzzy
+if g:tdvim_dev_mode
+    " TODO:
+    " Disable autochdir
+    set noautochdir
+    " Enable Autowrite
+    set autowriteall
+    " Try to load project.vim if exist
+    " Create/Update tags file
+    " Try to open session if exists
+    " Set title to put project name
+    " Set wildoptions+=tagfile
+    " Set wildoptions+=fuzzy
+endif
 
 " }}}
 
