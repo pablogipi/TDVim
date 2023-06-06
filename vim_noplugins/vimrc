@@ -683,6 +683,30 @@ set autochdir
 " Use OS clipboard:
 set clipboard^=unnamed,unnamedplus
 
+" Detect some commands availability in the system {{{2
+
+" Detect FZF
+let s:has_fzf = 0
+if  executable('fzf')
+    let s:has_fzf = 1
+endif
+" Detect RipGrep
+let s:has_rg = 0
+if  executable('rg')
+    let s:has_rg = 1
+endif
+" Detect Git
+let s:has_git = 0
+if  executable('git')
+    let s:has_git = 1
+endif
+" Detect Git
+let s:has_bash = 0
+if  executable('bash')
+    let s:has_bash = 1
+endif
+" }}}
+
 " Init Setting }}}
 
 " Sessions {{{
@@ -751,7 +775,7 @@ set smartindent
 " Global search by default
 set gdefault
 " Better grep
-if executable("rg")
+if s:has_rg
   set grepprg=rg\ --vimgrep
   set grepformat=%f:%l:%c:%m
 elseif executable("ag")
@@ -950,6 +974,8 @@ command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --fields=+iaS --extras
 command! TDVimOpenTerminal call TDVimCreateOrJumpToTerminal()
 " Run grep, allow user to mpdify initial pattern and then open quickfix window wit results
 command! -nargs=+ TDvimGrep execute 'silent grep! <args>' | copen
+command! -bang -nargs=? -complete=dir Files
+        \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline']}, <bang>0)
 " }}}
 
 " Keyboard mappings {{{
@@ -958,8 +984,6 @@ command! -nargs=+ TDvimGrep execute 'silent grep! <args>' | copen
 "let mapleader = "`"
 let mapleader = "\<Space>"
 let maplocalleader = ","
-" Load keymaps mapings for TDVim
-" TODO
 
 " Modes
 "   normal_mode = "n",
@@ -985,21 +1009,21 @@ imap  <silent> jk              <ESC>
 " }}}
 
 " Help {{{2
-if executable("fzf")
+if s:has_fzf
     nnoremap  <S-F1>             :Helptags<CR> 
     xnoremap  <S-F1>             :Helptags<CR> 
     inoremap  <S-F1>             <C-O>:Helptags<CR> 
 else
     nnoremap  <S-F1>             :h <C-r><C-w><CR> 
     xnoremap  <S-F1>             :h <C-r><C-w><CR> 
-    inoremap  <S-F1>             <C-O>:h <C-r><C-w><CR> 
+    inoremap  <S-F1>             <C-O>:h <C-r><Cew><CR> 
 endif
 " }}}
 
 " Main Operations {{{2
 " Main operations like open, save, new, quit, etc ...
 " Open Files in current location - S-F3, <leader>o
-if executable("fzf")
+if s:has_fzf
     nnoremap   <S-F3>   :Files<CR>
     vnoremap   <S-F3>   :Files<CR>
     inoremap   <S-F3>   <ESC>:Files<CR>
@@ -1009,7 +1033,7 @@ else
     inoremap   <S-F3>   <ESC>:find<space>
 endif
 " Open Recent Files - C-S-F3
-if executable("fzf")
+if s:has_fzf
     nnoremap   <C-S-F3>   :History<CR>
     vnoremap   <C-S-F3>   :History<CR>
     inoremap   <C-S-F3>   <ESC>:History<CR>
@@ -1023,15 +1047,15 @@ nnoremap   <leader>w    :w<CR>
 " Save All - <leader>wa
 nnoremap   <leader>wa   :wa<CR>
 " Save All  and Quit
-nnoremap   <F12>      :xa<CR>
-xnoremap   <F12>      :xa<CR>
-inoremap   <F12>      <ESC>:xa<CR>
-tnoremap   <F12>      <C-W>:xa<CR>
+nnoremap   <F10>      :xa<CR>
+xnoremap   <F10>      :xa<CR>
+inoremap   <F10>      <ESC>:xa<CR>
+tnoremap   <F10>      <C-W>:xa<CR>
 " Close And Quit
-nnoremap   <C-F12>    :confirm qa<CR>
-xnoremap   <C-F12>    :confirm qa<CR>
-inoremap   <C-F12>    <ESC>:confirm qa<CR>
-tnoremap   <C-F12>    <C-W>:confirm qa<CR>
+nnoremap   <C-F10>    :confirm qa<CR>
+xnoremap   <C-F10>    :confirm qa<CR>
+inoremap   <C-F10>    <ESC>:confirm qa<CR>
+tnoremap   <C-F10>    <C-W>:confirm qa<CR>
 "}}}
 
 
@@ -1065,7 +1089,7 @@ xnoremap  <silent> <A-Up>      :move '<-2<CR>gv-gv
 " nnoremap  <F4>      :silent lgrep <C-R><C-W><CR>:lopen<CR>
 " inoremap  <F4>      :<C-O>silent lgrep <C-R><C-W><CR>:lopen<CR>
 " xnoremap  <F4>      :silent lgrep <C-R><C-W><CR>:lopen<CR>
-if executable("fzf") &&  executable("rg")
+if s:has_fzf &&  s:has_rg
     nnoremap  <F4>          :Rg <C-R><C-W><CR>
     inoremap  <F4>          :<C-O>Rg  <C-R><C-W><CR>
     xnoremap  <F4>          :Rg  <C-R><C-W><CR>
@@ -1082,7 +1106,7 @@ else
 endif
 
 " Grep/Search in project - C-F4
-if executable("fzf") &&  executable("rg")
+if s:has_fzf &&  s:has_rg
     nnoremap  <S-F4>          :Rg<CR>
     inoremap  <S-F4>          :<C-O>Rg<CR>
     xnoremap  <S-F4>          :Rg<CR>
@@ -1240,10 +1264,10 @@ nnoremap  <silent> <leader><TAB>   :e #<CR>
 vnoremap  <silent> <leader><TAB>   :e #<CR>
 
 " Navigate Buffers - F3, <leader>b
-if executable("fzf")
-    nnoremap   <F3>   :Files<cr>
-    vnoremap   <F3>   :Files<cr>
-    inoremap   <F3>   <ESC>:Files<cr>
+if s:has_fzf
+    nnoremap   <F3>   :Buffers<cr>
+    vnoremap   <F3>   :Buffers<cr>
+    inoremap   <F3>   <ESC>:Buffers<cr>
 else
     nnoremap   <F3>   :files<cr>:b<space>
     vnoremap   <F3>   :files<cr>:b<space>
@@ -1282,8 +1306,13 @@ nmap <silent> <leader>cs <Plug>NERDCommenterSexy
 vmap <silent> <leader>cs <Plug>NERDCommenterSexy
 
 " Inspect and jump to tags
-nnoremap   <F6>   :tjump <C-r><C-w><space>
-xnoremap   <F6>   :tjump <C-r><C-w><space>
+if s:has_fzf
+    nnoremap   <F6>   :Tags<CR>
+    xnoremap   <F6>   :Tags<CR>
+else
+    nnoremap   <F6>   :tjump <C-r><C-w><space>
+    xnoremap   <F6>   :tjump <C-r><C-w><space>
+endif
 " Unimpaired tags navigation style with []t
 nnoremap   ]t   :tjump <C-r><C-w><CR>
 nnoremap   [t   <C-t>
@@ -1433,7 +1462,7 @@ if has("autocmd")
 
     " CursorHold
     augroup tdvimCursorHold
-      if executable("git")
+      if s:has_git
         :au! CursorHold * ++nested call TDVimUpdateCurrentGitBranch()
         autocmd! CursorHold * ++nested call TDVimUpdateDevIconFileType()
       endif
@@ -1576,6 +1605,9 @@ let g:lightline.colorscheme = "PaperColor"
 " }}}
 
 " FZF {{{2
+" Layout
+" Open using split at bottom. Faster than floating window
+let  fzf_layout = {'down':'~40%'}
 " Customize fzf colors to match your color scheme                                          
 " - fzf#wrap translates this to a set of `--color` options                                 
 let g:fzf_colors =                                                                         
@@ -1597,6 +1629,12 @@ if s:GetOS() == 3
     "Windows
     set termwintype=conpty
     let g:fzf_force_termguicolors = 1
+endif
+" Enable preview based on availability of bash
+if !s:has_bash
+    " Empty value to disable preview window altogether
+    echomsg "Bash not found"
+    let g:fzf_preview_window = []
 endif
 " }}}
 " Setup Plugins }}}
