@@ -135,6 +135,82 @@ function! s:SetupAuxBuffer( )
 endfunction
 " }}}
 
+" CloseAllBuffersByType {{{2
+" Close all buffers for a given buffertype, filetype or syntax
+" @param type type to delete
+" @param mode delete mode: 0- buftype, 1- filtetype, 2- syntax
+function! TDVimCloseAllBuffersByType( type, mode )
+  " Save current window number to revert.
+  let sel_winnr = winnr()
+  let nwin = 1
+  for nbuf in range(1, bufnr('$'))
+      let to_delete = 0
+      echo "Buffer :" . bufname( nbuf )
+      echo "Buffertype :" .getbufvar(nbuf, '&buffertype') 
+      echo "Filetype :" .getbufvar(nbuf, '&filetype') 
+      echo "Syntax :" .getbufvar(nbuf, '&syntax') 
+      if a:mode == 0 && getbufvar(nbuf, '&buftype') ==# a:type
+          let to_delete = 1
+      elseif a:mode == 1 && getbufvar(nbuf, '&filetype') ==# a:type
+          echo "DETECTED!!!"
+          let to_delete = 1
+      elseif a:mode == 2 && getbufvar(nbuf, '&syntax') ==# a:type
+          let to_delete = 1
+      endif
+      echo "Need to delete: " . to_delete
+      if to_delete == 1
+          "bdelete! bufname( nbuf ) 
+          "silent! exe 'lcd ' . fnameescape(baseName)
+          exe 'bwipeout! ' . bufname( nbuf ) 
+      endif
+  endfor
+
+
+endfunction
+" }}}
+
+
+" CloseAllWindowsByType {{{2
+" Close all windows for a given buffertype
+function! TDVimCloseAllWindowsByType( buffertype )
+    " For preview window just run pclose and exit:
+    if "preview" ==# a:buffertype
+        pclose
+        return
+    endif
+  " Save current window number to revert.
+  let sel_winnr = winnr()
+  let nwin = 1
+  while 1
+      let nbuf = winbufnr(nwin)
+      " After all window processed, finish.
+      if nbuf == -1
+          break
+      endif
+      " Close window if its buftype is same as buffertype argument.  If not help, go to next window.
+      if getbufvar(nbuf, '&buftype') ==# a:buffertype
+          " Correct saved window number if younger window will be closed.
+          if sel_winnr > nbuf
+              let sel_winnr = sel_winnr - 1
+          endif
+          execute nwin.'wincmd w'
+          " If there is only one help window, quit.
+          if nwin == 1 && winbufnr(2) == -1
+              quit!
+          else
+              close!
+          endif
+      else
+          let nwin = nwin + 1
+      endif
+  endwhile
+  " Revert selected window.
+  "execute save_winnr.'wincmd w' , silent!
+  silent! sel_winnr.'wincmd w'
+endfunction
+" }}}
+
+
 " JumpToWindowsByType {{{2
 " Given a buffer type, jump to it.
 " Used to jump to quickfix, preview or location windows
@@ -310,45 +386,6 @@ function! TDVimCreateOrJumpToTerminal ( )
 endfunction
 " }}}
 
-" CloseAllWindowsByType {{{2
-" Close all windows for a given buffertype
-function! TDVimCloseAllWindowsByType( buffertype )
-    " For preview window just run pclose and exit:
-    if "preview" ==# a:buffertype
-        pclose
-        return
-    endif
-  " Save current window number to revert.
-  let sel_winnr = winnr()
-  let nwin = 1
-  while 1
-      let nbuf = winbufnr(nwin)
-      " After all window processed, finish.
-      if nbuf == -1
-          break
-      endif
-      " Close window if its buftype is same as buffertype argument.  If not help, go to next window.
-      if getbufvar(nbuf, '&buftype') ==# a:buffertype
-          " Correct saved window number if younger window will be closed.
-          if sel_winnr > nbuf
-              let sel_winnr = sel_winnr - 1
-          endif
-          execute nwin.'wincmd w'
-          " If there is only one help window, quit.
-          if nwin == 1 && winbufnr(2) == -1
-              quit!
-          else
-              close!
-          endif
-      else
-          let nwin = nwin + 1
-      endif
-  endwhile
-  " Revert selected window.
-  "execute save_winnr.'wincmd w' , silent!
-  silent! sel_winnr.'wincmd w'
-endfunction
-" }}}
 
 " ClosePreviousWindow {{{2
 " Close previous window
@@ -1485,8 +1522,9 @@ if has("autocmd")
         autocmd BufEnter * call s:OnlyReadSetup()
     augroup END
     " BufLeave
-    "augroup tdvimBufLeave
-    "augroup END
+    augroup tdvimBufLeave
+        autocmd BufLeave * echomsg "Leaving the buf"
+    augroup END
     " BufWinEnter
     augroup tdvimWinNew
         autocmd WinNew * call s:PreviewWindowSetup()
@@ -1724,10 +1762,15 @@ endif
 " work in a project, assuming the current folder is the project root
 if g:tdvim_dev_mode
     " TODO:
-    " Disable autochdir
+    " Disable autochdir:
     set noautochdir
-    " Enable Autowrite
+    " Enable Autowrite:
     set autowriteall
+    " Autosave:
+    let s:autoPattern = "*.{c,h,[ch]pp,[acjt]s,inl,cg,cgfx,fx,py,bat,cmd,jam,vim,yml,yaml,vsprops,erb,rb,html,htm},SCons*,[mM]akefile,*vimrc"
+    execute "autocmd FocusLost"     s:autoPattern   "silent! wall"
+    execute "autocmd CursorHold " s:autoPattern " silent! update"
+    
     " Try to load project.vim if exist
     " Create/Update tags file
     " Try to open session if exists
