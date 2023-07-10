@@ -1317,7 +1317,6 @@ tnoremap  <silent> <leader><Down>   <C-w>k
 "nnoremap  <silent> <leader>e  :Lex 20<cr> 
 " NErdtTree
 nnoremap  <silent> <F8>       :NERDTreeToggle<cr> 
-nnoremap  <silent> <leader>e  :NERDTreeToggle<cr> 
 inoremap  <silent> <F8>       <C-O>:NERDTreeToggle<cr> 
 xnoremap  <silent> <F8>       <ESC>:NERDTreeToggle<cr> 
 " In Explorer - -
@@ -1429,7 +1428,7 @@ inoremap   <S-TAB>  <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
 " nnoremap <F7>       :wincmd b \| botright terminal<CR>
 " Open terminal at bottom
 nnoremap <F7>       :TDVimOpenTerminal<CR>
-nnoremap <leader>t  :wincmd b \| botright terminal<CR>
+nnoremap <leader>t  :TDVimOpenTerminal<CR>
 " Minimize terminal window and jump to previous window
 tnoremap <F7>       <C-W>1_<C-W>W
 " }}}
