@@ -1151,14 +1151,12 @@ if s:has_fzf &&  s:has_rg
     inoremap  <F4>          :<C-O>Rg  <C-R><C-W><CR>
     xnoremap  <F4>          :Rg  <C-R><C-W><CR>
     nnoremap  <leader>g     :Rg <C-R><C-W><CR>
-    inoremap  <leader>g     :<C-O>Rg  <C-R><C-W><CR>
     xnoremap  <leader>g     :Rg  <C-R><C-W><CR>
 else
     nnoremap  <F4>          :TDvimGrep <C-R><C-W>
     inoremap  <F4>          :<C-O>TDvimGrep  <C-R><C-W>
     xnoremap  <F4>          :TDvimGrep  <C-R><C-W>
     nnoremap  <leader>g     :TDvimGrep <C-R><C-W>
-    inoremap  <leader>g     :<C-O>TDvimGrep  <C-R><C-W>
     xnoremap  <leader>g     :TDvimGrep  <C-R><C-W>
 endif
 
@@ -1524,11 +1522,11 @@ if has("autocmd")
     "augroup END
 
     " CursorHold
+    if s:has_git
+        autocmd! CursorHold * ++nested call TDVimUpdateCurrentGitBranch()
+    endif
     augroup tdvimCursorHold
-      if s:has_git
-        :au! CursorHold * ++nested call TDVimUpdateCurrentGitBranch()
         autocmd! CursorHold * ++nested call TDVimUpdateDevIconFileType()
-      endif
         "autocmd! CursorHold * ++nested call utils#UpdateDevIconFileType()
         "autocmd! CursorHold leaderf ++nested normal <C-I>
     augroup END
