@@ -99,6 +99,7 @@ endfunction
 function! s:SetLocalPath ()
     " If in dev mode dont change location automatically
     if g:tdvim_dev_mode
+        " TODO use rooter to move to project root
        return
     endif 
 
@@ -1522,7 +1523,7 @@ if has("autocmd")
     augroup END
     " BufLeave
     augroup tdvimBufLeave
-        autocmd BufLeave * echomsg "Leaving the buf"
+        "autocmd BufLeave * echomsg "Leaving the buf"
     augroup END
     " BufWinEnter
     augroup tdvimWinNew
@@ -1761,6 +1762,38 @@ endif
 " work in a project, assuming the current folder is the project root
 if g:tdvim_dev_mode
     " TODO:
+    " Create tdvim folder if it doesn't exists
+    "let s:root=gitbranch#dir(argv(0))
+    if s:has_git
+        let s:root = system('git rev-parse --show-toplevel')
+        let s:tdvim_proj_root = trim(s:root)
+        "echomsg "Project root: " . s:tdvim_proj_root
+        let s:tdvim_proj_name = fnamemodify( s:tdvim_proj_root, ':t' )
+        let s:tdvim_proj_root_config = s:tdvim_proj_root . '/.tdvim'
+        "echomsg "Project config folder: " . s:tdvim_proj_root_config
+        let s:has_tdvim_root = 0
+        let s:has_tdvim_proj_config = 0
+        if !isdirectory(s:tdvim_proj_root_config)
+            echomsg "tdvim project folder doesnt exists, create it"
+            s:has_tdvim_root = mkdir(s:tdvim_proj_root_config, "p", 0o777)
+        else
+            let s:has_tdvim_root = 1
+        endif
+        if s:has_tdvim_root
+            let s:tdvim_proj_config = s:tdvim_proj_root_config . "/project.vim"
+            if !filereadable(expand(s:tdvim_proj_config))
+                echomsg "Crete project.vim"
+                call writefile( ["\" Project config file for tdvim", "let g:tdvim_proj_name='" . s:tdvim_proj_name . "'",  "let g:tdvim_proj_root='" . s:tdvim_proj_root . "'" ], s:tdvim_proj_config )
+                let s:has_tdvim_proj_config = 1
+            else
+                let s:has_tdvim_proj_config = 1
+            endif
+            if s:has_tdvim_proj_config
+                exe 'source ' . s:tdvim_proj_config
+            endif
+        endif
+        "exe 'cd ' . s:root
+    endif
     " Disable autochdir:
     set noautochdir
     " Enable Autowrite:
@@ -1769,7 +1802,7 @@ if g:tdvim_dev_mode
     let s:autoPattern = "*.{c,h,[ch]pp,[acjt]s,inl,cg,cgfx,fx,py,bat,cmd,jam,vim,yml,yaml,vsprops,erb,rb,html,htm},SCons*,[mM]akefile,*vimrc"
     execute "autocmd FocusLost"     s:autoPattern   "silent! wall"
     execute "autocmd CursorHold " s:autoPattern " silent! update"
-    
+
     " Try to load project.vim if exist
     " Create/Update tags file
     " Try to open session if exists
