@@ -695,6 +695,48 @@ endfunction
 "}}}
 
 
+" Session fVunctions {{{2
+ " Save session
+fu! TDVimSaveSess()
+    " Only in project mode
+    if !g:tdvim_dev_mode || !exists('g:tdvim_proj_root')
+        return
+    endif
+    let sessionfile = g:tdvim_proj_root_config . '/session.vim'
+    call TDVimCloseAllBuffersByType( 'nerdtree', 1)
+    execute 'mksession! ' . sessionfile 
+    echomsg "Session saved in: " . sessionfile
+endfunction
+
+" Restiore session
+fu! TDVimRestoreSess()
+    " Only in project mode
+    if !g:tdvim_dev_mode || !exists('g:tdvim_proj_root')
+        return
+    endif
+    let sessionfile = g:tdvim_proj_root_config . '/session.vim'
+    echomsg "Restoring vim session: " . sessionfile
+    if filereadable(sessionfile)
+        "echomsg "Source session ..."
+        execute 'source ' . sessionfile
+        " TODO: after restore check las buffer, becasue we start gvim using
+        " a folder to start project mode, after session is restored it adds the 
+        " buffer to chose a file, so if last buffer is a nerdtree buffer we
+        " have to remove it
+        " TDVimCloseAllBuffersByType is not detecting the nerdtree buffer
+        call TDVimCloseAllBuffersByType( 'nerdtree', 1)
+        "if bufexists(1)
+            "for l in range(1, bufnr('$'))
+                "if bufwinnr(l) == -1
+                    "exec 'sbuffer ' . l
+                "endif
+            "endfor
+        "endif
+    else
+        echomsg "Can't restore project session from: " . sessionfile
+    endif
+endfunction
+" }}}
 
 
 
@@ -1766,34 +1808,43 @@ if g:tdvim_dev_mode
     "let s:root=gitbranch#dir(argv(0))
     if s:has_git
         let s:root = system('git rev-parse --show-toplevel')
-        let s:tdvim_proj_root = trim(s:root)
-        "echomsg "Project root: " . s:tdvim_proj_root
-        let s:tdvim_proj_name = fnamemodify( s:tdvim_proj_root, ':t' )
-        let s:tdvim_proj_root_config = s:tdvim_proj_root . '/.tdvim'
-        "echomsg "Project config folder: " . s:tdvim_proj_root_config
+        let g:tdvim_proj_root = trim(s:root)
+        "echomsg "Project root: " . g:tdvim_proj_root
+        let g:tdvim_proj_name = fnamemodify( g:tdvim_proj_root, ':t' )
+        let g:tdvim_proj_root_config = g:tdvim_proj_root . '/.tdvim'
+        "echomsg "Project config folder: " . g:tdvim_proj_root_config
         let s:has_tdvim_root = 0
         let s:has_tdvim_proj_config = 0
-        if !isdirectory(s:tdvim_proj_root_config)
-            echomsg "tdvim project folder doesnt exists, create it"
-            s:has_tdvim_root = mkdir(s:tdvim_proj_root_config, "p", 0o777)
+        if !isdirectory(g:tdvim_proj_root_config)
+            echomsg "Init tdvim config for project " . g:tdvim_proj_name
+            let s:has_tdvim_root = mkdir(g:tdvim_proj_root_config, "p", 0o777)
         else
             let s:has_tdvim_root = 1
         endif
         if s:has_tdvim_root
-            let s:tdvim_proj_config = s:tdvim_proj_root_config . "/project.vim"
+            let s:tdvim_proj_config = g:tdvim_proj_root_config . "/project.vim"
             if !filereadable(expand(s:tdvim_proj_config))
-                echomsg "Crete project.vim"
-                call writefile( ["\" Project config file for tdvim", "let g:tdvim_proj_name='" . s:tdvim_proj_name . "'",  "let g:tdvim_proj_root='" . s:tdvim_proj_root . "'" ], s:tdvim_proj_config )
+                "echomsg "Crete project.vim"
+                "call writefile( ["\" Project config file for tdvim", "let g:tdvim_proj_name='" . g:tdvim_proj_name . "'",  "let g:tdvim_proj_root='" . g:tdvim_proj_root . "'" ], s:tdvim_proj_config )
+                call writefile( ["\" Project config file for tdvim", "\" Use this to setup vim for your project"], s:tdvim_proj_config )
                 let s:has_tdvim_proj_config = 1
             else
                 let s:has_tdvim_proj_config = 1
             endif
             if s:has_tdvim_proj_config
+                " TODO: move project config file source to a function and call
+                " it in VimEnter, after session restore
+                echomsg "Source: " . s:tdvim_proj_config
                 exe 'source ' . s:tdvim_proj_config
             endif
         endif
         "exe 'cd ' . s:root
     endif
+    " Simple session management
+    autocmd VimLeave * call TDVimSaveSess()
+    autocmd VimEnter * nested call TDVimRestoreSess()
+    command! TDVimSaveSession call TDVimSaveSess()
+
     " Disable autochdir:
     set noautochdir
     " Enable Autowrite:
