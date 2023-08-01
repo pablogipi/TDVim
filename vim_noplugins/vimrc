@@ -146,6 +146,7 @@ function! TDVimCloseAllBuffersByType( type, mode )
   let nwin = 1
   for nbuf in range(1, bufnr('$'))
       let to_delete = 0
+      echo "Buffer number: " . nbuf
       echo "Buffer :" . bufname( nbuf )
       echo "Buffertype :" .getbufvar(nbuf, '&buffertype') 
       echo "Filetype :" .getbufvar(nbuf, '&filetype') 
@@ -719,19 +720,24 @@ fu! TDVimRestoreSess()
     if filereadable(sessionfile)
         "echomsg "Source session ..."
         execute 'source ' . sessionfile
-        " TODO: after restore check las buffer, becasue we start gvim using
-        " a folder to start project mode, after session is restored it adds the 
-        " buffer to chose a file, so if last buffer is a nerdtree buffer we
-        " have to remove it
-        " TDVimCloseAllBuffersByType is not detecting the nerdtree buffer
-        call TDVimCloseAllBuffersByType( 'nerdtree', 1)
-        "if bufexists(1)
-            "for l in range(1, bufnr('$'))
-                "if bufwinnr(l) == -1
-                    "exec 'sbuffer ' . l
-                "endif
-            "endfor
-        "endif
+        " Delete all buffers that are a folder or its's name starts with
+        " NERD_tree. These are usually the NERD Tree buffers and we dont want
+        " them on load
+        for nbuf in range(1, bufnr('$'))
+            let to_delete = 0
+            echomsg "Buffer number: " . nbuf
+            let buffer_name = bufname( nbuf )
+            echomsg "Buffer :" . buffer_name
+            if isdirectory(buffer_name)
+                let to_delete = 1
+            elseif match(buffer_name, "NERD_tree") == 0
+                let to_delete = 1
+            endif
+            if to_delete == 1
+                echomsg("Buffer deleted")
+                exe "bdelete! " . nbuf
+            endif
+        endfor
     else
         echomsg "Can't restore project session from: " . sessionfile
     endif
