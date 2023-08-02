@@ -98,15 +98,15 @@ endfunction
 " loaded file
 function! s:SetLocalPath ()
     " If in dev mode dont change location automatically
-    if g:tdvim_dev_mode
-        " TODO use rooter to move to project root
-       return
-    endif 
-
-    " Current basename for the buffer
-    let baseName = expand("%:p:h")
-    if isdirectory(baseName)
-        silent! exe 'lcd ' . fnameescape(baseName)
+    if g:tdvim_dev_mode && s:has_git && has('b:tdvim_proj_root')
+        " Rooter, set buffer location to project roo in dev mode
+        silent! exe 'lcd ' . b:tdvim_proj_root
+    else
+        " Current basename for the buffer
+        let baseName = expand("%:p:h")
+        if isdirectory(baseName)
+            silent! exe 'lcd ' . fnameescape(baseName)
+        endif
     endif
 endfunction
 " }}}
@@ -146,20 +146,20 @@ function! TDVimCloseAllBuffersByType( type, mode )
   let nwin = 1
   for nbuf in range(1, bufnr('$'))
       let to_delete = 0
-      echo "Buffer number: " . nbuf
-      echo "Buffer :" . bufname( nbuf )
-      echo "Buffertype :" .getbufvar(nbuf, '&buffertype') 
-      echo "Filetype :" .getbufvar(nbuf, '&filetype') 
-      echo "Syntax :" .getbufvar(nbuf, '&syntax') 
+      "echo "Buffer number: " . nbuf
+      "echo "Buffer :" . bufname( nbuf )
+      "echo "Buffertype :" .getbufvar(nbuf, '&buffertype') 
+      "echo "Filetype :" .getbufvar(nbuf, '&filetype') 
+      "echo "Syntax :" .getbufvar(nbuf, '&syntax') 
       if a:mode == 0 && getbufvar(nbuf, '&buftype') ==# a:type
           let to_delete = 1
       elseif a:mode == 1 && getbufvar(nbuf, '&filetype') ==# a:type
-          echo "DETECTED!!!"
+          "echo "DETECTED!!!"
           let to_delete = 1
       elseif a:mode == 2 && getbufvar(nbuf, '&syntax') ==# a:type
           let to_delete = 1
       endif
-      echo "Need to delete: " . to_delete
+      "echo "Need to delete: " . to_delete
       if to_delete == 1
           "bdelete! bufname( nbuf ) 
           "silent! exe 'lcd ' . fnameescape(baseName)
@@ -696,7 +696,7 @@ endfunction
 "}}}
 
 
-" Session fVunctions {{{2
+" Session functions {{{2
  " Save session
 fu! TDVimSaveSess()
     " Only in project mode
@@ -709,7 +709,7 @@ fu! TDVimSaveSess()
     echomsg "Session saved in: " . sessionfile
 endfunction
 
-" Restiore session
+" Restore session {{{3
 fu! TDVimRestoreSess()
     " Only in project mode
     if !g:tdvim_dev_mode || !exists('g:tdvim_proj_root')
@@ -742,6 +742,8 @@ fu! TDVimRestoreSess()
         echomsg "Can't restore project session from: " . sessionfile
     endif
 endfunction
+" }}}
+
 " }}}
 
 
@@ -1831,25 +1833,38 @@ if g:tdvim_dev_mode
             let s:tdvim_proj_config = g:tdvim_proj_root_config . "/project.vim"
             if !filereadable(expand(s:tdvim_proj_config))
                 "echomsg "Crete project.vim"
-                "call writefile( ["\" Project config file for tdvim", "let g:tdvim_proj_name='" . g:tdvim_proj_name . "'",  "let g:tdvim_proj_root='" . g:tdvim_proj_root . "'" ], s:tdvim_proj_config )
                 call writefile( ["\" Project config file for tdvim", "\" Use this to setup vim for your project"], s:tdvim_proj_config )
                 let s:has_tdvim_proj_config = 1
             else
                 let s:has_tdvim_proj_config = 1
             endif
             if s:has_tdvim_proj_config
-                " TODO: move project config file source to a function and call
-                " it in VimEnter, after session restore
-                echomsg "Source: " . s:tdvim_proj_config
-                exe 'source ' . s:tdvim_proj_config
+                " Source project config on VimEnter
+                autocmd VimEnter * nested exe 'source ' . s:tdvim_proj_config | echomsg "Project config loaded: " . s:tdvim_proj_config
             endif
         endif
-        "exe 'cd ' . s:root
+        " Rooter. move to git root folder.
+        " Globally move to project root, set creation of buffer variable with
+        " bufer git rootm needed for submodules,
+        " In SetLocal() we use it to do a lcd .
+        exe "cd " . g:tdvim_proj_root
+        autocmd BufRead * cd %:p:h | let b:tdvim_proj_root = system('git rev-parse --show-toplevel') 
+
+        " Window title
+        set title
+        autocmd BufEnter * let &titlestring = expand("%:t") . " (" . expand("%:p:h") . ")" . "  |> " . fnamemodify(g:tdvim_proj_name, ':t') . " <|   " . "TDVim " . $TDVIMVERSION
+        
     endif
     " Simple session management
+    " Session management in tdvim dev mode, save session on leave and restore
+    " on enter
     autocmd VimLeave * call TDVimSaveSess()
-    autocmd VimEnter * nested call TDVimRestoreSess()
+    autocmd VimEnter * nested silent! call TDVimRestoreSess()
+    " Load project setup on Enter
+    autocmd VimEnter * nested exe 'source ' . s:tdvim_proj_config
+    " Session commands
     command! TDVimSaveSession call TDVimSaveSess()
+    command! TDVimRestoreSession call TDVimRestoreSess()
 
     " Disable autochdir:
     set noautochdir
@@ -1860,10 +1875,8 @@ if g:tdvim_dev_mode
     execute "autocmd FocusLost"     s:autoPattern   "silent! wall"
     execute "autocmd CursorHold " s:autoPattern " silent! update"
 
-    " Try to load project.vim if exist
+
     " Create/Update tags file
-    " Try to open session if exists
-    " Set title to put project name
     " Set wildoptions+=tagfile
     " Set wildoptions+=fuzzy
 endif
