@@ -1626,18 +1626,6 @@ endif " has("autocmd")
 " }}}
 
 
-" Always run mswin at the end {{{
-" Load more conventional editors options, MSWin mode:
-source $VIMRUNTIME/mswin.vim
-" Fix mswin, it enters in select mode rather than visual.
-set selectmode=""
-" }}}
-
-" XXX: Mmmm this is provably controversial
-" Automatically change directory
-set autochdir
-
-
 " Setup Plugins {{{
 
 
@@ -1657,18 +1645,19 @@ let NERDTreeIgnore=['\.swo$', '\.swp$','\.pyc$', '\.o$','\~$']
 let NERDTreeAutoDeleteBuffer = 1
 
 " NERDTree Git
-" let g:NERDTreeGitStatusIndicatorMapCustom = {
-    " \ "Modified"  : "✹",
-    " \ "Staged"    : "✚",
-    " \ "Untracked" : "✭",
-    " \ "Renamed"   : "➜",
-    " \ "Unmerged"  : "═",
-    " \ "Deleted"   : "✖",
-    " \ "Dirty"     : "✗",
-    " \ "Clean"     : "✔︎",
-    " \ 'Ignored'   : '☒',
-    " \ "Unknown"   : "?"
-    " \ }
+let g:NERDTreeGitStatusEnable=1
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+            \ "Modified"  : "✹",
+            \ "Staged"    : "✚",
+            \ "Untracked" : "✭",
+            \ "Renamed"   : "➜",
+            \ "Unmerged"  : "═",
+            \ "Deleted"   : "✖",
+            \ "Dirty"     : "✗",
+            \ "Clean"     : "✔︎",
+            \ 'Ignored'   : '☒',
+            \ "Unknown"   : "?"
+            \ }
 
 " NERD Commenter:
 let g:NERDMenuMode = 0 " Disable menu
@@ -1811,9 +1800,22 @@ endif
 " If vim is opened in a directory then enable some special settings to
 " work in a project, assuming the current folder is the project root
 if g:tdvim_dev_mode
-    " TODO:
-    " Create tdvim folder if it doesn't exists
-    "let s:root=gitbranch#dir(argv(0))
+    " Add devmode folder to runtime to load plugins availalbe only in dev mode
+    "let s:tdvimroot = substitute($TDVIMROOT, "\\", "/", "g")
+    "Add TDVim to runtim path
+    "execute "set rtp^=" . s:tdvimroot
+    "execute "set rtp+=" . s:tdvimroot . "/after"
+    " Relative path of script file:
+    "let s:tdvim_install_path = expand('<sfile>')
+    let g:tdvim_install_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
+    let s:tdvim_devmode_path = g:tdvim_install_path . "/devmode"
+    execute "set rtp^=" . s:tdvim_devmode_path
+    execute "set rtp+=" . s:tdvim_devmode_path . "/after"
+    echomsg "TDVim install location: " . s:tdvim_devmode_path
+
+    " Set project folder and tdvim config skeleton for project.
+    " Preapre session magement for project
+    " Also prepare Rooter and window title for session
     if s:has_git
         let s:root = system('git rev-parse --show-toplevel')
         let g:tdvim_proj_root = trim(s:root)
@@ -1865,6 +1867,26 @@ if g:tdvim_dev_mode
     " Session commands
     command! TDVimSaveSession call TDVimSaveSess()
     command! TDVimRestoreSession call TDVimRestoreSess()
+
+    " Keymaps for dev mode
+    " NERDTree using VCS mode (open in root project)
+    " NErdtTree
+    nunmap <F8>
+    xunmap <F8>
+    iunmap <F8>
+    nnoremap  <silent> <F8>       :NERDTreeToggleVCS<cr> 
+    inoremap  <silent> <F8>       <C-O>:NERDTreeToggleVCS<cr> 
+    xnoremap  <silent> <F8>       <ESC>:NERDTreeToggleVCS<cr> 
+    " Open Files in current location - S-F3, <leader>o
+    " Remap S-F3 if using FZF to use GFile instead of Files
+    if s:has_fzf
+        nunmap <S-F3>
+        vunmap <S-F3>
+        iunmap <S-F3>
+        nnoremap   <S-F3>   :GFiles<CR>
+        vnoremap   <S-F3>   :GFiles<CR>
+        inoremap   <S-F3>   <ESC>:GFiles<CR>
+    endif
 
     " Disable autochdir:
     set noautochdir

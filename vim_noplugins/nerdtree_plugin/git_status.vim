@@ -17,6 +17,8 @@ let g:loaded_nerdtree_git_status = 1
 
 let s:is_win = gitstatus#isWin()
 
+echomsg "Loading gitstatus for NERDTree"
+
 " stolen from nerdtree
 "Function: s:initVariable() function {{{2
 "This function is used to initialise a given variable to a given value. The
