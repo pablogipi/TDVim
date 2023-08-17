@@ -600,6 +600,11 @@ function! TDVimLightlineGit()
   return '-'
 endfunction
 
+function! TDVimGitHunksummary()
+    let [a,m,r] = GitGutterGetHunkSummary()
+    return printf('+%d ~%d -%d', a, m, r)
+endfunction
+
 " LightlineExtraInfo
 " Return some extra information at the center of lightline
 " - For programming file types return tag for current function
@@ -646,52 +651,60 @@ endfunction
 " SetFancyUI {{{2
 " Set fancy unicode symbols for UI. Mostly lightline.
 function! s:SetFancyUI()
-  " fancy UI using UTF and fancy icons
+    " fancy UI using UTF and fancy icons
 
-  if  exists('g:GuiLoaded') || has('gui_running')
-    let g:lightline.active = {
-          \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
-          \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ], [ 'git' ] ]
-          \   }
-    let g:lightline.component.lineinfo = '▤ %3l:%-2v'
-    let g:lightline.separator = { 'left': '', 'right': '' }
-    let g:lightline.subseparator = { 'left': '', 'right': '' }    
-    let g:lightline#bufferline#unicode_symbols = 1
-    let g:lightline#bufferline#enable_devicons = 1
-  else
-    let g:lightline.component.lineinfo = '%3l:%-2v'
-  endif
+    if  exists('g:GuiLoaded') || has('gui_running')
+        if g:tdvim_dev_mode && s:has_git
+            let g:lightline.active = {
+                        \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon', 'githunksummary' ], [ 'extrainfo', 'tagsgen' ] ],
+                        \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ], [ 'git' ] ]
+                        \   }
+        else
+            let g:lightline.active = {
+                        \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
+                        \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ] ]
+                        \   }
+        endif
 
-  " if exists('g:loaded_lightline') && exists('g:lightline')
+        let g:lightline.component.lineinfo = '▤ %3l:%-2v'
+        let g:lightline.separator = { 'left': '', 'right': '' }
+        let g:lightline.subseparator = { 'left': '', 'right': '' }    
+        let g:lightline#bufferline#unicode_symbols = 1
+        let g:lightline#bufferline#enable_devicons = 1
+    else
+        let g:lightline.component.lineinfo = '%3l:%-2v'
+    endif
+
+    " if exists('g:loaded_lightline') && exists('g:lightline')
 
     " if has_key( g:lightline, 'component' )
-        " let g:lightline.component.lineinfo = '▤ %3l:%-2v'
+    " let g:lightline.component.lineinfo = '▤ %3l:%-2v'
     " else
-        " let g:lightline.component = {}
-        " let g:lightline.component.lineinfo = '▤ %3l:%-2v'
+    " let g:lightline.component = {}
+    " let g:lightline.component.lineinfo = '▤ %3l:%-2v'
     " endif
     " :au! CursorHold * ++nested call TDVimUpdateCurrentGitBranch()
     " let g:lightline.separator = { 'left': '', 'right': '' }
     " let g:lightline.subseparator = { 'left': '', 'right': '' }    
-  " endif
-  if exists('g:loaded_lightline_buffer')
-    "let g:lightline_buffer_logo = "\u233e"
-    let g:lightline_buffer_logo                     = "》"
-    let g:lightline_buffer_readonly_icon            = ''
-    let g:lightline_buffer_modified_icon            = '✗'
-    let g:lightline_buffer_git_icon                 = ' '
-    let g:lightline_buffer_ellipsis_icon            = '..'
-    let g:lightline_buffer_expand_left_icon         = "\u25c4"
-    let g:lightline_buffer_expand_right_icon        = "\u25ba"
-    let g:lightline_buffer_active_buffer_left_icon  = '▌'
-    let g:lightline_buffer_active_buffer_right_icon = '▐'
-    "let g:lightline_buffer_separator_icon = "\u25b9"
-    let g:lightline_buffer_separator_icon           = "╱"
-  endif
-  " Force lightline update
-  call lightline#disable()
-  call lightline#enable()
-  call lightline#bufferline#reload()
+    " endif
+    if exists('g:loaded_lightline_buffer')
+        "let g:lightline_buffer_logo = "\u233e"
+        let g:lightline_buffer_logo                     = "》"
+        let g:lightline_buffer_readonly_icon            = ''
+        let g:lightline_buffer_modified_icon            = '✗'
+        let g:lightline_buffer_git_icon                 = ' '
+        let g:lightline_buffer_ellipsis_icon            = '..'
+        let g:lightline_buffer_expand_left_icon         = "\u25c4"
+        let g:lightline_buffer_expand_right_icon        = "\u25ba"
+        let g:lightline_buffer_active_buffer_left_icon  = '▌'
+        let g:lightline_buffer_active_buffer_right_icon = '▐'
+        "let g:lightline_buffer_separator_icon = "\u25b9"
+        let g:lightline_buffer_separator_icon           = "╱"
+    endif
+    " Force lightline update
+    call lightline#disable()
+    call lightline#enable()
+    call lightline#bufferline#reload()
 endfunction
 "}}}
 
@@ -1114,7 +1127,6 @@ endif
 " }}}
 
 " Custom commands {{{
-" TODO:
 " Create Tags file in current location
 command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --fields=+iaS --extras=+q --exclude='.git' --exclude='.svn' --exclude='*.so' --exclude='__pycache__' --exclude='*.pyc'  
 " Jump to existing terminal and restore or create a new terminal
@@ -1397,13 +1409,15 @@ nnoremap  <silent> <]b>=    :bprevious<CR>
 
 " Switch to Previous window
 nnoremap  <silent> <leader>p   <C-w>p 
-tnoremap  <silent> <leader>p   <C-w>p 
-" Switch to Previous buffer - Ctrl-F3, <leader>TAB
+" Switch to Previous buffer - Ctrl-F3, TAB
 nnoremap  <silent> <C-F3>   :e #<CR>
 vnoremap  <silent> <C-F3>   :e #<CR>
 inoremap  <silent> <C-F3>   <ESC>:e #<CR>
-nnoremap  <silent> <leader><TAB>   :e #<CR>
+"nnoremap  <silent> <leader><TAB>   :e #<CR>
+nnoremap  <silent> <TAB>   :e #<CR>
 vnoremap  <silent> <leader><TAB>   :e #<CR>
+" Switch current window to Previous buffer - Shift-TAB
+nnoremap  <silent> <S-TAB>   <C-w>x
 
 " Navigate Buffers - F3, <leader>b
 if s:has_fzf
@@ -1472,6 +1486,7 @@ inoremap   <S-TAB>  <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
 " keymap("i", "<tab>", "<c-r>=utils#TabAutocompleteWrapper(\"backward\")<cr>", opts)
 " keymap("i", "<s-tab>", "<c-r>=utils#TabAutocompleteWrapper(\"forward\")<cr>", opts)
 
+
 " }}}
 
 " Terminal {{{2
@@ -1538,8 +1553,6 @@ if has("autocmd")
         autocmd ColorScheme * highlight ExtraWhitespace ctermbg=lightred guibg=lightred
         autocmd Syntax python,cpp,c,sh,csh,vim highlight ExtraWhitespace ctermbg=lightred guibg=lightred
     augroup END
-        " TODO
-	"autocmd VimEnter * call utils#SourceUserSettings()
 	autocmd VimEnter * call s:SetFancyUI()
         if g:tdvim_dev_mode
             autocmd VimEnter * echomsg "TDVim (Dev Mode)" . $TDVIMVERSION . " loaded"
@@ -1685,6 +1698,7 @@ let g:lightline = {
           \ 'extrainfo': 'TDVimLightlineExtraInfo',
           \ 'tagsgen': 'utils#LightlineGutentags',
           \ 'git': 'TDVimLightlineGit',
+          \ 'githunksummary': 'TDVimGitHunksummary',
           \ },
   \ 'component': {
           \ 'filename': '%{TDVimLightlineFilename()}',
@@ -1702,21 +1716,46 @@ let g:lightline = {
           " \ 'sessioninfo': 'utils#SessionName',
 
 if has ('gui_running')
-    let g:lightline.active = {
-                \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
-                \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git' ] ]
+    "let g:lightline.active = {
+                "\ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
+                "\ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git' ] ]
                 \   }
+    if s:has_git
+        let g:lightline.active = {
+                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon', 'githunksummary' ], [ 'extrainfo', 'tagsgen' ] ],
+                    \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git' ] ]
+                    \   }
+    else
+        let g:lightline.active = {
+                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
+                    \ 'right': [ [ 'lineinfo' ], [ 'percent' ] 
+                    \   }
+    endif
 else
-    let g:lightline.active = {
-                \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
-                \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git', 'filetype' ] ]
-                \   }
+    if s:has_git
+        let g:lightline.active = {
+                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modifiedicon', 'githunksummary' ], [ 'extrainfo', 'tagsgen' ] ],
+                    \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git', 'filetype' ] ]
+                    \   }
+    else
+        let g:lightline.active = {
+                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
+                    \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'filetype' ] ]
+                    \   }
+    endif
 endif
 
-let g:lightline.inactive = {
-            \ 'left': [ [ 'inactivemode', 'filename', 'modifiedicon' ] ],
-            \ 'right': [ [ 'lineinfo' ],
-            \            [ 'git', 'percent' ] ] }
+if s:has_git
+    let g:lightline.inactive = {
+                \ 'left': [ [ 'inactivemode', 'filename', 'modifiedicon' ] ],
+                \ 'right': [ [ 'lineinfo' ],
+                \            [ 'git', 'percent' ] ] }
+else
+    let g:lightline.inactive = {
+                \ 'left': [ [ 'inactivemode', 'filename', 'modifiedicon' ] ],
+                \ 'right': [ [ 'lineinfo' ],
+                \            [ 'percent' ] ] }
+endif
 " lightline-buffer
 " Always enable tabline, needed by lightline-bufferline
 set showtabline=2
@@ -1817,6 +1856,7 @@ if g:tdvim_dev_mode
     " Preapre session magement for project
     " Also prepare Rooter and window title for session
     if s:has_git
+        " Setup globla vars for project mode
         let s:root = system('git rev-parse --show-toplevel')
         let g:tdvim_proj_root = trim(s:root)
         "echomsg "Project root: " . g:tdvim_proj_root
@@ -1887,6 +1927,17 @@ if g:tdvim_dev_mode
         vnoremap   <S-F3>   :GFiles<CR>
         inoremap   <S-F3>   <ESC>:GFiles<CR>
     endif
+    " Git keymaps:
+    " Navigate hunks
+    nmap ]h <Plug>(GitGutterNextHunk)
+    nmap [h <Plug>(GitGutterPrevHunk)
+    " - Diff  with index
+    nnoremap   <F9>   :GitGutterDiffOrig<CR>
+    " - Fold Hunks
+    nnoremap   <C-F9>   :GitGutterFold<CR>
+    " - Show hunks in QuickFix
+    command! TDVimGitHunks :GitGutterQuickFix | copen
+    nnoremap   <S-F9>   :TDVimGitHunks<CR>
 
     " Disable autochdir:
     set noautochdir
