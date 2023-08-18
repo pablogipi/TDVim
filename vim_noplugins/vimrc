@@ -1995,6 +1995,6 @@ endif
 "}}}
 
 " TDVim version
-let $TDVIMVERSION="0.4"
+let $TDVIMVERSION="0.4.5"
 
 " vim: ts=8 ft=vim nowrap fdm=marker
