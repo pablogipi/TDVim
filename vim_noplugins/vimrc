@@ -1908,6 +1908,7 @@ if g:tdvim_dev_mode
     command! TDVimSaveSession call TDVimSaveSess()
     command! TDVimRestoreSession call TDVimRestoreSess()
 
+    "
     " Keymaps for dev mode
     " NERDTree using VCS mode (open in root project)
     " NErdtTree
@@ -1938,6 +1939,14 @@ if g:tdvim_dev_mode
     " - Show hunks in QuickFix
     command! TDVimGitHunks :GitGutterQuickFix | copen
     nnoremap   <S-F9>   :TDVimGitHunks<CR>
+    " Symbols keymaps
+    " Use FzfFunky if fzf available
+    if s:has_fzf
+        nnoremap   <F6>   :FzfFunky<CR>
+        xnoremap   <F6>   :FzfFunky<CR>
+    else
+
+
 
     " Disable autochdir:
     set noautochdir
