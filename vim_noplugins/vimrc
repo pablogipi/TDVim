@@ -738,16 +738,16 @@ fu! TDVimRestoreSess()
         " them on load
         for nbuf in range(1, bufnr('$'))
             let to_delete = 0
-            echomsg "Buffer number: " . nbuf
+            "echomsg "Buffer number: " . nbuf
             let buffer_name = bufname( nbuf )
-            echomsg "Buffer :" . buffer_name
+            "echomsg "Buffer :" . buffer_name
             if isdirectory(buffer_name)
                 let to_delete = 1
             elseif match(buffer_name, "NERD_tree") == 0
                 let to_delete = 1
             endif
             if to_delete == 1
-                echomsg("Buffer deleted")
+                "echomsg("Buffer deleted")
                 exe "bdelete! " . nbuf
             endif
         endfor
@@ -1585,9 +1585,9 @@ if has("autocmd")
         autocmd BufEnter * call s:OnlyReadSetup()
     augroup END
     " BufLeave
-    augroup tdvimBufLeave
+    "augroup tdvimBufLeave
         "autocmd BufLeave * echomsg "Leaving the buf"
-    augroup END
+    "augroup END
     " BufWinEnter
     augroup tdvimWinNew
         autocmd WinNew * call s:PreviewWindowSetup()
@@ -1816,7 +1816,6 @@ endif
 " Enable preview based on availability of bash
 if !s:has_bash
     " Empty value to disable preview window altogether
-    "echomsg "Bash not found"
     let g:fzf_preview_window = []
     " Files
     if s:has_bat
@@ -1850,7 +1849,7 @@ if g:tdvim_dev_mode
     let s:tdvim_devmode_path = g:tdvim_install_path . "/devmode"
     execute "set rtp^=" . s:tdvim_devmode_path
     execute "set rtp+=" . s:tdvim_devmode_path . "/after"
-    echomsg "TDVim install location: " . s:tdvim_devmode_path
+    "echomsg "TDVim install location: " . s:tdvim_devmode_path
 
     " Set project folder and tdvim config skeleton for project.
     " Preapre session magement for project
@@ -1866,7 +1865,7 @@ if g:tdvim_dev_mode
         let s:has_tdvim_root = 0
         let s:has_tdvim_proj_config = 0
         if !isdirectory(g:tdvim_proj_root_config)
-            echomsg "Init tdvim config for project " . g:tdvim_proj_name
+            "echomsg "Init tdvim config for project " . g:tdvim_proj_name
             let s:has_tdvim_root = mkdir(g:tdvim_proj_root_config, "p", 0o777)
         else
             let s:has_tdvim_root = 1
@@ -1944,7 +1943,7 @@ if g:tdvim_dev_mode
     if s:has_fzf
         nnoremap   <F6>   :FzfFunky<CR>
         xnoremap   <F6>   :FzfFunky<CR>
-    else
+    endif
 
 
 
