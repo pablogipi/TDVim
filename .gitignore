@@ -17,6 +17,7 @@ GRTAGS
 GTAGS
 releases
 spell/
+tmp/
 .netrwhist
 sessions
 .tdvim
