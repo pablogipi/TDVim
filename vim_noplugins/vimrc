@@ -601,8 +601,12 @@ function! TDVimLightlineGit()
 endfunction
 
 function! TDVimGitHunksummary()
-    let [a,m,r] = GitGutterGetHunkSummary()
-    return printf('+%d ~%d -%d', a, m, r)
+    if g:tdvim_dev_mode && exists("GitGutterGetHunkSummary")
+        let [a,m,r] = GitGutterGetHunkSummary()
+        return printf('+%d ~%d -%d', a, m, r)
+    else
+        return ""
+    endif
 endfunction
 
 " LightlineExtraInfo
