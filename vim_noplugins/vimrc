@@ -601,7 +601,7 @@ function! TDVimLightlineGit()
 endfunction
 
 function! TDVimGitHunksummary()
-    if g:tdvim_dev_mode && exists("GitGutterGetHunkSummary")
+    if g:tdvim_dev_mode && exists("*GitGutterGetHunkSummary")
         let [a,m,r] = GitGutterGetHunkSummary()
         return printf('+%d ~%d -%d', a, m, r)
     else
