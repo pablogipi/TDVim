@@ -763,6 +763,18 @@ endfunction
 
 " }}}
 
+" LSP {{{2
+" Mappings
+func! s:TDVimLSPMappings()
+    nnoremap <silent> <buffer> <c-]>    :LspDefinition<CR>
+    nnoremap <silent> <buffer> gd       :LspDefinition<CR>
+    nnoremap <silent> <buffer> K        :LspHover<CR>
+    nnoremap <silent> <buffer> \        :LspPeekDefinition<CR>
+    nnoremap <silent> <buffer> <C-F6>   :LspDocumentDiagnostics<CR>
+    nnoremap <silent> <buffer> <S-F6>   :LspReferences<CR>
+    nnoremap <silent> <buffer> <]s>     :lnext<CR>
+    nnoremap <silent> <buffer> <[s>     :lprev<CR>
+endfunc
 
 
 " Functions }}}
@@ -1834,6 +1846,104 @@ if !s:has_bash
     endif
 endif
 " }}}
+
+" LSP {{{2
+"let g:lsp_log_verbose = 1
+"let g:lsp_log_file = expand('~/vim-lsp.log')
+
+" Python LSPs:
+"let g:lsp_settings_filetype_python = [ 'ruff-lsp', 'pylsp-all' ]
+let g:lsp_settings_filetype_python = [ 'pylsp-all' ]
+set foldmethod=expr
+  \ foldexpr=lsp#ui#vim#folding#foldexpr()
+  \ foldtext=lsp#ui#vim#folding#foldtext()
+" - pylsp-all: https://github.com/python-lsp/python-lsp-server/blob/develop/CONFIGURATION.md , https://github.com/python-lsp/python-lsp-server
+"   Tools enabled by default:
+"   - Linter: autopep8
+"   - Formatter: pycodestyle
+"   - Completion: jedi
+"   - Linter alternative: flake8 ruff
+"   Ruff: https://github.com/python-lsp/python-lsp-ruff , https://docs.astral.sh/ruff/
+"   Our setup disable all linters and code formatters ato set Ruff as our
+"   default linter
+"   Jedi is used to analise decvalrations, reference, autocomplete, hover, etc
+"   ...
+let g:lsp_settings = {
+            \   'pylsp-all': {
+            \     'workspace_config': {
+            \       'pylsp': {
+            \           'plugins' : {
+            \               'autopep8' : {
+            \                   'enabled' : 0
+            \               },
+            \               'flake8' : {
+            \                   'enabled' : 0
+            \               },
+            \               'mccabe' : {
+            \                   'enabled' : 0
+            \               },
+            \               'pycodestyle' : {
+            \                   'enabled' : 0
+            \               },
+            \               'pylint' : {
+            \                   'enabled' : 0
+            \               },
+            \               'pyflakes' : {
+            \                   'enabled' : 0
+            \               },
+            \               'yapf' : {
+            \                   'enabled' : 0
+            \               },
+            \               'ruff' : {
+            \                   'enabled' : 1
+            \               },
+            \           }
+            \       }
+            \     }
+            \   },
+            \}
+" }}}
+
+" Vista {{{2
+" How each level is indented and what to prepend.
+" This could make the display more compact or more spacious.
+" e.g., more compact: ["▸ ", ""]
+" Note: this option only works for the kind renderer, not the tree renderer.
+let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+
+" Executive used when opening vista sidebar without specifying it.
+" See all the avaliable executives via `:echo g:vista#executives`.
+"let g:vista_default_executive = 'ctags'
+"let g:vista_default_executive = 'vim-lsp'
+
+" Set the executive for some filetypes explicitly. Use the explicit executive
+" instead of the default one for these filetypes when using `:Vista` without
+" specifying the executive.
+"let g:vista_executive_for = {
+  "\ 'cpp': 'vim_lsp',
+  "\ 'php': 'vim_lsp',
+  "\ }
+
+" To enable fzf's preview window set g:vista_fzf_preview.
+" The elements of g:vista_fzf_preview will be passed as arguments to fzf#vim#with_preview()
+" For example:
+let g:vista_fzf_preview = ['right:50%']
+
+" Ensure you have installed some decent font to show these pretty symbols, then you can enable icon for the kind.
+let g:vista#renderer#enable_icon = 1
+
+" The default icons can't be suitable for all the filetypes, you can extend it as you wish.
+let g:vista#renderer#icons = {
+\   "class": "力",
+\   "function": "\uf794",
+"\   "variable": "\uf71b",
+\   "variable": "狀",
+\  }
+" }}}
+
+
+
+
 " Setup Plugins }}}
 
 
@@ -1944,10 +2054,24 @@ if g:tdvim_dev_mode
     nnoremap   <S-F9>   :TDVimGitHunks<CR>
     " Symbols keymaps
     " Use FzfFunky if fzf available
+    " XXX: Testing Vista
     if s:has_fzf
-        nnoremap   <F6>   :FzfFunky<CR>
-        xnoremap   <F6>   :FzfFunky<CR>
+        "nnoremap   <F6>   :FzfFunky<CR>
+        "xnoremap   <F6>   :FzfFunky<CR>
+        nnoremap   <F6>   :Vista finder<CR>
+        xnoremap   <F6>   :Vista finder<CR>
     endif
+    nnoremap   <S-F8>   :Vista!!<CR>
+    " XXX: Testing LSP
+    " Enable LSP Mappings for those filetypes for what we usually have a LS
+    autocmd FileType python call s:TDVimLSPMappings()
+    " TODO: mapping for :
+    " LspDefinition
+    " LspPeekDefinition
+    " LSPNext/Prev Errors/Diasnostics
+    " LspFormat
+    " LspDiasnostics
+    " LspReferences
 
 
 
