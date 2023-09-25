@@ -765,6 +765,12 @@ endfunction
 
 " LSP {{{2
 " Mappings
+    " LspDefinition
+    " LspPeekDefinition
+    " LSPNext/Prev Errors/Diasnostics
+    " LspFormat
+    " LspDiasnostics
+    " LspReferences
 func! s:TDVimLSPMappings()
     nnoremap <silent> <buffer> <c-]>    :LspDefinition<CR>
     nnoremap <silent> <buffer> gd       :LspDefinition<CR>
@@ -1478,9 +1484,10 @@ nmap <silent> <leader>cs <Plug>NERDCommenterSexy
 vmap <silent> <leader>cs <Plug>NERDCommenterSexy
 
 " Inspect and jump to tags
+" Use FzfFunky if fzf available
 if s:has_fzf
-    nnoremap   <F6>   :Tags<CR>
-    xnoremap   <F6>   :Tags<CR>
+    nnoremap   <F6>   :FzfFunky<CR>
+    xnoremap   <F6>   :FzfFunky<CR>
 else
     nnoremap   <F6>   :tjump <C-r><C-w><space>
     xnoremap   <F6>   :tjump <C-r><C-w><space>
@@ -2021,6 +2028,42 @@ if g:tdvim_dev_mode
     command! TDVimSaveSession call TDVimSaveSess()
     command! TDVimRestoreSession call TDVimRestoreSess()
 
+    " Asynccomplete config and source
+    " Sources
+    " Buffer
+    call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+    \ 'name': 'buffer',
+    \ 'allowlist': ['*'],
+    \ 'blocklist': ['go'],
+    \ 'completor': function('asyncomplete#sources#buffer#completor'),
+    \ 'config': {
+    \    'max_buffer_size': 5000000,
+    \  },
+    \ }))
+    " Files
+    au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+    \ 'name': 'file',
+    \ 'allowlist': ['*'],
+    \ 'priority': 10,
+    \ 'completor': function('asyncomplete#sources#file#completor')
+    \ }))
+    " Vim
+    au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#necovim#get_source_options({
+    \ 'name': 'necovim',
+    \ 'allowlist': ['vim'],
+    \ 'completor': function('asyncomplete#sources#necovim#completor'),
+    \ }))
+    " Python
+    if executable('pyls')
+        "pip install python-language-server
+        au User lsp_setup call lsp#register_server({
+                    \ 'name': 'pyls',
+                    \ 'cmd': {server_info->['pyls']},
+                    \ 'allowlist': ['python'],
+                    \ })
+    endif
+
+
     "
     " Keymaps for dev mode
     " NERDTree using VCS mode (open in root project)
@@ -2053,25 +2096,21 @@ if g:tdvim_dev_mode
     command! TDVimGitHunks :GitGutterQuickFix | copen
     nnoremap   <S-F9>   :TDVimGitHunks<CR>
     " Symbols keymaps
-    " Use FzfFunky if fzf available
-    " XXX: Testing Vista
     if s:has_fzf
-        "nnoremap   <F6>   :FzfFunky<CR>
-        "xnoremap   <F6>   :FzfFunky<CR>
+        nunmap <F6>
+        xunmap <F6>
         nnoremap   <F6>   :Vista finder<CR>
         xnoremap   <F6>   :Vista finder<CR>
     endif
     nnoremap   <S-F8>   :Vista!!<CR>
-    " XXX: Testing LSP
     " Enable LSP Mappings for those filetypes for what we usually have a LS
     autocmd FileType python call s:TDVimLSPMappings()
-    " TODO: mapping for :
-    " LspDefinition
-    " LspPeekDefinition
-    " LSPNext/Prev Errors/Diasnostics
-    " LspFormat
-    " LspDiasnostics
-    " LspReferences
+    " Autocomplete
+    iunmap   <TAB>
+    iunmap   <S-TAB>
+    inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+    inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+    inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
 
 
 
@@ -2088,7 +2127,7 @@ if g:tdvim_dev_mode
     " Create/Update tags file
     " Set wildoptions+=tagfile
     " Set wildoptions+=fuzzy
-endif
+endif " devmode END
 
 " }}}
 
