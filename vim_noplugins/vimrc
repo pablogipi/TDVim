@@ -98,7 +98,9 @@ endfunction
 " loaded file
 function! s:SetLocalPath ()
     " If in dev mode dont change location automatically
-    if g:tdvim_dev_mode && s:has_git && has('b:tdvim_proj_root')
+    "if g:tdvim_dev_mode && s:has_git && has('b:tdvim_proj_root')
+    "if g:tdvim_dev_mode && has('b:tdvim_proj_root')
+    if g:tdvim_dev_mode
         " Rooter, set buffer location to project roo in dev mode
         silent! exe 'lcd ' . b:tdvim_proj_root
     else
@@ -1284,12 +1286,14 @@ nmap <silent> ]S :clast<CR>
 
 " Navigate Changes
 " Default mapped to []c
-nmap <silent> [c    g;
-imap <silent> [c    <Esc>g;
-vmap <silent> [c    g;
-nmap <silent> ]c    g,
-imap <silent> ]c    <Esc>g,
-vmap <silent> ]c    g,
+" XXX: Disabled at the moment, []c is used in diffmode, we need to find
+" a different keymap for changes
+"nmap <silent> [c    g;
+"imap <silent> [c    <Esc>g;
+"vmap <silent> [c    g;
+"nmap <silent> ]c    g,
+"imap <silent> ]c    <Esc>g,
+"vmap <silent> ]c    g,
 
 
 
@@ -1557,6 +1561,7 @@ if has("autocmd")
         autocmd ColorScheme * highlight ExtraWhitespace ctermbg=lightred guibg=lightred
         autocmd Syntax python,cpp,c,sh,csh,vim highlight ExtraWhitespace ctermbg=lightred guibg=lightred
     augroup END
+    augroup tdvimEnter
 	autocmd VimEnter * call s:SetFancyUI()
         if g:tdvim_dev_mode
             autocmd VimEnter * echomsg "TDVim (Dev Mode)" . $TDVIMVERSION . " loaded"
@@ -1923,14 +1928,14 @@ if g:tdvim_dev_mode
     xnoremap  <silent> <F8>       <ESC>:NERDTreeToggleVCS<cr> 
     " Open Files in current location - S-F3, <leader>o
     " Remap S-F3 if using FZF to use GFile instead of Files
-    if s:has_fzf
-        nunmap <S-F3>
-        vunmap <S-F3>
-        iunmap <S-F3>
-        nnoremap   <S-F3>   :GFiles<CR>
-        vnoremap   <S-F3>   :GFiles<CR>
-        inoremap   <S-F3>   <ESC>:GFiles<CR>
-    endif
+    "if s:has_fzf
+        "nunmap <S-F3>
+        "vunmap <S-F3>
+        "iunmap <S-F3>
+        "nnoremap   <S-F3>   :GFiles<CR>
+        "vnoremap   <S-F3>   :GFiles<CR>
+        "inoremap   <S-F3>   <ESC>:GFiles<CR>
+    "endif
     " Git keymaps:
     " Navigate hunks
     nmap ]h <Plug>(GitGutterNextHunk)
