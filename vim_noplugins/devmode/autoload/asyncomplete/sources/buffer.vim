@@ -56,6 +56,8 @@ function! s:on_event(opt, ctx, event) abort
     endif
 endfunction
 
+
+
 function! s:refresh_keywords() abort
     if g:asyncomplete_buffer_clear_cache
         let s:words = {}

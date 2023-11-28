@@ -38,7 +38,6 @@ if s:DetectDevMode()
 endif
 " }}}
 
-
 " Functions {{{
 
 " GetOS {{{2
@@ -628,26 +627,21 @@ function! TDVimLightlineExtraInfo() abort
       if exists("w:quickfix_title")
           return wininfo['variables']['quickfix_title']
       endif
+  else
+      let l:extra_info = ''
+      " Get closest function using Vista
+      if exists('b:vista_nearest_method_or_function') 
+          let l:extra_info = "\uf794⯈" . b:vista_nearest_method_or_function . '(...)'
+      endif
+      return l:extra_info
+      "return exists('b:vista_nearest_method_or_function') ? b:vista_nearest_method_or_function : ''
   endif
-
-  " Programing 
-  " Using w:curenttag set by UpdateCurrentTag using CursorHold autocmd. This fixes the lagging due to calling tagbar#currenttag in every redraw
-" if exists("w:currenttag")
-"     let l:tag = w:currenttag
-"     if len(w:currenttag) > winwidth(0)
-"          " Give 75 characters margin to the left in order to [reserver the
-"          " left part of the status line
-"          let l:tag = l:tag[0:winwidth(0) - 75 ]
-"          let l:tag .= " ..."
-"      endif
-"      "return w:currenttag
-"      "return string(winwidth(0))
-"      return l:tag
-"  endif
 
   return ""
 endfunction
+
 " }}}
+
 
 
 " Lightline Functions}}}
@@ -1860,7 +1854,11 @@ endif
 
 " Python LSPs:
 "let g:lsp_settings_filetype_python = [ 'ruff-lsp', 'pylsp-all' ]
-let g:lsp_settings_filetype_python = [ 'pylsp-all' ]
+"let g:lsp_settings_filetype_python = [ 'pylsp-all' ]
+"let g:lsp_settings_filetype_python = [ 'pyls-ms' ]
+"let g:lsp_settings_filetype_python = [ 'ruff-lsp' ] " Ruff works great as linter, fast. But only this option alone doesn't provide code completion
+"let g:lsp_settings_filetype_python = [ 'jedi-language-server' ] " This one is promising, linter is not gret but completion is non blocking and works
+let g:lsp_settings_filetype_python = [ 'jedi-language-server', 'ruff-lsp'  ] " Mixing, jedi for completions/symbols and ruff as static linter/diagnostics
 set foldmethod=expr
   \ foldexpr=lsp#ui#vim#folding#foldexpr()
   \ foldtext=lsp#ui#vim#folding#foldtext()
@@ -1871,7 +1869,7 @@ set foldmethod=expr
 "   - Completion: jedi
 "   - Linter alternative: flake8 ruff
 "   Ruff: https://github.com/python-lsp/python-lsp-ruff , https://docs.astral.sh/ruff/
-"   Our setup disable all linters and code formatters ato set Ruff as our
+"   Our setup disable all linters and code formatters to set Ruff as our
 "   default linter
 "   Jedi is used to analise decvalrations, reference, autocomplete, hover, etc
 "   ...
@@ -1918,18 +1916,20 @@ let g:lsp_settings = {
 " Note: this option only works for the kind renderer, not the tree renderer.
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 
+" NOTE: At the moment use ctags as provider for Vista. vim_lsp doen't display
+" symbols in context, hirarchicaly. I will need to test COC at some point
+
 " Executive used when opening vista sidebar without specifying it.
 " See all the avaliable executives via `:echo g:vista#executives`.
 "let g:vista_default_executive = 'ctags'
-"let g:vista_default_executive = 'vim-lsp'
+"let g:vista_default_executive = 'vim_lsp'
 
 " Set the executive for some filetypes explicitly. Use the explicit executive
 " instead of the default one for these filetypes when using `:Vista` without
 " specifying the executive.
 "let g:vista_executive_for = {
-  "\ 'cpp': 'vim_lsp',
-  "\ 'php': 'vim_lsp',
-  "\ }
+            "\ 'python': 'vim_lsp',
+            "\ }
 
 " To enable fzf's preview window set g:vista_fzf_preview.
 " The elements of g:vista_fzf_preview will be passed as arguments to fzf#vim#with_preview()
@@ -1942,8 +1942,8 @@ let g:vista#renderer#enable_icon = 1
 " The default icons can't be suitable for all the filetypes, you can extend it as you wish.
 let g:vista#renderer#icons = {
 \   "class": "力",
+\   "module": "",
 \   "function": "\uf794",
-"\   "variable": "\uf71b",
 \   "variable": "狀",
 \  }
 " }}}
@@ -2060,8 +2060,28 @@ if g:tdvim_dev_mode
                     \ 'name': 'pyls',
                     \ 'cmd': {server_info->['pyls']},
                     \ 'allowlist': ['python'],
-                    \ })
+                    \ },
+                    \{
+                    \ 'name': 'vim-language-server',
+                    \ 'cmd': {server_info->['vim-language-server']},
+                    \ 'allowlist': ['vim'],
+                    \ }
+                    \)
     endif
+    "au User call asyncomplete#register_source(asyncomplete#sources#necovim#get_source_options({
+                "\ 'name': 'necovim',
+                "\ 'allowlist': ['vim'],
+                "\ 'completor': function('asyncomplete#sources#necovim#completor'),
+                "\ }))
+    au User call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+                \ 'name': 'buffer',
+                \ 'allowlist': ['*'],
+                \ 'blocklist': ['go'],
+                \ 'completor': function('asyncomplete#sources#buffer#completor'),
+                \ 'config': {
+                \    'max_buffer_size': 5000000,
+                \  },
+                \ }))
 
 
     "
@@ -2076,14 +2096,15 @@ if g:tdvim_dev_mode
     xnoremap  <silent> <F8>       <ESC>:NERDTreeToggleVCS<cr> 
     " Open Files in current location - S-F3, <leader>o
     " Remap S-F3 if using FZF to use GFile instead of Files
-    if s:has_fzf
-        nunmap <S-F3>
-        vunmap <S-F3>
-        iunmap <S-F3>
-        nnoremap   <S-F3>   :GFiles<CR>
-        vnoremap   <S-F3>   :GFiles<CR>
-        inoremap   <S-F3>   <ESC>:GFiles<CR>
-    endif
+    " XXX: disable GFiles, is more useful to use Files
+    "if s:has_fzf
+        "nunmap <S-F3>
+        "vunmap <S-F3>
+        "iunmap <S-F3>
+        "nnoremap   <S-F3>   :GFiles<CR>
+        "vnoremap   <S-F3>   :GFiles<CR>
+        "inoremap   <S-F3>   <ESC>:GFiles<CR>
+    "endif
     " Git keymaps:
     " Navigate hunks
     nmap ]h <Plug>(GitGutterNextHunk)
@@ -2122,6 +2143,8 @@ if g:tdvim_dev_mode
     let s:autoPattern = "*.{c,h,[ch]pp,[acjt]s,inl,cg,cgfx,fx,py,bat,cmd,jam,vim,yml,yaml,vsprops,erb,rb,html,htm},SCons*,[mM]akefile,*vimrc"
     execute "autocmd FocusLost"     s:autoPattern   "silent! wall"
     execute "autocmd CursorHold " s:autoPattern " silent! update"
+    " Enable Vista get nearest method name:
+    autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 
 
     " Create/Update tags file
