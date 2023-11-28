@@ -1417,6 +1417,7 @@ nnoremap  <silent> <]b>=    :bprevious<CR>
 
 " Switch to Previous window
 nnoremap  <silent> <leader>p   <C-w>p 
+tnoremap  <silent> <leader>p   <C-w>p 
 " Switch to Previous buffer - Ctrl-F3, TAB
 nnoremap  <silent> <C-F3>   :e #<CR>
 vnoremap  <silent> <C-F3>   :e #<CR>
@@ -1425,7 +1426,8 @@ inoremap  <silent> <C-F3>   <ESC>:e #<CR>
 nnoremap  <silent> <TAB>   :e #<CR>
 vnoremap  <silent> <leader><TAB>   :e #<CR>
 " Switch current window to Previous buffer - Shift-TAB
-nnoremap  <silent> <S-TAB>   <C-w>x
+nnoremap  <silent> <C-TAB>   <C-w>x
+tnoremap  <silent> <C-TAB>   <C-w>x
 
 " Navigate Buffers - F3, <leader>b
 if s:has_fzf
