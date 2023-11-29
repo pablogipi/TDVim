@@ -2130,7 +2130,7 @@ if g:tdvim_dev_mode
     endif
     nnoremap   <S-F8>   :Vista!!<CR>
     " Enable LSP Mappings for those filetypes for what we usually have a LS
-    autocmd FileType python call s:TDVimLSPMappings()
+    "autocmd FileType python call s:TDVimLSPMappings()
     " Autocomplete
     iunmap   <TAB>
     iunmap   <S-TAB>
