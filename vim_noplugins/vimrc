@@ -399,6 +399,7 @@ function! TDVimClosePreviousWindow()
     endif
 endfunction
 " }}}
+"
 
 " SetupNERDTreeBuffer {{{2
 " Functiom to do some custom setups in a NERDtree buffer when Syntax event
@@ -1146,7 +1147,7 @@ endif
 
 " Custom commands {{{
 " Create Tags file in current location
-command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --fields=+iaS --extras=+q --exclude='.git' --exclude='.svn' --exclude='*.so' --exclude='__pycache__' --exclude='*.pyc'  
+command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --python-kinds=-iv --fields=+iaSl --extras=+q --exclude='.git' --exclude='.svn' --exclude='*.so' --exclude='__pycache__' --exclude='*.pyc'  
 " Jump to existing terminal and restore or create a new terminal
 command! TDVimOpenTerminal call TDVimCreateOrJumpToTerminal()
 " Run grep, allow user to mpdify initial pattern and then open quickfix window wit results
@@ -2033,62 +2034,6 @@ if g:tdvim_dev_mode
     command! TDVimSaveSession call TDVimSaveSess()
     command! TDVimRestoreSession call TDVimRestoreSess()
 
-    " Asynccomplete config and source
-    " Sources
-    " Buffer
-    call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-    \ 'name': 'buffer',
-    \ 'allowlist': ['*'],
-    \ 'blocklist': ['go'],
-    \ 'completor': function('asyncomplete#sources#buffer#completor'),
-    \ 'config': {
-    \    'max_buffer_size': 5000000,
-    \  },
-    \ }))
-    " Files
-    au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-    \ 'name': 'file',
-    \ 'allowlist': ['*'],
-    \ 'priority': 10,
-    \ 'completor': function('asyncomplete#sources#file#completor')
-    \ }))
-    " Vim
-    au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#necovim#get_source_options({
-    \ 'name': 'necovim',
-    \ 'allowlist': ['vim'],
-    \ 'completor': function('asyncomplete#sources#necovim#completor'),
-    \ }))
-    " Python
-    if executable('pyls')
-        "pip install python-language-server
-        au User lsp_setup call lsp#register_server({
-                    \ 'name': 'pyls',
-                    \ 'cmd': {server_info->['pyls']},
-                    \ 'allowlist': ['python'],
-                    \ },
-                    \{
-                    \ 'name': 'vim-language-server',
-                    \ 'cmd': {server_info->['vim-language-server']},
-                    \ 'allowlist': ['vim'],
-                    \ }
-                    \)
-    endif
-    "au User call asyncomplete#register_source(asyncomplete#sources#necovim#get_source_options({
-                "\ 'name': 'necovim',
-                "\ 'allowlist': ['vim'],
-                "\ 'completor': function('asyncomplete#sources#necovim#completor'),
-                "\ }))
-    au User call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-                \ 'name': 'buffer',
-                \ 'allowlist': ['*'],
-                \ 'blocklist': ['go'],
-                \ 'completor': function('asyncomplete#sources#buffer#completor'),
-                \ 'config': {
-                \    'max_buffer_size': 5000000,
-                \  },
-                \ }))
-
-
     "
     " Keymaps for dev mode
     " NERDTree using VCS mode (open in root project)
@@ -2131,14 +2076,6 @@ if g:tdvim_dev_mode
     nnoremap   <S-F8>   :Vista!!<CR>
     " Enable LSP Mappings for those filetypes for what we usually have a LS
     "autocmd FileType python call s:TDVimLSPMappings()
-    " Autocomplete
-    iunmap   <TAB>
-    iunmap   <S-TAB>
-    inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-    inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-    inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
-
-
 
     " Disable autochdir:
     set noautochdir
