@@ -22,6 +22,10 @@ tmp/
 sessions
 .tdvim
 
+# Compiled and cached python
+.pyc
+__pycache__
+
 # Compiled Lua sources
 luac.out
 

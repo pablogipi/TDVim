@@ -779,6 +779,23 @@ func! s:TDVimLSPMappings()
     nnoremap <silent> <buffer> <[s>     :lprev<CR>
 endfunc
 
+" TDVimHighlightWordUnderCursor {{{2
+" Highlight word under cursor, from: https://stackoverflow.com/questions/25227281/how-to-auto-highlight-the-current-word-in-vim
+function! TDVimHighlightWordUnderCursor()
+    let disabled_ft = ["qf", "fugitive", "nerdtree", "gundo", "diff", "fzf", "floaterm"]
+    if &diff || &buftype == "terminal" || index(disabled_ft, &filetype) >= 0
+        return
+    endif
+    if getline(".")[col(".")-1] !~# '[[:punct:][:blank:]]'
+        "hi MatchWord cterm=undercurl gui=undercurl guibg=#3b404a
+        hi MatchWord cterm=underline gui=underline guibg=#3b404a
+        exec 'match' 'MatchWord' '/\V\<'.expand('<cword>').'\>/'
+    else
+        match none
+    endif
+endfunction
+" }}}
+
 
 " Functions }}}
 
@@ -1854,6 +1871,14 @@ if !s:has_bash
 endif
 " }}}
 
+" Jedi {{{2
+let g:jedi#goto_stubs_command = ""
+let g:jedi#goto_command = "]t"
+let g:jedi#popup_select_first = 0
+" }}}
+
+
+
 " LSP {{{2
 "let g:lsp_log_verbose = 1
 "let g:lsp_log_file = expand('~/vim-lsp.log')
@@ -2035,6 +2060,27 @@ if g:tdvim_dev_mode
     command! TDVimRestoreSession call TDVimRestoreSess()
     " FZF Commands
     command! -bang ProjectFiles call fzf#vim#files(g:tdvim_proj_root, fzf#vim#with_preview(), <bang>0)
+    " Disable autochdir:
+    set noautochdir
+    " Enable Autowrite:
+    set autowriteall
+    " Autosave:
+    let s:autoPattern = "*.{c,h,[ch]pp,[acjt]s,inl,cg,cgfx,fx,py,bat,cmd,jam,vim,yml,yaml,vsprops,erb,rb,html,htm},SCons*,[mM]akefile,*vimrc"
+    execute "autocmd FocusLost"     s:autoPattern   "silent! wall"
+    execute "autocmd CursorHold " s:autoPattern " silent! update"
+    " Enable Vista get nearest method name:
+    autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+    " Highlight word under cursor
+    augroup MatchWord
+        autocmd!
+        autocmd! CursorHold,CursorHoldI * call TDVimHighlightWordUnderCursor()
+    augroup END
+    
+
+
+    " Create/Update tags file
+    " Set wildoptions+=tagfile
+    " Set wildoptions+=fuzzy
 
     "
     " Keymaps for dev mode
@@ -2078,21 +2124,6 @@ if g:tdvim_dev_mode
     " Enable LSP Mappings for those filetypes for what we usually have a LS
     "autocmd FileType python call s:TDVimLSPMappings()
 
-    " Disable autochdir:
-    set noautochdir
-    " Enable Autowrite:
-    set autowriteall
-    " Autosave:
-    let s:autoPattern = "*.{c,h,[ch]pp,[acjt]s,inl,cg,cgfx,fx,py,bat,cmd,jam,vim,yml,yaml,vsprops,erb,rb,html,htm},SCons*,[mM]akefile,*vimrc"
-    execute "autocmd FocusLost"     s:autoPattern   "silent! wall"
-    execute "autocmd CursorHold " s:autoPattern " silent! update"
-    " Enable Vista get nearest method name:
-    autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
-
-
-    " Create/Update tags file
-    " Set wildoptions+=tagfile
-    " Set wildoptions+=fuzzy
 endif " devmode END
 
 " }}}
