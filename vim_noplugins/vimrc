@@ -2033,6 +2033,8 @@ if g:tdvim_dev_mode
     " Session commands
     command! TDVimSaveSession call TDVimSaveSess()
     command! TDVimRestoreSession call TDVimRestoreSess()
+    " FZF Commands
+    command! -bang ProjectFiles call fzf#vim#files(g:tdvim_proj_root, fzf#vim#with_preview(), <bang>0)
 
     "
     " Keymaps for dev mode
@@ -2045,16 +2047,15 @@ if g:tdvim_dev_mode
     inoremap  <silent> <F8>       <C-O>:NERDTreeToggleVCS<cr> 
     xnoremap  <silent> <F8>       <ESC>:NERDTreeToggleVCS<cr> 
     " Open Files in current location - S-F3, <leader>o
-    " Remap S-F3 if using FZF to use GFile instead of Files
-    " XXX: disable GFiles, is more useful to use Files
-    "if s:has_fzf
-        "nunmap <S-F3>
-        "vunmap <S-F3>
-        "iunmap <S-F3>
-        "nnoremap   <S-F3>   :GFiles<CR>
-        "vnoremap   <S-F3>   :GFiles<CR>
-        "inoremap   <S-F3>   <ESC>:GFiles<CR>
-    "endif
+    " Remap S-F3 if using FZF to use ProjectFiles command instead of Files
+    if s:has_fzf
+        nunmap <S-F3>
+        vunmap <S-F3>
+        iunmap <S-F3>
+        nnoremap   <S-F3>   :ProjectFiles<CR>
+        vnoremap   <S-F3>   :ProjectFiles<CR>
+        inoremap   <S-F3>   <ESC>:ProjectFiles<CR>
+    endif
     " Git keymaps:
     " Navigate hunks
     nmap ]h <Plug>(GitGutterNextHunk)
