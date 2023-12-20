@@ -1518,6 +1518,8 @@ xnoremap   <S-F6>   :ptjump <C-r><C-w><space>
 
 " Create tags file
 nnoremap   <F11>   :TDVimMakeTags <CR>
+" Toggle Indent Guides
+nnoremap   <S-F11>   :IndentGuidesToggle<CR>
 
 " Autocomplete using Previous and Next
 inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
@@ -2075,12 +2077,16 @@ if g:tdvim_dev_mode
         autocmd!
         autocmd! CursorHold,CursorHoldI * call TDVimHighlightWordUnderCursor()
     augroup END
+    " enable indent guides
+    autocmd VimEnter * nested IndentGuidesEnable
+    
     
 
 
     " Create/Update tags file
     " Set wildoptions+=tagfile
     " Set wildoptions+=fuzzy
+    
 
     "
     " Keymaps for dev mode
