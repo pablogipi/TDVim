@@ -1515,11 +1515,14 @@ nnoremap   [t   <C-t>
 nnoremap   <S-F6>   :ptjump <C-r><C-w><space>
 xnoremap   <S-F6>   :ptjump <C-r><C-w><space>
 
-
 " Create tags file
 nnoremap   <F11>   :TDVimMakeTags <CR>
 " Toggle Indent Guides
 nnoremap   <S-F11>   :IndentGuidesToggle<CR>
+
+" Insert Timestamp
+nmap <S-F11> i<C-R>=strftime("%A, %d %b %Y %r")<CR><Esc>
+imap <S-F11> <C-R>=strftime("%A, %d %b %Y %r")<CR>
 
 " Autocomplete using Previous and Next
 inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
@@ -1892,9 +1895,9 @@ let g:jedi#popup_select_first = 0
 "let g:lsp_settings_filetype_python = [ 'ruff-lsp' ] " Ruff works great as linter, fast. But only this option alone doesn't provide code completion
 "let g:lsp_settings_filetype_python = [ 'jedi-language-server' ] " This one is promising, linter is not gret but completion is non blocking and works
 let g:lsp_settings_filetype_python = [ 'jedi-language-server', 'ruff-lsp'  ] " Mixing, jedi for completions/symbols and ruff as static linter/diagnostics
-set foldmethod=expr
-  \ foldexpr=lsp#ui#vim#folding#foldexpr()
-  \ foldtext=lsp#ui#vim#folding#foldtext()
+"set foldmethod=expr
+  "\ foldexpr=lsp#ui#vim#folding#foldexpr()
+  "\ foldtext=lsp#ui#vim#folding#foldtext()
 " - pylsp-all: https://github.com/python-lsp/python-lsp-server/blob/develop/CONFIGURATION.md , https://github.com/python-lsp/python-lsp-server
 "   Tools enabled by default:
 "   - Linter: autopep8
@@ -2011,44 +2014,48 @@ if g:tdvim_dev_mode
     if s:has_git
         " Setup globla vars for project mode
         let s:root = system('git rev-parse --show-toplevel')
-        let g:tdvim_proj_root = trim(s:root)
-        "echomsg "Project root: " . g:tdvim_proj_root
-        let g:tdvim_proj_name = fnamemodify( g:tdvim_proj_root, ':t' )
-        let g:tdvim_proj_root_config = g:tdvim_proj_root . '/.tdvim'
-        "echomsg "Project config folder: " . g:tdvim_proj_root_config
-        let s:has_tdvim_root = 0
-        let s:has_tdvim_proj_config = 0
-        if !isdirectory(g:tdvim_proj_root_config)
-            "echomsg "Init tdvim config for project " . g:tdvim_proj_name
-            let s:has_tdvim_root = mkdir(g:tdvim_proj_root_config, "p", 0o777)
+        if len(s:root) == 0
+            echoerr "Can't guess project root loacation using git. Is this project controlled by Git?"
         else
-            let s:has_tdvim_root = 1
-        endif
-        if s:has_tdvim_root
-            let s:tdvim_proj_config = g:tdvim_proj_root_config . "/project.vim"
-            if !filereadable(expand(s:tdvim_proj_config))
-                "echomsg "Crete project.vim"
-                call writefile( ["\" Project config file for tdvim", "\" Use this to setup vim for your project"], s:tdvim_proj_config )
-                let s:has_tdvim_proj_config = 1
+            let g:tdvim_proj_root = trim(s:root)
+            "echomsg "Project root: " . g:tdvim_proj_root
+            let g:tdvim_proj_name = fnamemodify( g:tdvim_proj_root, ':t' )
+            let g:tdvim_proj_root_config = g:tdvim_proj_root . '/.tdvim'
+            "echomsg "Project config folder: " . g:tdvim_proj_root_config
+            let s:has_tdvim_root = 0
+            let s:has_tdvim_proj_config = 0
+            if !isdirectory(g:tdvim_proj_root_config)
+                echomsg "Init tdvim config for project " . g:tdvim_proj_name
+                let s:has_tdvim_root = mkdir(g:tdvim_proj_root_config, "p", 0o777)
             else
-                let s:has_tdvim_proj_config = 1
+                let s:has_tdvim_root = 1
             endif
-            if s:has_tdvim_proj_config
-                " Source project config on VimEnter
-                autocmd VimEnter * nested exe 'source ' . s:tdvim_proj_config | echomsg "Project config loaded: " . s:tdvim_proj_config
+            if s:has_tdvim_root
+                let s:tdvim_proj_config = g:tdvim_proj_root_config . "/project.vim"
+                if !filereadable(expand(s:tdvim_proj_config))
+                    echomsg "Crete project.vim"
+                    call writefile( ["\" Project config file for tdvim", "\" Use this to setup vim for your project"], s:tdvim_proj_config )
+                    let s:has_tdvim_proj_config = 1
+                else
+                    let s:has_tdvim_proj_config = 1
+                endif
+                if s:has_tdvim_proj_config
+                    " Source project config on VimEnter
+                    autocmd VimEnter * nested exe 'source ' . s:tdvim_proj_config | echomsg "Project config loaded: " . s:tdvim_proj_config
+                endif
             endif
-        endif
-        " Rooter. move to git root folder.
-        " Globally move to project root, set creation of buffer variable with
-        " bufer git rootm needed for submodules,
-        " In SetLocal() we use it to do a lcd .
-        exe "cd " . g:tdvim_proj_root
-        autocmd BufRead * cd %:p:h | let b:tdvim_proj_root = system('git rev-parse --show-toplevel') 
+            " Rooter. move to git root folder.
+            " Globally move to project root, set creation of buffer variable with
+            " bufer git rootm needed for submodules,
+            " In SetLocal() we use it to do a lcd .
+            exe "cd " . g:tdvim_proj_root
+            autocmd BufRead * cd %:p:h | let b:tdvim_proj_root = system('git rev-parse --show-toplevel') 
 
-        " Window title
-        set title
-        autocmd BufEnter * let &titlestring = expand("%:t") . " (" . expand("%:p:h") . ")" . "  |> " . fnamemodify(g:tdvim_proj_name, ':t') . " <|   " . "TDVim " . $TDVIMVERSION
-        
+            " Window title
+            set title
+            autocmd BufEnter * let &titlestring = expand("%:t") . " (" . expand("%:p:h") . ")" . "  |> " . fnamemodify(g:tdvim_proj_name, ':t') . " <|   " . "TDVim " . $TDVIMVERSION
+        endif
+
     endif
     " Simple session management
     " Session management in tdvim dev mode, save session on leave and restore
