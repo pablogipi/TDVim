@@ -1447,6 +1447,7 @@ nnoremap  <silent> <]b>=    :bprevious<CR>
 
 " Switch to Previous window
 nnoremap  <silent> <leader>p   <C-w>p 
+nnoremap  <silent> <C-TAB>   <C-w>p 
 " Switch to Previous buffer - Ctrl-F3, TAB
 nnoremap  <silent> <C-F3>   :e #<CR>
 vnoremap  <silent> <C-F3>   :e #<CR>
@@ -1618,7 +1619,13 @@ if has("autocmd")
         autocmd BufRead * call s:SetLocalPath()
         autocmd BufRead quickfix call s:SetupAuxBuffer()
         " Show bad spaces at the end of code lines:
-        au BufRead,BufNewFile *.py,*.pyw,*.c,*.cpp,*.vim,*.h match ExtraWhitespace  /\s\+$/
+        "au BufRead,BufNewFile *.py,*.pyw,*.c,*.cpp,*.vim,*.h match ExtraWhitespace  /\s\+$/
+        " Since Vim v8.2.5066 (2022-06-07), you could use `leadmultispace` in listchars for equivalent behaviour
+        " feel free to use this conceal-less alternative supporting varying buffer shift widths (use BufEnter if needed):
+        " setlocal list conceals leading and trailing charatcers so it cancels
+        " the ExtraWhitespace option set before
+        autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h setlocal list
+        autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h execute 'setlocal listchars=trail:·,tab:│\ ,leadmultispace:┆' . repeat('\ ', &sw - 1)
     augroup END
     " BufEnter
     augroup tdvimBufEnter
@@ -2033,7 +2040,7 @@ if g:tdvim_dev_mode
             if s:has_tdvim_root
                 let s:tdvim_proj_config = g:tdvim_proj_root_config . "/project.vim"
                 if !filereadable(expand(s:tdvim_proj_config))
-                    echomsg "Crete project.vim"
+                    echomsg "Create project.vim"
                     call writefile( ["\" Project config file for tdvim", "\" Use this to setup vim for your project"], s:tdvim_proj_config )
                     let s:has_tdvim_proj_config = 1
                 else
@@ -2085,7 +2092,7 @@ if g:tdvim_dev_mode
         autocmd! CursorHold,CursorHoldI * call TDVimHighlightWordUnderCursor()
     augroup END
     " enable indent guides
-    autocmd VimEnter * nested IndentGuidesEnable
+    "autocmd VimEnter * nested IndentGuidesEnable
     
     
 
