@@ -990,6 +990,9 @@ set nocursorcolumn
 " set nocursorline
 set norelativenumber
 syntax sync minlines=256
+
+" Custom keywords in comments that will match TODO style
+hi def link myTodo Todo
 " }}}
 
 " }}}
@@ -1355,28 +1358,28 @@ nnoremap  <silent> <leader>qw         :call TDVimClosePreviousWindow()<CR>
 vnoremap  <silent> <leader>qw         <Esc>:call TDVimClosePreviousWindow()<CR> 
 
 " Jump to QuickFix Window - <leader>jq
-nnoremap  <silent> <leader>jq         :call utils#JumpToWindowsByType( "quickfix" )<CR> 
-xnoremap  <silent> <leader>jq         <ESC>:call utils#JumpToWindowsByType( "quickfix" )<CR> 
+nnoremap  <silent> <leader>jq         :call TDVimJumpToWindowsByType( "quickfix" )<CR> 
+xnoremap  <silent> <leader>jq         <ESC>:call TDVimJumpToWindowsByType( "quickfix" )<CR> 
 " Jump to Location Window - <leader>jl
-nnoremap  <silent> <leader>jl         :call utils#JumpToWindowsByType( "location" )<CR> 
-xnoremap  <silent> <leader>jl         <ESC>:call utils#JumpToWindowsByType( "location" )<CR> 
+nnoremap  <silent> <leader>jl         :call TDVimJumpToWindowsByType( "location" )<CR> 
+xnoremap  <silent> <leader>jl         <ESC>:call TDVimJumpToWindowsByType( "location" )<CR> 
 " Jump to Preview Window - <leader>jl
-nnoremap  <silent> <leader>jp         :call utils#JumpToWindowsByType( "preview" )<CR> 
-xnoremap  <silent> <leader>jp         <ESC>:call utils#JumpToWindowsByType( "preview" )<CR> 
+nnoremap  <silent> <leader>jp         :call TDVimJumpToWindowsByType( "preview" )<CR> 
+xnoremap  <silent> <leader>jp         <ESC>:call TDVimJumpToWindowsByType( "preview" )<CR> 
 
 " Jump to Location List Window {{{3
-nnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow :call utils#JumpToWindowsByType( "location" )<CR>
-vnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow <Esc>:call utils#JumpToWindowsByType( "location" )<CR>
-inoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow <Esc>:call utils#JumpToWindowsByType( "location" )<CR>
+nnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow :call TDVimJumpToWindowsByType( "location" )<CR>
+vnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow <Esc>:call TDVimJumpToWindowsByType( "location" )<CR>
+inoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow <Esc>:call TDVimJumpToWindowsByType( "location" )<CR>
 
 nmap <silent> <leader>jl <Plug>TdvimJumpToLocationWindow 
 vmap <silent> <leader>jl <Plug>TdvimJumpToLocationWindow
 " }}}
 
 " Jump to Preview Window {{{3
-nnoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow :call utils#JumpToWindowsByType( "preview" )<CR>
-vnoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow <Esc>:call utils#JumpToWindowsByType( "preview" )<CR>
-inoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow <Esc>:call utils#JumpToWindowsByType( "preview" )<CR>
+nnoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow :call TDVimJumpToWindowsByType( "preview" )<CR>
+vnoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow <Esc>:call TDVimJumpToWindowsByType( "preview" )<CR>
+inoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow <Esc>:call TDVimJumpToWindowsByType( "preview" )<CR>
 
 nmap <silent> <leader>jp <Plug>TdvimJumpToPreviewWindow 
 vmap <silent> <leader>jp <Plug>TdvimJumpToPreviewWindow
@@ -1568,8 +1571,8 @@ set belloff+=all " If Vim beeps during scrolling
 set completeopt-=preview
 set completeopt+=menuone
 set completeopt-=popup
-" set completeopt+=noinsert
-" set completeopt+=noselect
+set completeopt+=noinsert
+"set completeopt+=noselect
 set completepopup=height:10,width:60,highlight:InfoPopu
 
 " Sources for searching in completion mode
@@ -1597,6 +1600,9 @@ if has("autocmd")
         " Highlight type for extra white spaces at the end of a line
         autocmd ColorScheme * highlight ExtraWhitespace ctermbg=lightred guibg=lightred
         autocmd Syntax python,cpp,c,sh,csh,vim highlight ExtraWhitespace ctermbg=lightred guibg=lightred
+        " Add keywords for comments, extend TODO, XXX and FIXME to other useful
+        " keywords in comments
+        autocmd Syntax * syntax keyword myTodo TODO FIX FIXME XXX DEBUG WARNING WARN ERROR DEPRECATED NOTE containedin=.*Comment
     augroup END
     augroup tdvimEnter
 	autocmd VimEnter * call s:SetFancyUI()
@@ -1888,8 +1894,6 @@ let g:jedi#goto_stubs_command = ""
 let g:jedi#goto_command = "]t"
 let g:jedi#popup_select_first = 0
 " }}}
-
-
 
 " LSP {{{2
 "let g:lsp_log_verbose = 1
