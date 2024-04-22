@@ -476,6 +476,8 @@ function! TDVimLightlineMode() abort
         return 'EXPLORER'
     elseif &filetype == "fugitive"
         return 'GIT'
+    elseif &filetype == "scratch"
+        return 'SCRATCHPAD'
     else
         return get(s:LightLineModeMap, mode(), '')
     endif
@@ -494,7 +496,7 @@ function! TDVimLightlineFilename() abort
     " Get current window info
     let wininfo = s:getWinInfo(-1)
 
-    if &filetype == "help" || &filetype == "ctrlp" || &filetype == "tagbar" || &filetype == "nerdtree"
+    if &filetype == "help" || &filetype == "ctrlp" || &filetype == "tagbar" || &filetype == "nerdtree" || &filetype == "scratch"
         return ''
     endif
     " For quickfix windows:
@@ -545,7 +547,7 @@ endfunction
 
 " LightLine utility functions {{{3
 function! TDVimLightlineReadonly()
-    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal"
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal" || &filetype == "scratch"
         return ''
     else
       if  exists('g:GuiLoaded') || has('gui_running')
@@ -557,7 +559,7 @@ function! TDVimLightlineReadonly()
 endfunction
 
 function! TDVimLightlineModified()
-    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal"
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal" || &filetype == "scratch"
         return ''
     else
       if  exists('g:GuiLoaded') || has('gui_running')
@@ -575,6 +577,8 @@ function! TDVimLightlineDeviconsFiletype()
         return 'ﬁ'
     elseif &filetype == "qf"
         return 'ί'
+    elseif &filetype == "scratch"
+        return ''
     else
         "return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
         if exists('w:currentdeviconfiletype')
@@ -584,11 +588,14 @@ function! TDVimLightlineDeviconsFiletype()
 endfunction
 
 function! TDVimLightlineDeviconsFileformat()
+  if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal" || &filetype == "scratch"
+      return ''
+  endif
   return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
 endfunction
 
 function! TDVimLightlineGit()
-  if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal"
+  if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal" || &filetype == "scratch"
       return ''
   elseif winwidth(0) < 100
       return ''
@@ -603,6 +610,9 @@ function! TDVimLightlineGit()
 endfunction
 
 function! TDVimGitHunksummary()
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal" || &filetype == "scratch"
+        return ''
+    endif
     if g:tdvim_dev_mode && exists("*GitGutterGetHunkSummary")
         let [a,m,r] = GitGutterGetHunkSummary()
         return printf('+%d ~%d -%d', a, m, r)
@@ -2163,6 +2173,9 @@ if g:tdvim_dev_mode
     nnoremap   <S-F8>   :Vista!!<CR>
     " Enable LSP Mappings for those filetypes for what we usually have a LS
     "autocmd FileType python call s:TDVimLSPMappings()
+    "Scratch Pad
+    nnoremap   <S-F7>   :Scratch<CR>
+    nnoremap   <C-F7>   :ScratchPreview<CR>
 
 endif " devmode END
 
