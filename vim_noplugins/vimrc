@@ -2011,7 +2011,7 @@ let g:vista#renderer#icons = {
 " Setup Plugins }}}
 
 
-" Project Mode {{{
+" Project Mode (Devmode) {{{
 " Overrides for Project Mode
 " If vim is opened in a directory then enable some special settings to
 " work in a project, assuming the current folder is the project root
@@ -2030,7 +2030,7 @@ if g:tdvim_dev_mode
     "echomsg "TDVim install location: " . s:tdvim_devmode_path
 
     " Set project folder and tdvim config skeleton for project.
-    " Preapre session magement for project
+    " Prepare session magement for project
     " Also prepare Rooter and window title for session
     if s:has_git
         " Setup globla vars for project mode
@@ -2083,10 +2083,10 @@ if g:tdvim_dev_mode
             endif
             " Rooter. move to git root folder.
             " Globally move to project root, set creation of buffer variable with
-            " bufer git rootm needed for submodules,
-            " In SetLocal() we use it to do a lcd .
+            "autocmd BufRead * cd %:p:h | let b:tdvim_proj_root = system('git rev-parse --show-toplevel') 
             exe "cd " . g:tdvim_proj_root
-            autocmd BufRead * cd %:p:h | let b:tdvim_proj_root = system('git rev-parse --show-toplevel') 
+            autocmd BufRead * let b:tdvim_proj_root = g:tdvim_proj_root
+            autocmd BufRead * exe "lcd " . g:tdvim_proj_root 
 
             " Window title
             set title
