@@ -137,6 +137,22 @@ function! s:SetupAuxBuffer( )
 endfunction
 " }}}
 
+" VSetSearch {{{2
+" Visual mode search
+" From: https://github.com/godlygeek/vim-files/blob/master/plugin/vsearch.vim
+function! s:VSetSearch()
+  let temp = @@
+  norm! gvy
+  let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
+  " Use this line instead of the above to match matches spanning across lines
+  "let @/ = '\V' . substitute(escape(@@, '\'), '\_s\+', '\\_s\\+', 'g')
+  call histadd('/', substitute(@/, '[?/]', '\="\\%d".char2nr(submatch(0))', 'g'))
+  let @@ = temp
+endfunction
+" }}}
+
+
+
 " CloseAllBuffersByType {{{2
 " Close all buffers for a given buffertype, filetype or syntax
 " @param type type to delete
@@ -1265,7 +1281,6 @@ inoremap   <C-F10>    <ESC>:confirm qa<CR>
 tnoremap   <C-F10>    <C-W>:confirm qa<CR>
 "}}}
 
-
 " Edit {{{2
 " Keymaps for editing operations
 
@@ -1291,6 +1306,9 @@ xnoremap  <silent> <A-k>       :move '<-2<CR>gv-gv
 xnoremap  <silent> <A-Down>    :move '>+1<CR>gv-gv 
 xnoremap  <silent> <A-Up>      :move '<-2<CR>gv-gv 
 
+" Visual Search
+vnoremap * :<C-u>call <SID>VSetSearch()<CR>/<CR>
+vnoremap # :<C-u>call <SID>VSetSearch()<CR>?<CR>
 
 " Grep/Search word under cursor - F4, leader-g
 " nnoremap  <F4>      :silent lgrep <C-R><C-W><CR>:lopen<CR>
@@ -1321,6 +1339,47 @@ else
     xnoremap  <F4>          :TDvimGrep  
 endif
 
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+nmap <silent> <leader>a <Plug(LiveEasyAlign)>
+vmap <silent> <Enter>   <Plug>(LiveEasyAlign)
+xmap ga <Plug>(EasyAlign)
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
+
+
+
+" }}}
+
+" Navigation {{{2
+
+" Navigate buffers - []b
+nnoremap  <silent> <S-l>=   :bnext<CR> 
+nnoremap  <silent> <S-h>=   :bprevious<CR> 
+nnoremap  <silent> <[b>=    :bnext<CR> 
+nnoremap  <silent> <]b>=    :bprevious<CR> 
+
+" Switch to Previous buffer - Ctrl-F3, TAB
+nnoremap  <silent> <C-F3>   :e #<CR>
+vnoremap  <silent> <C-F3>   :e #<CR>
+inoremap  <silent> <C-F3>   <ESC>:e #<CR>
+"nnoremap  <silent> <leader><TAB>   :e #<CR>
+nnoremap  <silent> <TAB>   :e #<CR>
+vnoremap  <silent> <leader><TAB>   :e #<CR>
+" Switch current window to Previous buffer - Shift-TAB
+nnoremap  <silent> <S-TAB>   <C-w>x
+
+" Navigate Buffers - F3, <leader>b
+if s:has_fzf
+    nnoremap   <F3>   :Buffers<cr>
+    vnoremap   <F3>   :Buffers<cr>
+    inoremap   <F3>   <ESC>:Buffers<cr>
+else
+    nnoremap   <F3>   :files<cr>:b<space>
+    vnoremap   <F3>   :files<cr>:b<space>
+    inoremap   <F3>   <ESC>:files<cr>:b<space>
+endif
+
 " Navigate Grep results. Navigate Location list entries
 " Default mapped to []s
 nmap <silent> [s :cprev<CR>
@@ -1328,6 +1387,7 @@ nmap <silent> ]s :cnext<CR>
 nmap <silent> [S :cfirst<CR>
 nmap <silent> ]S :clast<CR>
 
+" Navigate through changes and jumps
 " Navigate Changes
 " Default mapped to []c
 " XXX: Disabled at the moment, []c is used in diffmode, we need to find
@@ -1338,13 +1398,10 @@ nmap <silent> ]S :clast<CR>
 "nmap <silent> ]c    g,
 "imap <silent> ]c    <Esc>g,
 "vmap <silent> ]c    g,
-
-
-
-
+if s:has_fzf
+endif
 
 " }}}
-
 
 " WindowManagement {{{2
 " Operations to work with windows, tabs, etc ...
@@ -1453,35 +1510,10 @@ nnoremap  <silent> <leader>=   <C-w>=
 vnoremap  <silent> <leader>=   <C-w>= 
 tnoremap  <silent> <leader>=   <C-w>= 
 
-" Navigate buffers - []b
-nnoremap  <silent> <S-l>=   :bnext<CR> 
-nnoremap  <silent> <S-h>=   :bprevious<CR> 
-nnoremap  <silent> <[b>=    :bnext<CR> 
-nnoremap  <silent> <]b>=    :bprevious<CR> 
-
 " Switch to Previous window
 nnoremap  <silent> <leader>p   <C-w>p 
 nnoremap  <silent> <C-TAB>   <C-w>p 
-" Switch to Previous buffer - Ctrl-F3, TAB
-nnoremap  <silent> <C-F3>   :e #<CR>
-vnoremap  <silent> <C-F3>   :e #<CR>
-inoremap  <silent> <C-F3>   <ESC>:e #<CR>
-"nnoremap  <silent> <leader><TAB>   :e #<CR>
-nnoremap  <silent> <TAB>   :e #<CR>
-vnoremap  <silent> <leader><TAB>   :e #<CR>
-" Switch current window to Previous buffer - Shift-TAB
-nnoremap  <silent> <S-TAB>   <C-w>x
 
-" Navigate Buffers - F3, <leader>b
-if s:has_fzf
-    nnoremap   <F3>   :Buffers<cr>
-    vnoremap   <F3>   :Buffers<cr>
-    inoremap   <F3>   <ESC>:Buffers<cr>
-else
-    nnoremap   <F3>   :files<cr>:b<space>
-    vnoremap   <F3>   :files<cr>:b<space>
-    inoremap   <F3>   <ESC>:files<cr>:b<space>
-endif
 
 " }}}
 
@@ -1532,8 +1564,6 @@ xnoremap   <S-F6>   :ptjump <C-r><C-w><space>
 
 " Create tags file
 nnoremap   <F11>   :TDVimMakeTags <CR>
-" Toggle Indent Guides
-nnoremap   <S-F11>   :IndentGuidesToggle<CR>
 
 " Insert Timestamp
 nmap <S-F11> i<C-R>=strftime("%A, %d %b %Y %r")<CR><Esc>
@@ -1632,12 +1662,10 @@ if has("autocmd")
         " Change local path to the folder containing the current buffer:
         autocmd BufRead * call s:SetLocalPath()
         autocmd BufRead quickfix call s:SetupAuxBuffer()
-        " Show bad spaces at the end of code lines:
-        "au BufRead,BufNewFile *.py,*.pyw,*.c,*.cpp,*.vim,*.h match ExtraWhitespace  /\s\+$/
+        " Show guides for TAB, quick and better indentation guides
         " Since Vim v8.2.5066 (2022-06-07), you could use `leadmultispace` in listchars for equivalent behaviour
         " feel free to use this conceal-less alternative supporting varying buffer shift widths (use BufEnter if needed):
         " setlocal list conceals leading and trailing charatcers so it cancels
-        " the ExtraWhitespace option set before
         autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h setlocal list
         autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h execute 'setlocal listchars=trail:·,tab:│\ ,leadmultispace:┆' . repeat('\ ', &sw - 1)
     augroup END
@@ -1903,8 +1931,6 @@ let g:jedi#goto_command = "]t"
 let g:jedi#popup_select_first = 0
 " }}}
 
-
-
 " LSP {{{2
 "let g:lsp_log_verbose = 1
 "let g:lsp_log_file = expand('~/vim-lsp.log')
@@ -2005,6 +2031,22 @@ let g:vista#renderer#icons = {
 \  }
 " }}}
 
+" Vimdent {{{2
+let g:vindent_motion_OO_prev   = '[=' " jump to prev block of same indent.
+let g:vindent_motion_OO_next   = ']=' " jump to next block of same indent.
+let g:vindent_motion_more_prev = '[+' " jump to prev line with more indent.
+let g:vindent_motion_more_next = ']+' " jump to next line with more indent.
+let g:vindent_motion_less_prev = '[-' " jump to prev line with less indent.
+let g:vindent_motion_less_next = ']-' " jump to next line with less indent.
+let g:vindent_motion_diff_prev = '[;' " jump to prev line with different indent.
+let g:vindent_motion_diff_next = '];' " jump to next line with different indent.
+let g:vindent_motion_XX_ss     = '[p' " jump to start of the current block scope.
+let g:vindent_motion_XX_se     = ']p' " jump to end   of the current block scope.
+let g:vindent_object_XX_ii     = 'ii' " select current block.
+let g:vindent_object_XX_ai     = 'ai' " select current block + one extra line  at beginning.
+let g:vindent_object_XX_aI     = 'aI' " select current block + two extra lines at beginning and end.
+let g:vindent_jumps            = 1    " make vindent motion count as a |jump-motion| (works with |jumplist|).
+" }}}
 
 
 
@@ -2121,8 +2163,6 @@ if g:tdvim_dev_mode
         autocmd!
         autocmd! CursorHold,CursorHoldI * call TDVimHighlightWordUnderCursor()
     augroup END
-    " enable indent guides
-    "autocmd VimEnter * nested IndentGuidesEnable
     
     
 
