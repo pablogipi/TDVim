@@ -982,11 +982,6 @@ set iskeyword+=-
 set formatoptions-=cro
 
 " Search settings {{{2
-" Switch on highlighting the last used search pattern if colors  are supported
-if &t_Co > 2 || has("gui_running")
-    set hlsearch
-endif
-
 " Activate showmatch
 set showmatch
 " Do incremental searching
@@ -1016,10 +1011,15 @@ endif
 if &t_Co > 2 || has("gui_running")
     syntax on
 endif
+
+" Highlight certain keywords, extend TODO, FIXME and XXX
+" myTodo is defined in autcommands
+hi def link myTodo			Todo
+
 set nocursorcolumn
 " set nocursorline
 set norelativenumber
-syntax sync minlines=256
+"syntax sync minlines=256
 " }}}
 
 " }}}
@@ -1591,7 +1591,6 @@ tnoremap <F7>       <C-W>1_<C-W>W
 
 " }}}
 
-
 " Diff mode specific options {{{
 set diffopt=filler,vertical
 if &diff
@@ -1626,7 +1625,6 @@ set splitbelow
 set timeoutlen=500
 " }}}
 
-"
 " Autocommands and Events {{{
 "
 
@@ -1639,8 +1637,10 @@ if has("autocmd")
     " Misc
     augroup tdvimMisc
         " Highlight type for extra white spaces at the end of a line
-        autocmd ColorScheme * highlight ExtraWhitespace ctermbg=lightred guibg=lightred
-        autocmd Syntax python,cpp,c,sh,csh,vim highlight ExtraWhitespace ctermbg=lightred guibg=lightred
+        "autocmd ColorScheme * highlight ExtraWhitespace ctermbg=lightred guibg=lightred
+        "autocmd Syntax python,cpp,c,sh,csh,vim highlight ExtraWhitespace ctermbg=lightred guibg=lightred
+        "autocmd Syntax * syntax match myTodo /\v\_.<(TODO|FIXME|DEBUG|DEBUG|WARN|WARNING|ERROR|NOTE|DEPRECATED):?/hs=s+1 containedin=.*Comment
+        autocmd Syntax * syntax match myTodo /\v<(TODO|FIXME|DEBUG|DEBUG|WARN|WARNING|ERROR|NOTE|DEPRECATED):?/hs=s containedin=.*Comment
     augroup END
     augroup tdvimEnter
 	autocmd VimEnter * call s:SetFancyUI()
@@ -1666,6 +1666,8 @@ if has("autocmd")
         " Since Vim v8.2.5066 (2022-06-07), you could use `leadmultispace` in listchars for equivalent behaviour
         " feel free to use this conceal-less alternative supporting varying buffer shift widths (use BufEnter if needed):
         " setlocal list conceals leading and trailing charatcers so it cancels
+        " the ExtraWhitespace option set before
+        " Show indent guides
         autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h setlocal list
         autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h execute 'setlocal listchars=trail:·,tab:│\ ,leadmultispace:┆' . repeat('\ ', &sw - 1)
     augroup END
@@ -1731,7 +1733,6 @@ else
 endif " has("autocmd")
 
 " }}}
-
 
 " Setup Plugins {{{
 
@@ -2051,7 +2052,6 @@ let g:vindent_jumps            = 1    " make vindent motion count as a |jump-mot
 
 
 " Setup Plugins }}}
-
 
 " Project Mode (Devmode) {{{
 " Overrides for Project Mode
