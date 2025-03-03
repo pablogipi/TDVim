@@ -59,6 +59,21 @@ function! s:GetOS()
 endf
 " }}}
 
+function! ConvertWindowsToPosixPath(windows_path)
+    " Replace backslashes with forward slashes
+    let posix_path = substitute(a:windows_path, '\\', '/', 'g')
+
+    " Convert drive letter (e.g., C:) to /c/
+    "let posix_path = substitute(posix_path, '^\([A-Za-z]\):', '/\1', '')
+    " Remove drive letter
+    let posix_path = substitute(posix_path, '^\([A-Za-z]\):', '', '')
+
+    " Convert UNC paths (e.g., \\server\share to //server/share)
+    let posix_path = substitute(posix_path, '^//', '/', '')
+
+    return posix_path
+endfunction
+
 " getWinInfo {{{2
 " winid: id of the window, if not passed then current window will be used
 "function! s:getWinInfo( winid=-1 )
@@ -750,6 +765,8 @@ fu! TDVimSaveSess()
 endfunction
 
 " Restore session {{{3
+" To debug session restore dont use silent! when calling this function
+" By default the autocommand  uses silent
 fu! TDVimRestoreSess()
     " Only in project mode
     if !g:tdvim_dev_mode || !exists('g:tdvim_proj_root')
@@ -757,25 +774,34 @@ fu! TDVimRestoreSess()
     endif
     let sessionfile = g:tdvim_proj_root_config . '/session.vim'
     echomsg "Restoring vim session: " . sessionfile
+    echomsg "Project root: " . g:tdvim_proj_root
     if filereadable(sessionfile)
-        "echomsg "Source session ..."
+        echomsg "Source session ..."
         execute 'source ' . sessionfile
         " Delete all buffers that are a folder or its's name starts with
         " NERD_tree. These are usually the NERD Tree buffers and we dont want
         " them on load
+        " Also remove any buffer not relative to our current project
         for nbuf in range(1, bufnr('$'))
             let to_delete = 0
             "echomsg "Buffer number: " . nbuf
             let buffer_name = bufname( nbuf )
-            "echomsg "Buffer :" . buffer_name
-            if isdirectory(buffer_name)
+            let buffer_path = expand('#' . nbuf . ':p')
+            echomsg "Buffer: " . buffer_path
+            if bufexists(nbuf) && !buflisted(nbuf)
+                continue  " Skip unlisted buffers (optional)
+            elseif isdirectory(buffer_name)
                 let to_delete = 1
-            elseif match(buffer_name, "NERD_tree") == 0
+            "elseif match(buffer_name, "NERD_tree") == 0
+            elseif buffer_name =~ "^NERD_tree"
                 let to_delete = 1
+            elseif ConvertWindowsToPosixPath(buffer_path) !~ ConvertWindowsToPosixPath(g:tdvim_proj_root)
+                let to_delete = 1
+                echomsg "Buffer " . buffer_path . " doesn't match project root: " . g:tdvim_proj_root
             endif
             if to_delete == 1
-                "echomsg("Buffer deleted")
-                exe "bdelete! " . nbuf
+                echomsg("Buffer deleted: " . buffer_name)
+                exe "silent! bdelete! " . nbuf
             endif
         endfor
     else
@@ -2109,6 +2135,10 @@ if g:tdvim_dev_mode
             else
                 let s:has_tdvim_root = 1
             endif
+            if !empty(g:tdvim_proj_name)
+                " Opening  project message
+                autocmd VimEnter * nested  echomsg "Opening project " . g:tdvim_proj_name
+            endif
             if s:has_tdvim_root
                 let s:tdvim_proj_config = g:tdvim_proj_root_config . "/project.vim"
                 if !filereadable(expand(s:tdvim_proj_config))
@@ -2139,8 +2169,10 @@ if g:tdvim_dev_mode
     " Simple session management
     " Session management in tdvim dev mode, save session on leave and restore
     " on enter
+    " To debug session loading dont use silent! con calling the functions
     autocmd VimLeave * call TDVimSaveSess()
-    autocmd VimEnter * nested silent! call TDVimRestoreSess()
+    autocmd VimEnter * nested silent! call TDVimRestoreSess() | echomsg "Project session restored"
+    "autocmd VimEnter * nested call TDVimRestoreSess() | echomsg "Session restore from: " . g:tdvim_proj_config
     " Load project setup on Enter
     autocmd VimEnter * nested exe 'source ' . s:tdvim_proj_config
     " Session commands
