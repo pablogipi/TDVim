@@ -831,6 +831,8 @@ func! s:TDVimLSPMappings()
     nnoremap <silent> <buffer> <[s>     :lprev<CR>
 endfunc
 
+
+
 " TDVimHighlightWordUnderCursor {{{2
 " Highlight word under cursor, from: https://stackoverflow.com/questions/25227281/how-to-auto-highlight-the-current-word-in-vim
 function! TDVimHighlightWordUnderCursor()
@@ -845,6 +847,21 @@ function! TDVimHighlightWordUnderCursor()
     else
         match none
     endif
+endfunction
+" }}}
+
+" ShowTDVimHelp {{{
+" Show TDVim help window
+function! TDVimShowQuickHelp(  )
+    :helpclose
+    ":botright h tdvim
+    :botright h tdvim.txt
+
+    " Help buffer local maps
+    map <silent> <buffer> <Esc> :bdelete<CR>
+    map <silent> <buffer> q :bdelete<CR>
+
+    ":silent file! TDVim Help
 endfunction
 " }}}
 
@@ -1267,6 +1284,11 @@ else
     xnoremap  <S-F1>             :h <C-r><C-w><CR> 
     inoremap  <S-F1>             <C-O>:h <C-r><Cew><CR> 
 endif
+
+" Quick TDvim Help. Cheat sheet
+nnoremap  <silent> <C-F1>             :call TDVimShowQuickHelp()<CR>
+xnoremap  <silent> <C-F1>             :call TDVimShowQuickHelp()<CR> 
+inoremap  <silent> <C-F1>             <C-O>:call TDVimShowQuickHelp()<CR> 
 " }}}
 
 " Main Operations {{{2

@@ -1,4 +1,4 @@
-*tdvim.txt*           TDVim Help           TDVim 2.0
+*tdvim.txt*           TDVim Help           TDVim 0.4.5
 
 Table Of Contents~
 
