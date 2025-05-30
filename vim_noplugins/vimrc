@@ -2097,7 +2097,9 @@ let g:vindent_object_XX_aI     = 'aI' " select current block + two extra lines a
 let g:vindent_jumps            = 1    " make vindent motion count as a |jump-motion| (works with |jumplist|).
 " }}}
 
-
+" Black {{{2
+let g:black_use_virtualenv = 0
+" }}}
 
 " Setup Plugins }}}
 
