@@ -1,8 +1,0 @@
-../vimrc
-../after
-../autoload
-../doc
-../templates
-../UltiSnips
-../fonts
-../plugin
