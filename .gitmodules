@@ -7,3 +7,6 @@
 [submodule "vim_packages/pack/dev/opt/ale"]
 	path = vim_packages/pack/dev/opt/ale
 	url = https://github.com/dense-analysis/ale.git
+[submodule "vim_packages/pack/core/start/vim-unimpaired"]
+	path = vim_packages/pack/core/start/vim-unimpaired
+	url = git@github.com:tpope/vim-unimpaired.git

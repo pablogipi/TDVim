@@ -38,6 +38,21 @@ if s:DetectDevMode()
 endif
 " }}}
 
+
+" Load Packages {{{
+
+" Load all default packages
+packloadall
+
+" Packages for dev mode
+if g:tdvim_dev_mode
+    " ALE
+    packadd ale
+endif
+
+" }}}
+
+
 " Functions {{{
 
 " GetOS {{{2
