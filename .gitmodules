@@ -13,3 +13,9 @@
 [submodule "vim_packages/pack/core/start/vim-surround"]
 	path = vim_packages/pack/core/start/vim-surround
 	url = git@github.com:tpope/vim-surround.git
+[submodule "vim_packages/pack/core/start/vim-vinegar"]
+	path = vim_packages/pack/core/start/vim-vinegar
+	url = git@github.com:tpope/vim-vinegar.git
+[submodule "vim_packages/pack/core/start/delimitMate"]
+	path = vim_packages/pack/core/start/delimitMate
+	url = git@github.com:Raimondi/delimitMate.git
