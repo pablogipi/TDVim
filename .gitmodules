@@ -10,3 +10,6 @@
 [submodule "vim_packages/pack/core/start/vim-unimpaired"]
 	path = vim_packages/pack/core/start/vim-unimpaired
 	url = git@github.com:tpope/vim-unimpaired.git
+[submodule "vim_packages/pack/core/start/vim-surround"]
+	path = vim_packages/pack/core/start/vim-surround
+	url = git@github.com:tpope/vim-surround.git
