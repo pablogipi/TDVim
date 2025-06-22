@@ -690,7 +690,12 @@ function! TDVimLightlineExtraInfo() abort
       let l:extra_info = ''
       " Get closest function using Vista
       if exists('b:vista_nearest_method_or_function') 
-          let l:extra_info = "\uf794⯈" . b:vista_nearest_method_or_function . '(...)'
+          "let l:extra_info = "\uf794⯈" . b:vista_nearest_method_or_function . '(...)'
+          "let l:extra_info = "\uf794\u2192" . b:vista_nearest_method_or_function . '(...)'
+          let l:extra_info = "→ " . b:vista_nearest_method_or_function . '(...)'
+          "let l:extra_info = "\uf794\u27a4" . b:vista_nearest_method_or_function . '(...)'
+          "let l:extra_info = "\u27a4" . b:vista_nearest_method_or_function . '(...)'
+          
       endif
       return l:extra_info
       "return exists('b:vista_nearest_method_or_function') ? b:vista_nearest_method_or_function : ''

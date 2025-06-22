@@ -19,3 +19,12 @@
 [submodule "vim_packages/pack/core/start/delimitMate"]
 	path = vim_packages/pack/core/start/delimitMate
 	url = git@github.com:Raimondi/delimitMate.git
+[submodule "vim_packages/pack/core/start/lightline"]
+	path = vim_packages/pack/core/start/lightline
+	url = git@github.com:itchyny/lightline.vim.git
+[submodule "vim_packages/pack/core/start/lightline-bufferline"]
+	path = vim_packages/pack/core/start/lightline-bufferline
+	url = git@github.com:mengelbrecht/lightline-bufferline.git
+[submodule "vim_packages/pack/dev/start/vim-gitbranch"]
+	path = vim_packages/pack/dev/start/vim-gitbranch
+	url = git@github.com:itchyny/vim-gitbranch.git
