@@ -28,3 +28,12 @@
 [submodule "vim_packages/pack/dev/start/vim-gitbranch"]
 	path = vim_packages/pack/dev/start/vim-gitbranch
 	url = git@github.com:itchyny/vim-gitbranch.git
+[submodule "vim_packages/pack/core/start/vim-easy-align"]
+	path = vim_packages/pack/core/start/vim-easy-align
+	url = git@github.com:junegunn/vim-easy-align.git
+[submodule "vim_packages/pack/dev/start/vindent"]
+	path = vim_packages/pack/dev/start/vindent
+	url = git@github.com:jessekelighine/vindent.vim.git
+[submodule "vim_packages/pack/dev/start/nerdcommenter"]
+	path = vim_packages/pack/dev/start/nerdcommenter
+	url = git@github.com:preservim/nerdcommenter.git
