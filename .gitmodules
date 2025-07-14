@@ -46,3 +46,9 @@
 [submodule "vim_packages/pack/core/start/fzf.vim"]
 	path = vim_packages/pack/core/start/fzf.vim
 	url = https://github.com/junegunn/fzf.vim.git
+[submodule "vim_packages/pack/core/start/nerdtree"]
+	path = vim_packages/pack/core/start/nerdtree
+	url = https://github.com/preservim/nerdtree.git
+[submodule "vim_packages/pack/core/start/nerdtree-git-plugin"]
+	path = vim_packages/pack/core/start/nerdtree-git-plugin
+	url = https://github.com/Xuyuanp/nerdtree-git-plugin.git
