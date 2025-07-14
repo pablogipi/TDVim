@@ -37,3 +37,12 @@
 [submodule "vim_packages/pack/dev/start/nerdcommenter"]
 	path = vim_packages/pack/dev/start/nerdcommenter
 	url = git@github.com:preservim/nerdcommenter.git
+[submodule "vim_packages/pack/core/start/vim-devicons"]
+	path = vim_packages/pack/core/start/vim-devicons
+	url = https://github.com/ryanoasis/vim-devicons.git
+[submodule "vim_packages/pack/core/start/fzf"]
+	path = vim_packages/pack/core/start/fzf
+	url = https://github.com/junegunn/fzf.git
+[submodule "vim_packages/pack/core/start/fzf.vim"]
+	path = vim_packages/pack/core/start/fzf.vim
+	url = https://github.com/junegunn/fzf.vim.git
