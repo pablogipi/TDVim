@@ -52,3 +52,9 @@
 [submodule "vim_packages/pack/dev/start/nerdtree-git-plugin"]
 	path = vim_packages/pack/dev/start/nerdtree-git-plugin
 	url = https://github.com/Xuyuanp/nerdtree-git-plugin.git
+[submodule "vim_packages/pack/dev/opt/fzf-funky"]
+	path = vim_packages/pack/dev/opt/fzf-funky
+	url = https://github.com/tracyone/fzf-funky.git
+[submodule "vim_packages/pack/dev/opt/vim-gitgutter"]
+	path = vim_packages/pack/dev/opt/vim-gitgutter
+	url = https://github.com/airblade/vim-gitgutter

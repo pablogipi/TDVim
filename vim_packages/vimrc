@@ -47,6 +47,8 @@ packloadall
 " Packages for dev mode
 if g:tdvim_dev_mode
     " ALE
+    packadd fzf-funky
+    packadd vim-gitgutter
     packadd ale
 endif
 
@@ -2270,6 +2272,18 @@ if g:tdvim_dev_mode
     endif
     " Git keymaps:
     " Navigate hunks
+
+    "TODO: Update quick help with F9 keymaps, they are outdated.
+    "Add support for hunks text objects:
+    "omap ih <Plug>(GitGutterTextObjectInnerPending)
+    "omap ah <Plug>(GitGutterTextObjectOuterPending)
+    "xmap ih <Plug>(GitGutterTextObjectInnerVisual)
+    "xmap ah <Plug>(GitGutterTextObjectOuterVisual)
+    "Check if we allow git-gutter to do maps:
+    "let g:gitgutter_map_keys = 0
+    "Finally check how to have Ale signs in gutter with git-gutter signs,
+    "I think now Ale oberride git-gutter signs
+
     nmap ]h <Plug>(GitGutterNextHunk)
     nmap [h <Plug>(GitGutterPrevHunk)
     " - Diff  with index
@@ -2279,7 +2293,7 @@ if g:tdvim_dev_mode
     " - Show hunks in QuickFix
     command! TDVimGitHunks :GitGutterQuickFix | copen
     nnoremap   <S-F9>   :TDVimGitHunks<CR>
-    " Symbols keymaps
+    " Symbols keymaps. In dev mode use Vista instead of FzfFunky or simple ctags
     if s:has_fzf
         nunmap <F6>
         xunmap <F6>
