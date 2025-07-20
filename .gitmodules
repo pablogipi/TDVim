@@ -58,3 +58,15 @@
 [submodule "vim_packages/pack/dev/opt/vim-gitgutter"]
 	path = vim_packages/pack/dev/opt/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter
+[submodule "vim_packages/pack/colors/start/gruvbox"]
+	path = vim_packages/pack/colors/start/gruvbox
+	url = https://github.com/morhetz/gruvbox.git
+[submodule "vim_packages/pack/dev/opt/scratch.vim"]
+	path = vim_packages/pack/dev/opt/scratch.vim
+	url = https://github.com/mtth/scratch.vim.git
+[submodule "vim_packages/pack/dev/opt/vista"]
+	path = vim_packages/pack/dev/opt/vista
+	url = https://github.com/liuchengxu/vista.vim.git
+[submodule "vim_packages/pack/dev/opt/jedi-vim"]
+	path = vim_packages/pack/dev/opt/jedi-vim
+	url = https://github.com/davidhalter/jedi-vim.git

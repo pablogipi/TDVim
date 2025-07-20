@@ -49,6 +49,8 @@ if g:tdvim_dev_mode
     " ALE
     packadd fzf-funky
     packadd vim-gitgutter
+    packadd scratch.vim
+    packadd vista
     packadd ale
 endif
 
@@ -2341,6 +2343,6 @@ endif
 "}}}
 
 " TDVim version
-let $TDVIMVERSION="0.4.5"
+let $TDVIMVERSION="0.5.0"
 
 " vim: ts=8 ft=vim nowrap fdm=marker ff=unix

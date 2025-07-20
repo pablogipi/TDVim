@@ -89,6 +89,7 @@ Window Management                   *tdvim-windows*
     - Focus Current File in Explorer:         <leader>ef
     - In Window Explorer:                     <->
     - Open/Close Terminal:                    <F7>
+    - Open/Close Scratchpad:                  <Shift-F7>, <Ctrl-F7>
     - LeaderF Search Commands Menu:           <Shift-F7>
 
 - Explorer (NERD Tree)
@@ -175,6 +176,8 @@ Development                     *tdvim-development*
     - Go to previous hunk position:               [h
     - Go to next hunk position:                   ]h
 - Tasks List:                                     <Ctrl-Shift-F8>, <leader>t
+- SratchPad:                                      <Shift-F7>, gs
+  - Preview ScratchPad                            <Ctrl-F7>
 - Diffs:
     - Jump to previous diff change:               [c
     - Jump to next diff change:                   ]c
@@ -206,7 +209,8 @@ Function Keys                     *tdvim-func-keys*
    - <Shift-F6>:       Echo current function
    - <Ctrl-Shift-F6>:  Tags Finder
 - <F7>:                Open Terminal
-   - <Shift-F7>:       LeaderF Search Commands Menu
+   - <Shift-F7>:       Open ScratchPad
+   - <Ctrl-F7>:        Preview ScratchPad
 - <F8>:                Open file browser
    - <Ctrl-F8>:        Enable/disable menu bar
    - <Shift-F8>:       Tags Explorer
