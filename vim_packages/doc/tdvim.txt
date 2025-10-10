@@ -53,8 +53,8 @@ Editing                             *tdvim-editing*
 - File History:                            <Ctrl-Shift-F4>
 - Go to previous jump position:            [j
 - Go to next jump position:                ]j
-- Go to previous change position:          [c
-- Go to next change position:              ]c
+- Go to previous change position:          [d
+- Go to next change position:              ]d
 - Diff non saved file with latest version: <Ctrl-F4>
 
 ==================================================
@@ -88,9 +88,8 @@ Window Management                   *tdvim-windows*
     - Focus Explorer:                         <leader>e, <leader>je
     - Focus Current File in Explorer:         <leader>ef
     - In Window Explorer:                     <->
-    - Open/Close Terminal:                    <F7>
-    - Open/Close Scratchpad:                  <Shift-F7>, <Ctrl-F7>
-    - LeaderF Search Commands Menu:           <Shift-F7>
+    - Open/Close Terminal:                    <F11>
+    - Open/Close Scratchpad:                  <Shift-F11>, <Ctrl-F11>
 
 - Explorer (NERD Tree)
   - Go up dir:                                <u>
@@ -100,22 +99,21 @@ Window Management                   *tdvim-windows*
 ==================================================
 Search                                 *tdvim-search*
 
-- Grep word under cursor in all files:        F4, <leader>f, <leader>g
-- Jump to next search in location window:     ]s
-- Jump to next search in location window:     [s
-- Jump to first search in location window:    [S
-- Jump to last search in location window:     ]S
-- Browse changes in file:                     Ctrl-F4, <leader>fc
-- Browse lines in file:                       Shift-F4, <leader>fl
-- Grep operator (use motions and selections): gs
+- Grep word under cursor in all files:          F4, <leader>f, <leader>g
+- Jump to next search in location window:       ]s
+- Jump to next search in location window:       [s
+- Jump to first search in location window:      [S
+- Jump to last search in location window:       ]S
+- Browse changes in file:                       <F7>, <leader>fc
+- Browse jumps in file:                         <Shift-F7>, <leader>fj
+- Browse lines in file:                         <leader>fl
+- Grep operator (use motions and selections):   gs
 
 ==================================================
 Commands                                 *tdvim-commands*
 
 - Command Line:           <F2>
-- Command History:        <Ctrl-F2>
 - Visual Block Selection: <Shift-F2>
-- Main LeaderF Commands:  <Ctrl-Shift-F2>, <Ctrl-Shift-P>
 
 ==================================================
 Development                     *tdvim-development*
@@ -123,10 +121,14 @@ Development                     *tdvim-development*
 - Moving Around:
     - Move to prev or next indented line:       <[l> , <]l>
     - Move to prev or next level indented line: <[L> , <]L>
-    - Grep:                                     <F4>
-    - Browse Changes:                           <Ctrl-F4>
-    - Go to previous change position:           [c
-    - Go to next change position:               ]c
+    - Grep current word:                        <F4>
+    - Grep in project:                          <Shift-F4>
+    - Go to previous change position:           [d
+    - Go to next change position:               ]d
+    - Search Changes:                           <F11>
+    - Go to previous jump position:             [j
+    - Go to next jump position:                 ]j
+    - Search Jumps:                             <Shift-F11>
     - Go to start of next function:             ]]
     - Go to next end of function:               ][
     - Go to previous start of function:         []
@@ -141,12 +143,9 @@ Development                     *tdvim-development*
     - Multiline Comment:                        <Ctrl-F5>, <leader>cs
     - Yank and Comment:                         <Shift-F5>, <leader>cy
 - Build:
-    - Build:                                    <F11>
-    - Check Syntax:                             <Ctrl-Shift-F11>
     - Prev/Next Error:                          []q
 - Tags and Code Navigation:
-    - Build Buffer Tags:                        <F12>
-    - Build Project Tags:                       <Ctrl-F12>
+    - Build Buffer Tags:                        <F11>
     - Tags Explorer:                            <Shift-F8>
     - Browse functions:                         <F6>, <leader>fu
     - Echo current function:                    <Shift-F6>
@@ -175,56 +174,54 @@ Development                     *tdvim-development*
     - Git File Log:                               <Ctrl-Shift-F9>
     - Go to previous hunk position:               [h
     - Go to next hunk position:                   ]h
-- Tasks List:                                     <Ctrl-Shift-F8>, <leader>t
-- SratchPad:                                      <Shift-F7>, gs
-  - Preview ScratchPad                            <Ctrl-F7>
+- Tasks List:                                     
+- SratchPad:                                      <Shift-F11>, gs
+  - Preview ScratchPad                            <Ctrl-F11>
 - Diffs:
     - Jump to previous diff change:               [c
     - Jump to next diff change:                   ]c
+- Timestamp:
+    - Introduce timestamp:                          <leader>d
 
 ==================================================
 Function Keys                     *tdvim-func-keys*
 
-- <F1>:                help
-   - <Shift-F1>:       Help for word under the cursor
-   - <Ctrl-F1>:        Open shortcuts help
-   - <Ctrl-Shift-F1>:  Open Start Menu
-- <F2>:                Command line mode
-   - <Ctrl-F2>:        Search Command Line History
-   - <Shift-F2>:       Visual block selection
-   - <Ctrl-Shift-F2>:  Main LeaderF Commands
-- <F3>:                Open buffer
-   - <Ctrl-Shift-F3>:  Open Recent files
-   - <Shift-F3>:       Open Files
-   - <Ctrl-F3>:        Switch previous buffer
-- <F4>:                Grep word under cursor in all files in location
-   - <Ctrl-F4>:        Diff non saved file with latest version
-   - <Shift-F4>:       Navigate lines
-   - <Ctrl-Shift-F4>:  File History
-- <F5>:                Toggle line comment
-   - <Shift-F5>:       Yank and comment line
-   - <Ctrl-F5>:        Multi-line comment
-- <F6>:                Browse Functions
-   - <Ctrl-F6>:        Show tag for current word in Preview Window.
-   - <Shift-F6>:       Echo current function
-   - <Ctrl-Shift-F6>:  Tags Finder
-- <F7>:                Open Terminal
-   - <Shift-F7>:       Open ScratchPad
-   - <Ctrl-F7>:        Preview ScratchPad
-- <F8>:                Open file browser
-   - <Ctrl-F8>:        Enable/disable menu bar
-   - <Shift-F8>:       Tags Explorer
-   - <Ctrl-Shift-F8>:  Tasks list
-- <F9>:                Git Status
-   - <Ctrl-F9>:        Git Log
-   - <Shift-F9>:       Git Diff
-   - <Ctrl-Shift-F9>:  Git File Log
-- <F10>:               NOT USED
-- <F11>:               Build
-   - <Ctrl F11>:       Next Error
-   - <Shift F11>:      Prev Error
-   - <Ctrl-Shift F11>: Errors list
-- <F12>:               Build Tags
+- <F1>:                 help
+   - <Shift-F1>:        Help for word under the cursor
+   - <Ctrl-F1>:         Open shortcuts help
+   - <Ctrl-Shift-F1>:   Open Start Menu
+- <F2>:                 Command line mode
+   - <Ctrl-F2>:         Search Command Line History
+   - <Shift-F2>:        Visual block selection
+   - <Ctrl-Shift-F2>:   Main LeaderF Commands
+- <F3>:                 Open buffer
+   - <Ctrl-Shift-F3>:   Open Recent files
+   - <Shift-F3>:        Open Files
+   - <Ctrl-F3>:         Switch previous buffer
+- <F4>:                 Grep word under cursor in all files in location
+   - <Shift-F4>:        Grep in project
+   - <Ctrl-Shift-F4>:   File History
+- <F5>:                 Toggle line comment
+   - <Shift-F5>:        Yank and comment line
+   - <Ctrl-F5>:         Multi-line comment
+- <F6>:                 Browse Functions
+   - <Shift-F6>:        Run code fixer and formatter
+- <F7>:                 Changes
+   - <Shift-F7>:        Jumps
+- <F8>:                 Open file browser
+   - <Ctrl-F8>:         Enable/disable menu bar
+   - <Shift-F8>:        Tags Explorer
+   - <Ctrl-Shift-F8>:   Tasks list
+- <F9>:                 Git Status
+   - <Ctrl-F9>:         Git Log
+   - <Shift-F9>:        Git Diff
+   - <Ctrl-Shift-F9>:   Git File Log
+- <F10>:                Save All & Close
+    - <Ctrl-F10>:       Close without Saving
+- <F11>:                Open Terminal
+   - <Shift-F11>:       Open ScratchPad
+   - <Ctrl-F11>:        Preview ScratchPad
+- <F12>:                RESERVED - NOT USED
 
 ==================================================
 Leader Key                           *tdvim-leader*

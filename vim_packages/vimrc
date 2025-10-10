@@ -46,12 +46,12 @@ packloadall
 
 " Packages for dev mode
 if g:tdvim_dev_mode
-    " ALE
     packadd fzf-funky
     packadd vim-gitgutter
     packadd scratch.vim
     packadd vista
     packadd ale
+    packadd jedi-vim
 endif
 
 " }}}
@@ -1400,7 +1400,7 @@ else
     xnoremap  <leader>g     :TDvimGrep  <C-R><C-W>
 endif
 
-" Grep/Search in project - C-F4
+" Grep/Search in project - S-F4
 if s:has_fzf &&  s:has_rg
     nnoremap  <S-F4>          :Rg<CR>
     inoremap  <S-F4>          :<C-O>Rg<CR>
@@ -1461,18 +1461,43 @@ nmap <silent> ]S :clast<CR>
 
 " Navigate through changes and jumps
 " Navigate Changes
-" Default mapped to []c
-" XXX: Disabled at the moment, []c is used in diffmode, we need to find
-" a different keymap for changes
-"nmap <silent> [c    g;
-"imap <silent> [c    <Esc>g;
-"vmap <silent> [c    g;
-"nmap <silent> ]c    g,
-"imap <silent> ]c    <Esc>g,
-"vmap <silent> ]c    g,
+" Default mapped to []d
+" XXX: []c is used in diffmode, change to []d
+nmap <silent> [d    g;
+imap <silent> [d    <Esc>g;
+vmap <silent> [d    g;
+nmap <silent> ]d    g,
+imap <silent> ]d    <Esc>g,
+vmap <silent> ]d    g,
 if s:has_fzf
+    nnoremap   <F7>   :Changes<cr>
+    vnoremap   <F7>   :Changes<cr>
+    inoremap   <F7>   <ESC>:Changes<cr>
+    nnoremap   <leader>fc   :Changes<cr>
+    vnoremap   <leader>fc   :Changes<cr>
+    inoremap   <leader>fc   <ESC>:Changes<cr>
 endif
 
+" Navigate Jumps
+" Default mapped to []d
+nmap <silent> [j    <C-O>
+nmap <silent> ]j    <C-I> 
+if s:has_fzf
+    nnoremap   <S-F7>   :Jumps<cr>
+    vnoremap   <S-F7>   :Jumps<cr>
+    inoremap   <S-F7>   <ESC>:Jumps<cr>
+    nnoremap   <leader>fj   :Jumps<cr>
+    vnoremap   <leader>fj   :Jumps<cr>
+    inoremap   <leader>fj   <ESC>:Jumps<cr>
+endif
+
+" Navigate Lines
+" Default mapped to <leader>fl
+if s:has_fzf
+    nnoremap   <leader>fl   :Lines<cr>
+    vnoremap   <leader>fl   :Lines<cr>
+    inoremap   <leader>fl   <ESC>:Lines<cr>
+endif
 " }}}
 
 " WindowManagement {{{2
@@ -1498,14 +1523,14 @@ nnoremap  <silent> <leader>qw         :call TDVimClosePreviousWindow()<CR>
 vnoremap  <silent> <leader>qw         <Esc>:call TDVimClosePreviousWindow()<CR> 
 
 " Jump to QuickFix Window - <leader>jq
-nnoremap  <silent> <leader>jq         :call utils#JumpToWindowsByType( "quickfix" )<CR> 
-xnoremap  <silent> <leader>jq         <ESC>:call utils#JumpToWindowsByType( "quickfix" )<CR> 
+nnoremap  <silent> <leader>jq         :call JumpToWindowsByType( "quickfix" )<CR> 
+xnoremap  <silent> <leader>jq         <ESC>:call JumpToWindowsByType( "quickfix" )<CR> 
 " Jump to Location Window - <leader>jl
-nnoremap  <silent> <leader>jl         :call utils#JumpToWindowsByType( "location" )<CR> 
-xnoremap  <silent> <leader>jl         <ESC>:call utils#JumpToWindowsByType( "location" )<CR> 
+nnoremap  <silent> <leader>jl         :call JumpToWindowsByType( "location" )<CR> 
+xnoremap  <silent> <leader>jl         <ESC>:call JumpToWindowsByType( "location" )<CR> 
 " Jump to Preview Window - <leader>jl
-nnoremap  <silent> <leader>jp         :call utils#JumpToWindowsByType( "preview" )<CR> 
-xnoremap  <silent> <leader>jp         <ESC>:call utils#JumpToWindowsByType( "preview" )<CR> 
+nnoremap  <silent> <leader>jp         :call #JumpToWindowsByType( "preview" )<CR> 
+xnoremap  <silent> <leader>jp         <ESC>:call JumpToWindowsByType( "preview" )<CR> 
 
 " Jump to Location List Window {{{3
 nnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow :call utils#JumpToWindowsByType( "location" )<CR>
@@ -1627,37 +1652,40 @@ else
     nnoremap   <F6>   :tjump <C-r><C-w><space>
     xnoremap   <F6>   :tjump <C-r><C-w><space>
 endif
+
 " Unimpaired tags navigation style with []t
+" ]t is usually overriden by more advanced methods, like Jedi or a LS
 nnoremap   ]t   :tjump <C-r><C-w><CR>
 nnoremap   [t   <C-t>
 " Inspect and preview tag
-nnoremap   <S-F6>   :ptjump <C-r><C-w><space>
-xnoremap   <S-F6>   :ptjump <C-r><C-w><space>
+" DEPRECATED: weFriday, 10 Oct 2025 01:05:02on't use tags anymore
+"nnoremap   <S-F6>   :ptjump <C-r><C-w><space>
+"xnoremap   <S-F6>   :ptjump <C-r><C-w><space>
 
+" DEPRECATED: removethis map
 " Create tags file
-nnoremap   <F11>   :TDVimMakeTags <CR>
+"nnoremap   <F11>   :TDVimMakeTags <CR>
 
 " Insert Timestamp
-nmap <S-F11> i<C-R>=strftime("%A, %d %b %Y %r")<CR><Esc>
-imap <S-F11> <C-R>=strftime("%A, %d %b %Y %r")<CR>
+nmap <leader>d i<C-R>=strftime("%A, %d %b %Y %r")<CR><Esc>
+imap <leader>d <C-R>=strftime("%A, %d %b %Y %r")<CR>
 
 " Autocomplete using Previous and Next
 inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
 inoremap   <S-TAB>  <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
-" keymap("i", "<tab>", "<c-r>=utils#TabAutocompleteWrapper(\"backward\")<cr>", opts)
-" keymap("i", "<s-tab>", "<c-r>=utils#TabAutocompleteWrapper(\"forward\")<cr>", opts)
 
+" TODO: hotkeys for ALE fixer and formater, use F6 or F9 ?
 
 " }}}
 
 " Terminal {{{2
 " Termnal keymaps
-" nnoremap <F7>       :wincmd b \| botright terminal<CR>
+" nnoremap <F11>       :wincmd b \| botright terminal<CR>
 " Open terminal at bottom
-nnoremap <F7>       :TDVimOpenTerminal<CR>
+nnoremap <F11>       :TDVimOpenTerminal<CR>
 nnoremap <leader>t  :TDVimOpenTerminal<CR>
 " Minimize terminal window and jump to previous window
-tnoremap <F7>       <C-W>1_<C-W>W
+tnoremap <F11>       <C-W>1_<C-W>W
 " }}}
 
 
@@ -1740,8 +1768,8 @@ if has("autocmd")
         " setlocal list conceals leading and trailing charatcers so it cancels
         " the ExtraWhitespace option set before
         " Show indent guides
-        autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h setlocal list
-        autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h execute 'setlocal listchars=trail:·,tab:│\ ,leadmultispace:┆' . repeat('\ ', &sw - 1)
+        autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h,*vimrc setlocal list
+        autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h,*vimrc execute 'setlocal listchars=trail:·,tab:│\ ,leadmultispace:┆' . repeat('\ ', &sw - 1)
     augroup END
     " BufEnter
     augroup tdvimBufEnter
@@ -1796,7 +1824,6 @@ if has("autocmd")
     endif
     augroup tdvimCursorHold
         autocmd! CursorHold * ++nested call TDVimUpdateDevIconFileType()
-        "autocmd! CursorHold * ++nested call utils#UpdateDevIconFileType()
         "autocmd! CursorHold leaderf ++nested normal <C-I>
     augroup END
 
@@ -1996,6 +2023,7 @@ if !s:has_bash
                     \ call fzf#vim#files(<q-args>, {'options': ['--prompt=Files:> ', '--layout=reverse', '--info=inline']}, <bang>0)
     endif
 endif
+
 " }}}
 
 " Jedi {{{2
@@ -2124,6 +2152,24 @@ let g:vindent_jumps            = 1    " make vindent motion count as a |jump-mot
 " Black {{{2
 let g:black_use_virtualenv = 0
 " }}}
+
+" ALE {{{2
+" TODO: setup ALE linter and fixer for pyhon usinhg ruff if available, othersie
+" fallback to the default
+" Other file formats linters? vim? bash?
+if  executable('ruff')
+    " Linters
+    let g:ale_linters = { "python": ["ruff"] }
+    " Fixers
+    let g:ale_fixers = { "python": ["ruff", "trim_whitespace", "ruff_format"] }
+    " Options
+    " Sort imports
+    let g:ale_python_ruff_options = '--extend-select I'
+endif
+"let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+" }}}
+
 
 " Setup Plugins }}}
 
@@ -2283,8 +2329,6 @@ if g:tdvim_dev_mode
     "xmap ah <Plug>(GitGutterTextObjectOuterVisual)
     "Check if we allow git-gutter to do maps:
     "let g:gitgutter_map_keys = 0
-    "Finally check how to have Ale signs in gutter with git-gutter signs,
-    "I think now Ale oberride git-gutter signs
 
     nmap ]h <Plug>(GitGutterNextHunk)
     nmap [h <Plug>(GitGutterPrevHunk)
@@ -2306,8 +2350,25 @@ if g:tdvim_dev_mode
     " Enable LSP Mappings for those filetypes for what we usually have a LS
     "autocmd FileType python call s:TDVimLSPMappings()
     "Scratch Pad
-    nnoremap   <S-F7>   :Scratch<CR>
-    nnoremap   <C-F7>   :ScratchPreview<CR>
+    nnoremap   <S-F11>   :Scratch<CR>
+    nnoremap   <C-F11>   :ScratchPreview<CR>
+
+    " ALE Fixer and formatter
+    if exists("g:ale_enabled")
+        " Check if F6 is mapped and unmap it
+        if maparg('<S-F6>') != ''
+            execute 'unmap <S-F6>'
+        endif
+        nnoremap   <S-F6>   :ALEFix<CR>
+    endif
+
+    " Configs for different file types
+    " Python
+    " Run ALEFix on Python buffer save
+    if exists(':ALEFix') == 2
+        autocmd FileType python let b:ale_fix_on_save = 1
+        autocmd FileWritePre *.py silent! execute ':ALEFix'
+    endif
 
 endif " devmode END
 
@@ -2315,29 +2376,29 @@ endif " devmode END
 
 " Load user settings {{{
 if has('unix')
-  " unix-like platform (including Cygwin)
-  if filereadable($HOME . "/myvimrc")
-    source $HOME/myvimrc
-  elseif filereadable($HOME . "/.myvimrc")
-    source $HOME/.myvimrc
-  elseif filereadable($HOME . "/_myvimrc")
-    source $HOME/_myvimrc
-  else
-    " Do nothing
-  endif
-else
-  " probably Windows
-  if has("win32")
+    " unix-like platform (including Cygwin)
     if filereadable($HOME . "/myvimrc")
-      source $HOME/myvimrc
-    elseif filereadable($HOME . "/_myvimrc")
-      source $HOME/_myvimrc
+        source $HOME/myvimrc
     elseif filereadable($HOME . "/.myvimrc")
-      source $HOME/.myvimrc
+        source $HOME/.myvimrc
+    elseif filereadable($HOME . "/_myvimrc")
+        source $HOME/_myvimrc
     else
-      " Do nothing
+        " Do nothing
     endif
-  endif
+else
+    " probably Windows
+    if has("win32")
+        if filereadable($HOME . "/myvimrc")
+            source $HOME/myvimrc
+        elseif filereadable($HOME . "/_myvimrc")
+            source $HOME/_myvimrc
+        elseif filereadable($HOME . "/.myvimrc")
+            source $HOME/.myvimrc
+        else
+            " Do nothing
+        endif
+    endif
 endif
 
 "}}}
