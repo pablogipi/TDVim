@@ -1758,6 +1758,7 @@ if has("autocmd")
 		    "\		setlocal omnifunc=syntaxcomplete#Complete |
 		    "\	endif
         autocmd! FileType nerdtree call s:SetupNERDTreeBuffer()
+        autocmd! FileType nerdtree setlocal nobuflisted
         autocmd! BufRead,BufNewFile *.usd set filetype=usd
         autocmd! BufRead,BufNewFile *.usda set filetype=usda
         autocmd! BufNewFile,BufRead *.hjson setlocal filetype=hjson
