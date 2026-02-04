@@ -99,7 +99,9 @@ Window Management                   *tdvim-windows*
 ==================================================
 Search                                 *tdvim-search*
 
-- Grep word under cursor in all files:          F4, <leader>f, <leader>g
+- Grep word under cursor in all files:          <F4>, <leader>f, <leader>g
+- Grep word in project:                         <Shift-F4>
+- Grep word in projects, sresult in Quickfix:   <Ctrl-F4>
 - Jump to next search in location window:       ]s
 - Jump to next search in location window:       [s
 - Jump to first search in location window:      [S
@@ -168,10 +170,9 @@ Development                     *tdvim-development*
     - Show available snippets:                  <Ctrl-B>
     - Forward in snippets placeholders:         <Ctrl-Shift-TAB>
 - Git:
-    - GiT File diff:                              <Shift-F9>, <leader>gd
-    - Git Status:                                 <F9>, <leader>gs
-    - Git Log:                                    <Ctrl-F9>, <leader>gl
-    - Git File Log:                               <Ctrl-Shift-F9>
+    - GiT File diff:                              <F9>
+    - Fold code based on Git Hunks:               <Ctrl-F9>
+    - Show Git Hunks in Quickfix:                 <Shift-F9>
     - Go to previous hunk position:               [h
     - Go to next hunk position:                   ]h
 - Tasks List:                                     
@@ -200,7 +201,7 @@ Function Keys                     *tdvim-func-keys*
    - <Ctrl-F3>:         Switch previous buffer
 - <F4>:                 Grep word under cursor in all files in location
    - <Shift-F4>:        Grep in project
-   - <Ctrl-Shift-F4>:   File History
+   - <Ctrl-F4>:         Grep in project sending results to Quickfix
 - <F5>:                 Toggle line comment
    - <Shift-F5>:        Yank and comment line
    - <Ctrl-F5>:         Multi-line comment
@@ -212,10 +213,9 @@ Function Keys                     *tdvim-func-keys*
    - <Ctrl-F8>:         Enable/disable menu bar
    - <Shift-F8>:        Tags Explorer
    - <Ctrl-Shift-F8>:   Tasks list
-- <F9>:                 Git Status
-   - <Ctrl-F9>:         Git Log
-   - <Shift-F9>:        Git Diff
-   - <Ctrl-Shift-F9>:   Git File Log
+- <F9>:                 Git Diff
+   - <Ctrl-F9>:         Fold code based on Git Hunks
+   - <Shift-F9>:        Show Git Hunks in Quickfix
 - <F10>:                Save All & Close
     - <Ctrl-F10>:       Close without Saving
 - <F11>:                Open Terminal
