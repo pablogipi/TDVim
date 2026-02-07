@@ -137,8 +137,13 @@ Development                     *tdvim-development*
     - Go to previous end of function:           [[
     - Python:
       - Class text object:                      c
-      - Function text object:                   f
-      - These motion are valid:                 ic, af, dif, etc ...
+        - Function text object:                 f
+        - Doc String                            d
+        - These motion are valid:               ic, af, dif, etc ...
+      - Extended Match Pairs (matchpairs):      %
+        - Match loop oppsite:                   g%
+        - Prev and Next Matched                 [%, ]%
+        - In python it detects match for if,while,for,try, functions, etc ...
 
 - Comments:
     - Toggle Comment:                           <F5>, <leader>ct
