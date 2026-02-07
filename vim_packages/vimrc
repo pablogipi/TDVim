@@ -52,6 +52,8 @@ if g:tdvim_dev_mode
     packadd vista
     packadd ale
     packadd jedi-vim
+    packadd vim-pythonsense
+    packadd vim-python-match
 endif
 
 " }}}

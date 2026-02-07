@@ -70,3 +70,9 @@
 [submodule "vim_packages/pack/dev/opt/jedi-vim"]
 	path = vim_packages/pack/dev/opt/jedi-vim
 	url = https://github.com/davidhalter/jedi-vim.git
+[submodule "vim_packages/pack/dev/opt/vim-pythonsense"]
+	path = vim_packages/pack/dev/opt/vim-pythonsense
+	url = https://github.com/jeetsukumaran/vim-pythonsense
+[submodule "vim_packages/pack/dev/opt/vim-python-match"]
+	path = vim_packages/pack/dev/opt/vim-python-match
+	url = https://github.com/okcompute/vim-python-match
