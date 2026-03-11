@@ -76,3 +76,6 @@
 [submodule "vim_packages/pack/dev/opt/vim-python-match"]
 	path = vim_packages/pack/dev/opt/vim-python-match
 	url = https://github.com/okcompute/vim-python-match
+[submodule "vim_packages/pack/dev/opt/dwm.vim"]
+	path = vim_packages/pack/dev/opt/dwm.vim
+	url = git@github.com:pablogipi/dwm.vim.git

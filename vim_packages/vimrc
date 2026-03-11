@@ -54,6 +54,8 @@ if g:tdvim_dev_mode
     packadd jedi-vim
     packadd vim-pythonsense
     packadd vim-python-match
+
+    packadd dwm.vim
 endif
 
 " }}}
@@ -187,8 +189,6 @@ function! s:VSetSearch()
 endfunction
 " }}}
 
-
-
 " CloseAllBuffersByType {{{2
 " Close all buffers for a given buffertype, filetype or syntax
 " @param type type to delete
@@ -223,7 +223,6 @@ function! TDVimCloseAllBuffersByType( type, mode )
 
 endfunction
 " }}}
-
 
 " CloseAllWindowsByType {{{2
 " Close all windows for a given buffertype
@@ -265,6 +264,67 @@ function! TDVimCloseAllWindowsByType( buffertype )
 endfunction
 " }}}
 
+" FindWindowByType {{{2
+" Given a buffer type, find it window number
+" This can be used for different porpose, detect a particualar buffer type is
+" open in a window
+" If buffer type is not found then return -1, otherwise return the index of the
+" window
+" Check against:
+" - Buffer type
+" - File Type
+" - Preview Window
+"   TODO: use this function in DWM
+function! TDVimFindWindowByType ( buffertype )
+  " Save current window number to revert.
+  let save_winnr = winnr()
+  let nwin = 1
+  while 1
+      let nbuf = winbufnr(nwin)
+      " After all window processed, finish.
+      if nbuf == -1
+          let nwin = -1
+          break
+      endif
+      " Close window if its buftype is same as buffertype argument.  If not help, go to next window.
+      "echo "Look into window " . nwin . ", buffer type: " . getbufvar(nbuf, '&buftype')
+      let cond1 = getbufvar(nbuf, '&buftype') ==# a:buffertype
+      let cond2 = getbufvar(nbuf, '&filetype') ==# a:buffertype
+      let cond3 = "preview" ==# a:buffertype ? getwinvar(nwin, '&previewwindow') : 0
+      " quickfix buffer type is a special case, it can be quickfix or location
+      " list
+      if "quickfix" ==# a:buffertype || "location" ==# a:buffertype
+          " Get current window info
+          let wininfo = s:getWinInfo( nwin )
+          let islocwin = wininfo['loclist']
+          let cond1 = 0
+          if "quickfix" ==# a:buffertype && wininfo['quickfix'] && !wininfo['loclist']
+              let cond1 = 1
+          endif
+          if "location" ==# a:buffertype && wininfo['quickfix'] && wininfo['loclist']
+              let cond1 = 1
+          endif
+          "echomsg "Type: " . a:buffertype . " ,Condition: " . cond1
+      endif
+      if "qf" ==# a:buffertype
+          " Get current window info
+          let wininfo = s:getWinInfo( nwin )
+          let cond2 = wininfo['quickfix'] && !wininfo['loclist']
+      endif
+      if cond1 || cond2 || cond3
+          "echomsg "Correct!, jump to window " . nwin
+          " Correct saved window number if younger window will be closed.
+          if save_winnr > nbuf
+              let save_winnr = save_winnr - 1
+          endif
+          break
+      else
+          let nwin = nwin + 1
+      endif
+  endwhile
+  return nwin
+endfunction
+" }}}
 
 " JumpToWindowsByType {{{2
 " Given a buffer type, jump to it.
@@ -347,7 +407,6 @@ function! s:OnlyReadSetup()
     endif
 endfunction
 " }}}
-
 
 " PreviewWindowSetup {{{2
 " Setup preview window depending based on previous window type.
@@ -440,7 +499,6 @@ function! TDVimCreateOrJumpToTerminal ( )
   " wincmd J
 endfunction
 " }}}
-
 
 " ClosePreviousWindow {{{2
 " Close previous window
@@ -1670,13 +1728,8 @@ nnoremap   [t   <C-t>
 "nnoremap   <S-F6>   :ptjump <C-r><C-w><space>
 "xnoremap   <S-F6>   :ptjump <C-r><C-w><space>
 
-" DEPRECATED: removethis map
-" Create tags file
-"nnoremap   <F11>   :TDVimMakeTags <CR>
-
 " Insert Timestamp
 nmap <leader>d i<C-R>=strftime("%A, %d %b %Y %r")<CR><Esc>
-imap <leader>d <C-R>=strftime("%A, %d %b %Y %r")<CR>
 
 " Autocomplete using Previous and Next
 inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
@@ -2129,6 +2182,9 @@ let g:vista_fzf_preview = ['right:50%']
 " Ensure you have installed some decent font to show these pretty symbols, then you can enable icon for the kind.
 let g:vista#renderer#enable_icon = 1
 
+" Move to the vista window when it is opened.
+let g:vista_stay_on_open = 0
+
 " The default icons can't be suitable for all the filetypes, you can extend it as you wish.
 let g:vista#renderer#icons = {
 \   "class": "力",
@@ -2176,6 +2232,11 @@ endif
 let g:ale_set_quickfix = 1
 " }}}
 
+" DWM {{{2
+" Disable DWM mappings, we will
+let g:dwm_map_keys = 0
+
+" }}}
 
 " Setup Plugins }}}
 
@@ -2365,6 +2426,22 @@ if g:tdvim_dev_mode
         autocmd FileType python let b:ale_fix_on_save = 1
         autocmd FileWritePre *.py silent! execute ':ALEFix'
     endif
+
+    " DWM keymaps
+    if exists("g:dwm_version")
+        " Use Alt-[right|left] to navigate windows clockwise or counter clockwise windows
+        nnoremap    <M-right>    <C-W>w
+        nnoremap    <M-left>     <C-W>W 
+        " Use Ctrl-TAB to rotate windows clockwise
+        nunmap      <C-TAB>
+        nnoremap    <C-TAB>     :call DWM_Rotate(1)<CR>
+        " Use Shift-TAB or Ctrl-Space to swap focus between previous and current
+        nunmap      <S-TAB>
+        nnoremap    <S-TAB>     :call DWM_Focus()<CR>
+        nunmap      <C-Space>
+        nnoremap    <C-Space>     :call DWM_Focus()<CR>
+    endif
+
 
 endif " devmode END
 
