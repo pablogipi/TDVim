@@ -82,6 +82,7 @@ function! s:GetOS()
 endf
 " }}}
 
+" ConvertWindowsToPosixPath {{{2
 function! ConvertWindowsToPosixPath(windows_path)
     " Replace backslashes with forward slashes
     let posix_path = substitute(a:windows_path, '\\', '/', 'g')
@@ -96,6 +97,7 @@ function! ConvertWindowsToPosixPath(windows_path)
 
     return posix_path
 endfunction
+" }}}
 
 " getWinInfo {{{2
 " winid: id of the window, if not passed then current window will be used
@@ -524,8 +526,35 @@ function! s:SetupNERDTreeBuffer(  )
     "echomsg "We are in a NERDtree buffer!!!"
     nmap <buffer> -        :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
     nmap <buffer> <silent> <Esc> :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
+    " Remove buffer from buffers list
+    setlocal nobuflisted
+endfunction
+
+
+
+" }}}
+
+" CleanupNERDTreeBuffer {{{2
+" Define a function to clean up NERDTree buffers
+function! s:CleanupNERDTreeBuffer()
+    " If we are currently in a NERDTree window, do nothing
+    "if &filetype ==# 'nerdtree'
+        "return
+    "endif
+    " Get all buffers
+    for buf in range(1, bufnr('$'))
+        " Check if buffer is a NERDTree buffer (exists, loaded, and has nerdtree filetype)
+        if bufexists(buf) && bufloaded(buf) && getbufvar(buf, '&filetype') == 'nerdtree'
+            " Check if we're not currently in this buffer
+            if buf != bufnr('%')
+                " Wipe out the NERDTree buffer
+                execute 'bwipeout! ' . buf
+            endif
+        endif
+    endfor
 endfunction
 " }}}
+
 
 " UpdateCurrentGitBranch {{{2
 " Update current git branch from buffer in window. This function will use gitbranch#name() 
@@ -834,7 +863,6 @@ function! s:SetFancyUI()
 endfunction
 "}}}
 
-
 " Session functions {{{2
  " Save session
 fu! TDVimSaveSess()
@@ -914,8 +942,7 @@ func! s:TDVimLSPMappings()
     nnoremap <silent> <buffer> <]s>     :lnext<CR>
     nnoremap <silent> <buffer> <[s>     :lprev<CR>
 endfunc
-
-
+" }}}
 
 " TDVimHighlightWordUnderCursor {{{2
 " Highlight word under cursor, from: https://stackoverflow.com/questions/25227281/how-to-auto-highlight-the-current-word-in-vim
@@ -934,7 +961,7 @@ function! TDVimHighlightWordUnderCursor()
 endfunction
 " }}}
 
-" ShowTDVimHelp {{{
+" ShowTDVimHelp {{{2
 " Show TDVim help window
 function! TDVimShowQuickHelp(  )
     :helpclose
@@ -949,6 +976,38 @@ function! TDVimShowQuickHelp(  )
 endfunction
 " }}}
 
+" TDVimGitDiffToggle {{{2
+" Toggle diff between current buffer and HEAD in git. In other words show current
+" changes compared to latest commit.
+" If buffer is already in diff mode then remove HEAD buffer and unset diffmode
+" Use GitGutterDiff command to generate the diff with HEAD
+function! TDVimGitDiff ()
+    if &diff
+        " If we aare in diff mode then remove it and HEAD buffer
+        diffoff
+        " 2. Loop through all listed buffers
+        for bufnr in filter(range(1, bufnr('$')), 'buflisted(v:val)')
+            " 3. Check for the name 'HEAD'
+            if bufname(bufnr) ==# 'HEAD'
+                " 4. Get the window ID for that buffer to check its diff status
+                let bwinid = bufwinid(bufnr)
+                if bwinid != -1 && getwinvar(bwinid, '&diff')
+                    " 5. Wipe it out silently
+                    execute 'silent bdelete ' . bufnr
+                    echo "HEAD diff buffer removed."
+                endif
+            endif
+        endfor
+    else
+        " Enable Git Diff
+        GitGutterDiffOrig
+        wincmd p
+        file HEAD
+        set ro
+        wincmd p
+    endif
+endfunction
+" }}}
 
 " Functions }}}
 
@@ -1786,6 +1845,8 @@ set timeoutlen=500
 
 " Autocommands and Events {{{
 "
+"
+
 
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
@@ -1829,6 +1890,8 @@ if has("autocmd")
         " Show indent guides
         autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h,*vimrc setlocal list
         autocmd BufEnter  *.py,*.pyw,*.c,*.cpp,*.vim,*.h,*vimrc execute 'setlocal listchars=trail:·,tab:│\ ,leadmultispace:┆' . repeat('\ ', &sw - 1)
+        " After reading buffer cleanup any existing Nerdtree Buffer
+        autocmd BufReadPost * call s:CleanupNERDTreeBuffer()
     augroup END
     " BufEnter
     augroup tdvimBufEnter
@@ -2390,7 +2453,7 @@ if g:tdvim_dev_mode
     nmap ]h <Plug>(GitGutterNextHunk)
     nmap [h <Plug>(GitGutterPrevHunk)
     " - Diff  with index
-    nnoremap   <F9>   :GitGutterDiffOrig<CR>
+    nnoremap   <F9>   :call TDVimGitDiffToggle() <CR>
     " - Fold Hunks
     nnoremap   <C-F9>   :GitGutterFold<CR>
     " - Show hunks in QuickFix
