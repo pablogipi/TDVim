@@ -1,81 +1,81 @@
 [submodule "vim_packages/pack/minpac/opt/minpac"]
-	path = vim_packages/pack/minpac/opt/minpac
+	path = pack/minpac/opt/minpac
 	url = https://github.com/k-takata/minpac.git
 [submodule "dev/opt/ale"]
 	path = dev/opt/ale
 	url = https://github.com/dense-analysis/ale.git
 [submodule "vim_packages/pack/dev/opt/ale"]
-	path = vim_packages/pack/dev/opt/ale
+	path = pack/dev/opt/ale
 	url = https://github.com/dense-analysis/ale.git
 [submodule "vim_packages/pack/core/start/vim-unimpaired"]
-	path = vim_packages/pack/core/start/vim-unimpaired
+	path = pack/core/start/vim-unimpaired
 	url = git@github.com:tpope/vim-unimpaired.git
 [submodule "vim_packages/pack/core/start/vim-surround"]
-	path = vim_packages/pack/core/start/vim-surround
+	path = pack/core/start/vim-surround
 	url = git@github.com:tpope/vim-surround.git
 [submodule "vim_packages/pack/core/start/vim-vinegar"]
-	path = vim_packages/pack/core/start/vim-vinegar
+	path = pack/core/start/vim-vinegar
 	url = git@github.com:tpope/vim-vinegar.git
 [submodule "vim_packages/pack/core/start/delimitMate"]
-	path = vim_packages/pack/core/start/delimitMate
+	path = pack/core/start/delimitMate
 	url = git@github.com:Raimondi/delimitMate.git
 [submodule "vim_packages/pack/core/start/lightline"]
-	path = vim_packages/pack/core/start/lightline
+	path = pack/core/start/lightline
 	url = git@github.com:itchyny/lightline.vim.git
 [submodule "vim_packages/pack/core/start/lightline-bufferline"]
-	path = vim_packages/pack/core/start/lightline-bufferline
+	path = pack/core/start/lightline-bufferline
 	url = git@github.com:mengelbrecht/lightline-bufferline.git
 [submodule "vim_packages/pack/dev/start/vim-gitbranch"]
-	path = vim_packages/pack/dev/start/vim-gitbranch
+	path = pack/dev/start/vim-gitbranch
 	url = git@github.com:itchyny/vim-gitbranch.git
 [submodule "vim_packages/pack/core/start/vim-easy-align"]
-	path = vim_packages/pack/core/start/vim-easy-align
+	path = pack/core/start/vim-easy-align
 	url = git@github.com:junegunn/vim-easy-align.git
 [submodule "vim_packages/pack/dev/start/vindent"]
-	path = vim_packages/pack/dev/start/vindent
+	path = pack/dev/start/vindent
 	url = git@github.com:jessekelighine/vindent.vim.git
 [submodule "vim_packages/pack/dev/start/nerdcommenter"]
-	path = vim_packages/pack/dev/start/nerdcommenter
+	path = pack/dev/start/nerdcommenter
 	url = git@github.com:preservim/nerdcommenter.git
 [submodule "vim_packages/pack/core/start/vim-devicons"]
-	path = vim_packages/pack/core/start/vim-devicons
+	path = pack/core/start/vim-devicons
 	url = https://github.com/ryanoasis/vim-devicons.git
 [submodule "vim_packages/pack/core/start/fzf"]
-	path = vim_packages/pack/core/start/fzf
+	path = pack/core/start/fzf
 	url = https://github.com/junegunn/fzf.git
 [submodule "vim_packages/pack/core/start/fzf.vim"]
-	path = vim_packages/pack/core/start/fzf.vim
+	path = pack/core/start/fzf.vim
 	url = https://github.com/junegunn/fzf.vim.git
 [submodule "vim_packages/pack/core/start/nerdtree"]
-	path = vim_packages/pack/core/start/nerdtree
+	path = pack/core/start/nerdtree
 	url = https://github.com/preservim/nerdtree.git
 [submodule "vim_packages/pack/dev/start/nerdtree-git-plugin"]
-	path = vim_packages/pack/dev/start/nerdtree-git-plugin
+	path = pack/dev/start/nerdtree-git-plugin
 	url = https://github.com/Xuyuanp/nerdtree-git-plugin.git
 [submodule "vim_packages/pack/dev/opt/fzf-funky"]
-	path = vim_packages/pack/dev/opt/fzf-funky
+	path = pack/dev/opt/fzf-funky
 	url = https://github.com/tracyone/fzf-funky.git
 [submodule "vim_packages/pack/dev/opt/vim-gitgutter"]
-	path = vim_packages/pack/dev/opt/vim-gitgutter
+	path = pack/dev/opt/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter
 [submodule "vim_packages/pack/colors/start/gruvbox"]
-	path = vim_packages/pack/colors/start/gruvbox
+	path = pack/colors/start/gruvbox
 	url = https://github.com/morhetz/gruvbox.git
 [submodule "vim_packages/pack/dev/opt/scratch.vim"]
-	path = vim_packages/pack/dev/opt/scratch.vim
+	path = pack/dev/opt/scratch.vim
 	url = https://github.com/mtth/scratch.vim.git
 [submodule "vim_packages/pack/dev/opt/vista"]
-	path = vim_packages/pack/dev/opt/vista
+	path = pack/dev/opt/vista
 	url = https://github.com/liuchengxu/vista.vim.git
 [submodule "vim_packages/pack/dev/opt/jedi-vim"]
-	path = vim_packages/pack/dev/opt/jedi-vim
+	path = pack/dev/opt/jedi-vim
 	url = https://github.com/davidhalter/jedi-vim.git
 [submodule "vim_packages/pack/dev/opt/vim-pythonsense"]
-	path = vim_packages/pack/dev/opt/vim-pythonsense
+	path = pack/dev/opt/vim-pythonsense
 	url = https://github.com/jeetsukumaran/vim-pythonsense
 [submodule "vim_packages/pack/dev/opt/vim-python-match"]
-	path = vim_packages/pack/dev/opt/vim-python-match
+	path = pack/dev/opt/vim-python-match
 	url = https://github.com/okcompute/vim-python-match
 [submodule "vim_packages/pack/dev/opt/dwm.vim"]
-	path = vim_packages/pack/dev/opt/dwm.vim
+	path = pack/dev/opt/dwm.vim
 	url = git@github.com:pablogipi/dwm.vim.git
