@@ -460,29 +460,35 @@ endfunction
 " Or insert a TAB if there is nothing in front of the cursor
 " From: https://stackoverflow.com/questions/2055417/mapping-tab-to-omicompletion-in-gvim 
 function! TDVimTabAutocompleteWrapper( direction)
-  " Make TAB working in popup menu
-  if pumvisible()
-    if "backward" == a:direction
-      return "\<C-P>"
-    else
-      return "\<C-N>"
+    " Make TAB working in popup menu
+    if pumvisible()
+        " If menu is visible then just move up and down. If use C-P and C-N
+        " then the selection will be applied to the text, we prefer to just
+        " move around and manuyally select and insert pressin enter on
+        " selection in the menu
+        if "backward" == a:direction
+            "return "\<C-P>"
+            return "\<Up>"
+        else
+            "return "\<C-N>"
+            return "\<Down>"
+        endif
     endif
-  endif
-  " Pass a normal TAB if there is no character in front.
-  " Use autocomplete if there is something in front of the cursor
-  let char_before = col('.') - 1
-  if !char_before || getline('.')[char_before - 1] !~ '\k'
-    "if "backward" == a:direction
-    "return "\<BS>"
-    "else
-    "return "\<tab>"
-    "endif
-    return "\<tab>"
-  elseif "backward" == a:direction
-    return "\<c-p>"
-  else
-    return "\<c-n>"
-  endif
+    " Pass a normal TAB if there is no character in front.
+    " Use autocomplete if there is something in front of the cursor
+    let char_before = col('.') - 1
+    if !char_before || getline('.')[char_before - 1] !~ '\k'
+        "if "backward" == a:direction
+        "return "\<BS>"
+        "else
+        "return "\<tab>"
+        "endif
+        return "\<tab>"
+    elseif "backward" == a:direction
+        return "\<c-p>"
+    else
+        return "\<c-n>"
+    endif
 endfunction
 " }}}
 
@@ -1791,8 +1797,9 @@ nnoremap   [t   <C-t>
 nmap <leader>d i<C-R>=strftime("%A, %d %b %Y %r")<CR><Esc>
 
 " Autocomplete using Previous and Next
-inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
-inoremap   <S-TAB>  <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
+inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
+inoremap   <S-TAB>  <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
+
 
 " }}}
 
@@ -1826,12 +1833,19 @@ set noinfercase
 set belloff+=ctrlg " If Vim beeps during completion
 set belloff+=cursor " If Vim beeps during scrolling
 set belloff+=all " If Vim beeps during scrolling
+
 set completeopt-=preview
 set completeopt+=menuone
-set completeopt-=popup
-" set completeopt+=noinsert
-" set completeopt+=noselect
+set completeopt+=popup
+set completeopt+=noinsert
+set completeopt+=noselect
+set completeopt+=fuzzy
+
 set completepopup=height:10,width:60,highlight:InfoPopu
+
+" This will be deprecated but is still needed to get a proper fuzzy search for
+" keywords
+set completefuzzycollect=keyword
 
 " Sources for searching in completion mode
 " Only include current buffer and buffer in other windows only
