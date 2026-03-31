@@ -675,7 +675,10 @@ function! TDVimLightlineExtraInfo() abort
       let l:extra_info = ''
       " Get closest function using Vista
       if exists('b:vista_nearest_method_or_function') 
-          let l:extra_info = "\uf794⯈" . b:vista_nearest_method_or_function . '(...)'
+          "let l:extra_info = "\uf794\u003e" . b:vista_nearest_method_or_function . '(...)'
+          "let l:extra_info = "\uf794\u2192" . b:vista_nearest_method_or_function . '(...)'
+          "let l:extra_info = "\uf794\u27a4" . b:vista_nearest_method_or_function . '(...)'
+          let l:extra_info = "→ " . b:vista_nearest_method_or_function . '(...)'          
       endif
       return l:extra_info
       "return exists('b:vista_nearest_method_or_function') ? b:vista_nearest_method_or_function : ''
@@ -1040,7 +1043,7 @@ set smartindent
 set gdefault
 " Better grep
 if s:has_rg
-  set grepprg=rg\ --vimgrep
+  set grepprg=rg\ --vimgrep\ -g\ !tags
   set grepformat=%f:%l:%c:%m
 elseif executable("ag")
   set grepprg=ag\ --vimgrep\ --ignore\ *~\ --ignore\ *.swp\ --ignore\ *.diff\ --ignore\ tags\ --ignore\ *.tags
@@ -1162,8 +1165,8 @@ let g:netrw_banner=0        " disable annoying banner
 let g:netrw_browse_split=0  " open in prior window
 let g:netrw_altv=1          " open splits to the right
 let g:netrw_liststyle=3     " tree view
-let g:netrw_list_hide=netrw_gitignore#Hide()
-let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
+"let g:netrw_list_hide=netrw_gitignore#Hide()
+"let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 let g:netrw_sizestyle="H"   " Human readable sizes
 " }}}
 
@@ -1618,8 +1621,8 @@ nmap <S-F11> i<C-R>=strftime("%A, %d %b %Y %r")<CR><Esc>
 imap <S-F11> <C-R>=strftime("%A, %d %b %Y %r")<CR>
 
 " Autocomplete using Previous and Next
-inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
-inoremap   <S-TAB>  <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
+inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
+inoremap   <S-TAB>  <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
 " keymap("i", "<tab>", "<c-r>=utils#TabAutocompleteWrapper(\"backward\")<cr>", opts)
 " keymap("i", "<s-tab>", "<c-r>=utils#TabAutocompleteWrapper(\"forward\")<cr>", opts)
 
@@ -1658,10 +1661,15 @@ set belloff+=cursor " If Vim beeps during scrolling
 set belloff+=all " If Vim beeps during scrolling
 set completeopt-=preview
 set completeopt+=menuone
-set completeopt-=popup
-" set completeopt+=noinsert
-" set completeopt+=noselect
+set completeopt+=popup
+set completeopt+=fuzzy
+set completeopt+=noinsert
+ set completeopt+=noselect
 set completepopup=height:10,width:60,highlight:InfoPopu
+
+" This will be deprecated but is still needed to get a proper fuzzy search for
+" keywords
+set completefuzzycollect=keyword
 
 " Sources for searching in completion mode
 " Only include current buffer and buffer in other windows only
@@ -2075,9 +2083,12 @@ let g:vista#renderer#enable_icon = 1
 " The default icons can't be suitable for all the filetypes, you can extend it as you wish.
 let g:vista#renderer#icons = {
 \   "class": "力",
-\   "module": "",
 \   "function": "\uf794",
+\   "functions": "\uf794",
+\   "module": "",
+\   "subroutine": "", 
 \   "variable": "狀",
+\   "variables": "狀",
 \  }
 " }}}
 
@@ -2227,6 +2238,7 @@ if g:tdvim_dev_mode
     " Create/Update tags file
     " Set wildoptions+=tagfile
     " Set wildoptions+=fuzzy
+    set wildoptions+=fuzzy
     
 
     "
