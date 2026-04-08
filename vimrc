@@ -1835,7 +1835,7 @@ set belloff+=cursor " If Vim beeps during scrolling
 set belloff+=all " If Vim beeps during scrolling
 
 set completeopt-=preview
-set completeopt+=menuone
+"set completeopt+=menuone
 set completeopt+=popup
 set completeopt+=noinsert
 set completeopt+=noselect
