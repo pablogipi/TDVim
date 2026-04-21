@@ -79,3 +79,12 @@
 [submodule "vim_packages/pack/dev/opt/dwm.vim"]
 	path = pack/dev/opt/dwm.vim
 	url = git@github.com:pablogipi/dwm.vim.git
+[submodule "pack/core/start/bufexplorer"]
+	path = pack/core/start/bufexplorer
+	url = https://github.com/jlanzarotta/bufexplorer
+[submodule "pack/dev/opt/vim-fugitive"]
+	path = pack/dev/opt/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
+[submodule "pack/dev/opt/vim-flog"]
+	path = pack/dev/opt/vim-flog
+	url = https://github.com/rbong/vim-flog

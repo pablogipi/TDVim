@@ -22,8 +22,8 @@ Files                                  *tdvim-files*
 
 - Open File:                      <Ctrl-O>
 - Open File in new tab:           <Ctrl-Alt-O>
-- Open files using Fuzzy Finder:  <F3>, <Ctrl-P>
-- Open Recent Files Fuzzy Finder: <Ctrl-Shift-F3>
+- Open files using Fuzzy Finder:  <Shift-F3>, <Ctrl-P>
+- Open Buf Explorer:              <Ctrl-Shift-F3>
 - New File:                       <Ctrl-N>
 - New File in tab:                <Ctrl-Alt-N>
 - Save:                           <Ctrl-S> , <leader>w
@@ -75,8 +75,8 @@ Window Management                   *tdvim-windows*
     - Jump to Preview window:                 <leader>jp
     - Jump to Quickfix window:                <leader>jq
     - Jump to Location window:                <leader>jl
-    - Jump to Explorer window:                <leader>je, <leader>e
-    - Jump to Tags Inspector window:          <leader>jt
+    - Jump to Explorer window:                <leader><Shift-Left>
+    - Jump to Tags Inspector window:          <leader><Shift-Right>
     - Reset windows size:                     <leader>=
 - Buffers:
     - Buffers Explorer:                       <F3>, <leader>b
@@ -201,7 +201,7 @@ Function Keys                     *tdvim-func-keys*
    - <Shift-F2>:        Visual block selection
    - <Ctrl-Shift-F2>:   Main LeaderF Commands
 - <F3>:                 Open buffer
-   - <Ctrl-Shift-F3>:   Open Recent files
+   - <Ctrl-Shift-F3>:   Open Buf Explorer
    - <Shift-F3>:        Open Files
    - <Ctrl-F3>:         Switch previous buffer
 - <F4>:                 Grep word under cursor in all files in location
@@ -255,8 +255,8 @@ Leader Key                           *tdvim-leader*
 - Jump to Preview window:                 <leader>jp
 - Jump to Quickfix window:                <leader>jq
 - Jump to Location window:                <leader>jl
-- Jump to Explorer window:                <leader>je, <leader>e
-- Jump to Tags Inspector window:          <leader>jt
+- Jump to Explorer window:                <leader><Shift-Left>
+- Jump to Tags Inspector window:          <leader><Shift-Right>
 - Reset windows size:                     <leader>=
 - Tasks list:                             <leader>t
 - GiT File diff:                          <leader>gd

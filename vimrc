@@ -54,8 +54,9 @@ if g:tdvim_dev_mode
     packadd jedi-vim
     packadd vim-pythonsense
     packadd vim-python-match
-
     packadd dwm.vim
+    packadd vim-fugitive
+    packadd vim-flog
 endif
 
 " }}}
@@ -519,8 +520,26 @@ endfunction
 " }}}
 "
 
+" CloseWindow {{{
+" Smarter way of closing a window in DevMode.
+" Assume this is run i ndev mode. If the window is a regular buffer then do
+" a DWM Clsoe Window, if is a special buffer the ndo a regular window close.
+function! TDVimCloseWindowDevMode()
+    if &previewwindow || &filetype == "ctrlp" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal" || &filetype == "scratch" || &syntax == 'vista'
+        wincmd q
+    elseif &filetype == "qf"
+        cclose
+    elseif  &buftype == 'quickfix' && exists('b:qflisttype') && b:qflisttype == 'location'
+        lclose
+    elseif g:tdvim_dev_mode
+        exec DWM_Close()
+    endif
+endfunction
+" }}}
+
+
 " SetupNERDTreeBuffer {{{2
-" Functiom to do some custom setups in a NERDtree buffer when Syntax event
+" Function to do some custom setups in a NERDtree buffer when Syntax event
 " is triggered usinh autocommands.
 " Close NERDtree window using - or Esc.
 function! s:SetupNERDTreeBuffer(  )
@@ -535,8 +554,6 @@ function! s:SetupNERDTreeBuffer(  )
     " Remove buffer from buffers list
     setlocal nobuflisted
 endfunction
-
-
 
 " }}}
 
@@ -1392,6 +1409,7 @@ command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --python-kinds=-iv --f
 command! TDVimOpenTerminal call TDVimCreateOrJumpToTerminal()
 " Run grep, allow user to mpdify initial pattern and then open quickfix window wit results
 command! -nargs=+ TDvimGrep execute 'silent grep! <args>' | copen
+command! TDvimCloseBuffer :bn|:bd#
 " }}}
 
 " Keyboard mappings {{{
@@ -1443,26 +1461,43 @@ inoremap  <silent> <C-F1>             <C-O>:call TDVimShowQuickHelp()<CR>
 
 " Main Operations {{{2
 " Main operations like open, save, new, quit, etc ...
-" Open Files in current location - S-F3, <leader>o
+" Open Files in current location - S-F3, <leader>o, <Ctrl-p>
 if s:has_fzf
-    nnoremap   <S-F3>   :Files<CR>
-    vnoremap   <S-F3>   :Files<CR>
-    inoremap   <S-F3>   <ESC>:Files<CR>
+    nnoremap   <S-F3>      :Files<CR>
+    vnoremap   <S-F3>      :Files<CR>
+    inoremap   <S-F3>      <ESC>:Files<CR>
+    nnoremap   <C-p>       :Files<CR>
+    vnoremap   <C-p>       :Files<CR>
+    inoremap   <C-p>       <ESC>:Files<CR>
+    nnoremap   <leader>o   :Files<CR>
+    vnoremap   <leader>o   :Files<CR>
+    inoremap   <leader>o   <ESC>:Files<CR>
 else
-    nnoremap   <S-F3>   :find<space>
-    vnoremap   <S-F3>   :find<space>
-    inoremap   <S-F3>   <ESC>:find<space>
+    nnoremap   <S-F3>      :find<space>
+    vnoremap   <S-F3>      :find<space>
+    inoremap   <S-F3>      <ESC>:find<space>
+    nnoremap   <C-p>       :find<space>
+    vnoremap   <C-p>       :find<space>
+    inoremap   <C-p>       <ESC>:find<space>
+    nnoremap   <leader>o   :find<space>
+    vnoremap   <leader>o   :find<space>
+    inoremap   <leader>o   <ESC>:find<space>
 endif
 " Open Recent Files - C-S-F3
-if s:has_fzf
-    nnoremap   <C-S-F3>   :History<CR>
-    vnoremap   <C-S-F3>   :History<CR>
-    inoremap   <C-S-F3>   <ESC>:History<CR>
-else
-    nnoremap   <C-S-F3>   :browse oldfiles<CR>
-    vnoremap   <C-S-F3>   :browse oldfiles<CR>
-    inoremap   <C-S-F3>   <ESC>:browse oldfiles<CR>
-endif
+" DEPRECATED
+"if s:has_fzf
+    "nnoremap   <C-S-F3>   :History<CR>
+    "vnoremap   <C-S-F3>   :History<CR>
+    "inoremap   <C-S-F3>   <ESC>:History<CR>
+"else
+    "nnoremap   <C-S-F3>   :browse oldfiles<CR>
+    "vnoremap   <C-S-F3>   :browse oldfiles<CR>
+    "inoremap   <C-S-F3>   <ESC>:browse oldfiles<CR>
+"endif
+" Open Buf Explorer - C-S-F3
+nnoremap   <C-S-F3>   :BufExplorer<CR>
+vnoremap   <C-S-F3>   :BufExplorer<CR>
+inoremap   <C-S-F3>   <ESC>:BufExplorer<CR>
 " Save - <leader>w
 nnoremap   <leader>w    :w<CR>
 " Save All - <leader>wa
@@ -1681,8 +1716,14 @@ nmap <silent> <leader>jp <Plug>TdvimJumpToPreviewWindow
 vmap <silent> <leader>jp <Plug>TdvimJumpToPreviewWindow
 " }}}
 
+" Jump to right/left most window. This can jump to explorer or symbols window {{{
+nnoremap  <silent> <leader><S-Left>         99<C-w>h
+nnoremap  <silent> <leader><S-right>         99<C-w>l
+" }}}
+
 " Close Window and Delete Buffer - <leader>x
-nnoremap  <leader>x        :bdelete<CR> 
+"nnoremap  <leader>x        :bdelete<CR> 
+nnoremap  <leader>x        :TDvimCloseBuffer<CR>
 xnoremap  <leader>x        :bdelete<CR> 
 
 " Vertical Split Window - <leader>s
@@ -2444,6 +2485,11 @@ if g:tdvim_dev_mode
 
     "
     " Keymaps for dev mode
+    " Close Window - <leader>q
+    silent! nunmap      <leader>q 
+    silent! vunmap      <leader>q 
+    nnoremap  <silent> <leader>q          :call TDVimCloseWindowDevMode() <CR>
+    vnoremap  <silent> <leader>q          :call TDVimCloseWindowDevMode() <CR>
     " NERDTree using VCS mode (open in root project)
     " NErdtTree
     nunmap <F8>
