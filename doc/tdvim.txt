@@ -276,17 +276,17 @@ Unimpaired                         *tdvim-unimpaired*
 *[Q*     |:  cfirst|. First Error
 *]Q*     |:  clast|. Last Error
 *[f* :        File preceding current one
-*[f* :        File succeeding current one
+*]f* :        File succeeding current one
 *[<Space>* :  Add [count] blank lines above the cursor.
 *]<Space>* :  Add [count] blank lines below the cursor.
-*[e* *v_[e* : Exchange the current line with [count] lines above it.
-*[e* *v_[e* : Exchange the current line with [count] lines below it.
+*[e* : Exchange the current line with [count] lines above it.
+*]e* : Exchange the current line with [count] lines below it.
 *[c* :        Previous Change
-*[c* :        Next Change
+*]c* :        Next Change
 *[j* :        Previous Jump
-*[j* :        Next Jump
+*]j* :        Next Jump
 *[h* :        Previous Hunk
-*[h* :        Next Hunk
+*]h* :        Next Hunk
 *]t* :        Jump to tag
 *[t* :        Go back from tag stack
 *]T* :        Search tag in Gtags

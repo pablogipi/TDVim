@@ -518,7 +518,6 @@ function! TDVimClosePreviousWindow()
     endif
 endfunction
 " }}}
-"
 
 " CloseWindow {{{
 " Smarter way of closing a window in DevMode.
@@ -533,10 +532,11 @@ function! TDVimCloseWindowDevMode()
         lclose
     elseif g:tdvim_dev_mode
         exec DWM_Close()
+    else
+        wincmd q
     endif
 endfunction
 " }}}
-
 
 " SetupNERDTreeBuffer {{{2
 " Function to do some custom setups in a NERDtree buffer when Syntax event
@@ -577,7 +577,6 @@ function! s:CleanupNERDTreeBuffer()
     endfor
 endfunction
 " }}}
-
 
 " UpdateCurrentGitBranch {{{2
 " Update current git branch from buffer in window. This function will use gitbranch#name() 
@@ -999,6 +998,27 @@ function! TDVimShowQuickHelp(  )
 endfunction
 " }}}
 
+" CheckTDVimHelp {{{2
+" Check TDVim help tags exists and are not than a month old
+function! TDVimCheckHelp(  )
+    let l:tagsfile = g:tdvim_install_path . "/doc/tags"
+    if !filereadable( l:tagsfile)
+        " Help tags doesnt exists, build new tags
+        echomsg "Help tags doesn't exists. Rebuild all help tags"
+        helptags ALL
+    else
+        let l:timestamp = getftime(l:tagsfile)
+        let l:one_month_ago = localtime() - (30 * 24 * 60 * 60)  " 30 days in seconds
+        " help tags file is too old, rebuild tags
+        if l:timestamp < l:one_month_ago
+            echomsg "Updating old help tags ..."
+            helptags ALL
+        endif
+        echomsg "Help tags exists"
+    endif
+endfunction
+" }}}
+
 " TDVimGitDiffToggle {{{2
 " Toggle diff between current buffer and HEAD in git. In other words show current
 " changes compared to latest commit.
@@ -1032,6 +1052,37 @@ function! TDVimGitDiff ()
 endfunction
 " }}}
 
+" TDVimUpdate {{{2
+" Update TDVim. This can install and/or update the current TDVim install
+" location
+" - Pull latest TDVim changes
+" - Do submodules update
+" - update help tags
+
+" TODO
+function! TDVimUpdate(  )
+    " Check if we can access github (check connection)
+    " Try pinging github.com (1 packet, 5 second timeout)
+    let l:result = system('ping -n 1 -w 5 github.com 2>/dev/null')
+    echomsg "Error code in ping: " . v:shell_error
+    if v:shell_error != 0:
+        "Connectivity Errors
+        echoerr("Can't connect to github, please check connectivity")
+        return
+    endif
+    let l:curloc = getcwd()
+    cd g:tdvim_install_path
+    echomsg "Running git pull to update vim install repo"
+    system('git pull')
+    echomsg "Update subm,odules plugins"
+    system('git submodule --remote --merge')
+    echomsg "Update Help Tags"
+    helptags ALL
+    echomsg "TDVim updated !!"
+
+
+endfunction
+" }}}
 " Functions }}}
 
 "
@@ -1140,6 +1191,8 @@ if  executable('cat')
 endif
 " }}}
 
+" TDVim install location
+let g:tdvim_install_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 " Init Setting }}}
 
@@ -1409,7 +1462,10 @@ command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --python-kinds=-iv --f
 command! TDVimOpenTerminal call TDVimCreateOrJumpToTerminal()
 " Run grep, allow user to mpdify initial pattern and then open quickfix window wit results
 command! -nargs=+ TDvimGrep execute 'silent grep! <args>' | copen
+" Close current buffer in an ordered way
 command! TDvimCloseBuffer :bn|:bd#
+" Update TDVim
+command! TDVimUpdate call TDVimUpdate()
 " }}}
 
 " Keyboard mappings {{{
@@ -1914,16 +1970,16 @@ if has("autocmd")
         " Highlight type for extra white spaces at the end of a line
         "autocmd ColorScheme * highlight ExtraWhitespace ctermbg=lightred guibg=lightred
         "autocmd Syntax python,cpp,c,sh,csh,vim highlight ExtraWhitespace ctermbg=lightred guibg=lightred
-        "autocmd Syntax * syntax match myTodo /\v\_.<(TODO|FIXME|DEBUG|DEBUG|WARN|WARNING|ERROR|NOTE|DEPRECATED):?/hs=s+1 containedin=.*Comment
         autocmd Syntax * syntax match myTodo /\v<(TODO|FIXME|DEBUG|DEBUG|WARN|WARNING|ERROR|NOTE|DEPRECATED):?/hs=s containedin=.*Comment
     augroup END
     augroup tdvimEnter
-	autocmd VimEnter * call s:SetFancyUI()
         if g:tdvim_dev_mode
             autocmd VimEnter * echomsg "TDVim (Dev Mode)" . $TDVIMVERSION . " loaded"
         else
             autocmd VimEnter * echomsg "TDVim " . $TDVIMVERSION . " loaded"
         endif
+	autocmd VimEnter * call s:SetFancyUI()
+	autocmd VimEnter * call TDVimCheckHelp()
     augroup END
     " AfterBufferRead
     augroup tdvimAftertBufferRead
@@ -2363,17 +2419,11 @@ let g:dwm_map_keys = 0
 " If vim is opened in a directory then enable some special settings to
 " work in a project, assuming the current folder is the project root
 if g:tdvim_dev_mode
-    " Add devmode folder to runtime to load plugins availalbe only in dev mode
-    "let s:tdvimroot = substitute($TDVIMROOT, "\\", "/", "g")
-    "Add TDVim to runtim path
-    "execute "set rtp^=" . s:tdvimroot
-    "execute "set rtp+=" . s:tdvimroot . "/after"
     " Relative path of script file:
-    "let s:tdvim_install_path = expand('<sfile>')
-    let g:tdvim_install_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
-    let s:tdvim_devmode_path = g:tdvim_install_path . "/devmode"
-    execute "set rtp^=" . s:tdvim_devmode_path
-    execute "set rtp+=" . s:tdvim_devmode_path . "/after"
+    "let g:tdvim_install_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
+    "let s:tdvim_devmode_path = g:tdvim_install_path . "/devmode"
+    "execute "set rtp^=" . s:tdvim_devmode_path
+    "execute "set rtp+=" . s:tdvim_devmode_path . "/after"
     "echomsg "TDVim install location: " . s:tdvim_devmode_path
 
     " Set project folder and tdvim config skeleton for project.
