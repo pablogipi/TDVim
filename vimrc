@@ -1014,7 +1014,7 @@ function! TDVimCheckHelp(  )
             echomsg "Updating old help tags ..."
             helptags ALL
         endif
-        echomsg "Help tags exists"
+        "echomsg "Help tags exists"
     endif
 endfunction
 " }}}
@@ -1065,20 +1065,27 @@ function! TDVimUpdate(  )
     " Try pinging github.com (1 packet, 5 second timeout)
     let l:result = system('ping -n 1 -w 5 github.com 2>/dev/null')
     echomsg "Error code in ping: " . v:shell_error
-    if v:shell_error != 0:
+    if v:shell_error != 0
         "Connectivity Errors
         echoerr("Can't connect to github, please check connectivity")
         return
     endif
     let l:curloc = getcwd()
-    cd g:tdvim_install_path
+    execute "cd " . g:tdvim_install_path
     echomsg "Running git pull to update vim install repo"
-    system('git pull')
-    echomsg "Update subm,odules plugins"
-    system('git submodule --remote --merge')
+    execute '!git pull'
+    " TODO: Check all submodules are initialised, this will helps with a first install
+    " to install all plugins and also for new plugins
+    " If pack is empty it means is a first install, then load all submodules
+    " Go trough all submodules and switch them to the default branch
+    " Update submodules
+    "echomsg "Update submodules plugins"
+    "execute '!git submodule foreach git pull'
     echomsg "Update Help Tags"
     helptags ALL
     echomsg "TDVim updated !!"
+    execute "cd " . l:curloc
+
 
 
 endfunction

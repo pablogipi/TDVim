@@ -2,6 +2,8 @@
 
 Table Of Contents~
 
+|tdvim-intro|                TDVim Introduction
+
 |tdvim-files|                             Files
 |tdvim-editing|                         Editing
 |tdvim-windows|               Window Management
@@ -13,9 +15,20 @@ Table Of Contents~
 |tdvim-unimpaired|                   Unimpaired
 |tdvim-git-symbols|                 GIT Symbols
 
-|tdvim-intro|                TDVim Introduction
 |tdvim-dev|                TDVim For Development
 |tdvim-houdini|                TDVim and Houdini
+
+==================================================
+Intro                                  *tdvim-intro*
+
+Install:
+    git clone --recurse-submodules -b vim-packages https://github.com/pablogipi/TDVim.git
+
+Update:
+From vim run this command:
+    :TDVimUpdate
+
+
 
 ==================================================
 Files                                  *tdvim-files*
