@@ -1201,7 +1201,7 @@ function! TDVimUpdate(  )
         " default branch
         let git_show = systemlist("git remote show origin")
         let line = matchstr(git_show, 'HEAD branch:.*')
-        let default_branch = trim(substitute(line, 'Head branch: \(\S\+\)', '\1', ''))
+        let default_branch = trim(substitute(line, 'HEAD branch: \(\S\+\)', '\1', ''))
 
         if default_branch == ''
             " Try common branch names
