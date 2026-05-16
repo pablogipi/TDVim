@@ -1130,8 +1130,9 @@ function! TDVimUpdate(  )
     execute "cd " . g:tdvim_install_path
 
     if !s:has_git
-        echoerr("Can't find git installed in this syustem, please install git before updating TDVim")
+        echoerr("Can't find git installed in this system, please install git before updating TDVim")
         return
+    endif
 
     " Check if this is the first install
     if !filereadable("doc/tags"):
@@ -1145,22 +1146,21 @@ function! TDVimUpdate(  )
         endif
     endif
 
-
-
     echomsg "Starting updating TDVim installed at " . g:tdvim_install_path
     call s:TDVimUpdateAddToScratch(["Starting updating TDVim installed at " . g:tdvim_install_path])
 
-    "echomsg "Running git pull to update vim install repo"
+    return
+
+    echomsg "Running git pull to update vim install repo"
     ""execute '!git pull'
-    "let l:output = system("git pull")
-    "let l:exit_code = v:shell_error
-    
-    "if l:exit_code != 0
-        "echoerr "Local changes detected. Please commit or stash them first."
-        "let l:status = system("git status")
-        "echo l:status
-        "return
-    "endif
+    let l:output = system("git pull")
+    let l:exit_code = v:shell_error
+    if l:exit_code != 0
+        echoerr "Local changes detected. Please commit or stash them first."
+        let l:status = system("git status")
+        echo l:status
+        return
+    endif
 
     " Load submodules
     call s:TDVimUpdateAddToScratch(["Load submodules (plugins)"])
@@ -1346,6 +1346,13 @@ endif
 
 " TDVim install location
 let g:tdvim_install_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
+
+" Check if this is the first install
+if !filereadable(g:tdvim_install_path . "/doc/tags")
+    echomsg "First time running TDVim, proceed to finish installation"
+    sleep 3
+    call TDVimUpdate()
+endif
 
 " Init Setting }}}
 
