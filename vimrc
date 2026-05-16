@@ -1077,8 +1077,6 @@ function! s:TDVimUpdateAddToScratch(lines)
         setlocal filetype=text
         setlocal nonumber
         setlocal norelativenumber
-        setlocal readonly
-        "setlocal nomodifiable
 
         " Map q and Esc to close the buffer
         nnoremap <buffer> <silent> q :bdelete!<CR>
@@ -1088,12 +1086,16 @@ function! s:TDVimUpdateAddToScratch(lines)
         execute "buffer" buffer_name
     endif
     
+    setlocal noreadonly
+    setlocal modifiable
     " Move to end and append lines
     call append(line('$'), a:lines)
 
     " Force redraw and stay in scratch buffer
     redraw
     normal! G
+    setlocal readonly
+    setlocal nomodifiable
 endfunction
 
 " Decide wheter or not to checkout the branch
@@ -1135,7 +1137,9 @@ function! TDVimUpdate(  )
     endif
 
     " Check if this is the first install
-    if !filereadable("doc/tags"):
+    let l:is_first_install = 0
+    if empty(readdir(g:tdvim_install_path . '/pack\core\start\fzf'))
+        let l:is_first_install = 1
         echomsg "Updating TDVim for the first time, finish installation and checks"
         call s:TDVimUpdateAddToScratch([ "Updating TDVim for the first time, finish installation and checks"])
         if !executable('ruff')
@@ -1149,22 +1153,18 @@ function! TDVimUpdate(  )
     echomsg "Starting updating TDVim installed at " . g:tdvim_install_path
     call s:TDVimUpdateAddToScratch(["Starting updating TDVim installed at " . g:tdvim_install_path])
 
-    return
-
-    echomsg "Running git pull to update vim install repo"
-    ""execute '!git pull'
-    let l:output = system("git pull")
-    let l:exit_code = v:shell_error
-    if l:exit_code != 0
-        echoerr "Local changes detected. Please commit or stash them first."
-        let l:status = system("git status")
-        echo l:status
-        return
-    endif
+    "echomsg "Running git pull to update vim install repo"
+    "let l:output = system("git pull")
+    "let l:exit_code = v:shell_error
+    "if l:exit_code != 0
+    "    echoerr "Local changes detected. Please commit or stash them first."
+    "    let l:status = system("git status")
+    "    echo l:status
+    "    return
+    "endif
 
     " Load submodules
     call s:TDVimUpdateAddToScratch(["Load submodules (plugins)"])
-    "execute '!git submodule update --init --recursive'
     let l:output = systemlist("git submodule update --init --recursive")
     let l:exit_code = v:shell_error
     if l:exit_code != 0
@@ -1229,6 +1229,10 @@ function! TDVimUpdate(  )
     helptags ALL
     call s:TDVimUpdateAddToScratch(["TDVim updated !!"])
     echomsg "TDVim updated !!"
+    if l:is_first_install
+        call s:TDVimUpdateAddToScratch(["Installation finished, please restart Vim"])
+        echomsg "Installation finished, please restart Vim"
+    endif
     execute "cd " . l:curloc
     let &more = save_more
 
@@ -1348,10 +1352,17 @@ endif
 let g:tdvim_install_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 " Check if this is the first install
-if !filereadable(g:tdvim_install_path . "/doc/tags")
-    echomsg "First time running TDVim, proceed to finish installation"
+if empty(readdir(g:tdvim_install_path . '/pack\core\start\fzf'))
+    " Minimal UI setup for isntallation
+    colorscheme desert
+    set background=dark
+    command! TDVimUpdate call TDVimUpdate()
+    echomsg "First time running TDVim. You are now un a temp installation. please Execute :TDVimUpdate to finish installation"
     sleep 3
-    call TDVimUpdate()
+    echomsg "Execute :TDVimUpdate to finish installation and restart Vim"
+    "call TDVimUpdate()
+    "echomsg "Please re-start vim"
+    finish
 endif
 
 " Init Setting }}}
