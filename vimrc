@@ -1060,11 +1060,67 @@ endfunction
 " - update help tags
 
 " TODO
+" Add messages to TDVim Update scratch buffer
+function! s:TDVimUpdateAddToScratch(lines)
+    let buffer_name = "[TDVim Update]"
+    
+    " Check if buffer exists
+    let bufnum = bufnr(buffer_name)
+    
+    if bufnum == -1
+        " Create new buffer
+        execute "new" buffer_name
+        setlocal buftype=nofile
+        setlocal bufhidden=hide
+        setlocal nobuflisted
+        setlocal noswapfile
+        setlocal filetype=text
+        setlocal nonumber
+        setlocal norelativenumber
+        setlocal readonly
+        "setlocal nomodifiable
+
+        " Map q and Esc to close the buffer
+        nnoremap <buffer> <silent> q :bdelete!<CR>
+        nnoremap <buffer> <silent> <Esc> :bdelete!<CR>
+    else
+        " Go to existing buffer
+        execute "buffer" buffer_name
+    endif
+    
+    " Move to end and append lines
+    call append(line('$'), a:lines)
+
+    " Force redraw and stay in scratch buffer
+    redraw
+    normal! G
+endfunction
+
+" Decide wheter or not to checkout the branch
+function! s:TDVimUpdateCheckoutIfNeeded(submodule, branch)
+    " Get current branch name
+    let current_branch = trim(system("git branch --show-current"))
+    
+    " Check if already on the target branch
+    if current_branch == a:branch
+        "echo "Already on branch: " . a:branch
+        return 0
+    else
+        call system("git checkout " . a:branch)
+        if v:shell_error == 0
+            call s:TDVimUpdateAddToScratch(["Switching from " . current_branch . " to " . a:branch])
+            return 1
+        else
+            echoerr "Error switching to branch: " . a:branch . " in repo: " . a:submodule
+            return -1
+        endif
+    endif
+endfunction
+
 function! TDVimUpdate(  )
     " Check if we can access github (check connection)
     " Try pinging github.com (1 packet, 5 second timeout)
     let l:result = system('ping -n 1 -w 5 github.com 2>/dev/null')
-    echomsg "Error code in ping: " . v:shell_error
     if v:shell_error != 0
         "Connectivity Errors
         echoerr("Can't connect to github, please check connectivity")
@@ -1072,19 +1128,109 @@ function! TDVimUpdate(  )
     endif
     let l:curloc = getcwd()
     execute "cd " . g:tdvim_install_path
-    echomsg "Running git pull to update vim install repo"
-    execute '!git pull'
-    " TODO: Check all submodules are initialised, this will helps with a first install
-    " to install all plugins and also for new plugins
-    " If pack is empty it means is a first install, then load all submodules
-    " Go trough all submodules and switch them to the default branch
+
+    if !s:has_git
+        echoerr("Can't find git installed in this syustem, please install git before updating TDVim")
+        return
+
+    " Check if this is the first install
+    if !filereadable("doc/tags"):
+        echomsg "Updating TDVim for the first time, finish installation and checks"
+        call s:TDVimUpdateAddToScratch([ "Updating TDVim for the first time, finish installation and checks"])
+        if !executable('ruff')
+            echomsg "TDVim for python works  better in companion with ruff, please consider installing it"
+            call s:TDVimUpdateAddToScratch([ "Updating TDVim for the first time, finish installation and checks"])
+        else
+            call s:TDVimUpdateAddToScratch([ "Ruff for python found"])
+        endif
+    endif
+
+
+
+    echomsg "Starting updating TDVim installed at " . g:tdvim_install_path
+    call s:TDVimUpdateAddToScratch(["Starting updating TDVim installed at " . g:tdvim_install_path])
+
+    "echomsg "Running git pull to update vim install repo"
+    ""execute '!git pull'
+    "let l:output = system("git pull")
+    "let l:exit_code = v:shell_error
+    
+    "if l:exit_code != 0
+        "echoerr "Local changes detected. Please commit or stash them first."
+        "let l:status = system("git status")
+        "echo l:status
+        "return
+    "endif
+
+    " Load submodules
+    call s:TDVimUpdateAddToScratch(["Load submodules (plugins)"])
+    "execute '!git submodule update --init --recursive'
+    let l:output = systemlist("git submodule update --init --recursive")
+    let l:exit_code = v:shell_error
+    if l:exit_code != 0
+        echoerr "Error loading git submodules"
+        return
+    else
+        call s:TDVimUpdateAddToScratch(l:output)
+    endif
     " Update submodules
-    "echomsg "Update submodules plugins"
-    "execute '!git submodule foreach git pull'
-    echomsg "Update Help Tags"
+    let status_output = system("git submodule status --recursive")
+    let submodules = []
+    for line in split(status_output, '\n')
+        " Format: <status> <hash> <path> (optional branch)
+        let parts = split(line)
+        if len(parts) >= 3
+            call add(submodules, parts[1])  " parts[1] is the path
+        endif
+    endfor
+    "echo  submodules
+    " Switch each submodule to default branch
+    let save_more = &more
+    set nomore
+    "echomsg "Found " . len(submodules) . " plugins packages"
+    call s:TDVimUpdateAddToScratch(["Found " . len(submodules) . " plugins packages"])
+    let l:submodule_counter = 0
+    for submodule in submodules
+        " Get default branch using git
+        "echomsg "Checking submodule: " . submodule
+        let l:submodule_counter += 1
+        call s:TDVimUpdateAddToScratch(["[" . submodule_counter . "/" . len(submodules) . "] Checking submodule: " . submodule])
+        execute "cd " . g:tdvim_install_path
+        execute "cd " . submodule
+        " TODO Check if cuirrent repo is HEAD detached and then do th switch to
+        " default branch
+        let git_show = systemlist("git remote show origin")
+        let line = matchstr(git_show, 'HEAD branch:.*')
+        let default_branch = trim(substitute(line, 'Head branch: \(\S\+\)', '\1', ''))
+
+        if default_branch == ''
+            " Try common branch names
+            for branch in ['main', 'master', 'develop']
+                let check = system("cd " . submodule . " && git show-ref --verify --quiet refs/heads/" . branch . " && echo exists")
+                if strlen(check) > 0
+                    let default_branch = branch
+                    break
+                endif
+            endfor
+        endif
+
+        if default_branch != ''
+            "echo "Switching " . submodule . " to " . default_branch
+            "let git_checkout = systemlist("git checkout " . default_branch)
+            "echomsg join(git_checkout, "\n")
+            "call s:TDVimUpdateAddToScratch(git_checkout)
+            call s:TDVimUpdateCheckoutIfNeeded( submodule, default_branch)
+        endif
+        " Do git pull to update
+        let git_pull = systemlist("git pull")
+        call s:TDVimUpdateAddToScratch(git_pull)
+    endfor
+    call s:TDVimUpdateAddToScratch(["Update Help Tags"])
     helptags ALL
+    call s:TDVimUpdateAddToScratch(["TDVim updated !!"])
     echomsg "TDVim updated !!"
     execute "cd " . l:curloc
+    let &more = save_more
 
 
 
@@ -1524,7 +1670,7 @@ inoremap  <silent> <C-F1>             <C-O>:call TDVimShowQuickHelp()<CR>
 
 " Main Operations {{{2
 " Main operations like open, save, new, quit, etc ...
-" Open Files in current location - S-F3, <leader>o, <Ctrl-p>
+" Open Files in current location - S-F3, <Ctrl-p>
 if s:has_fzf
     nnoremap   <S-F3>      :Files<CR>
     vnoremap   <S-F3>      :Files<CR>
@@ -1532,9 +1678,6 @@ if s:has_fzf
     nnoremap   <C-p>       :Files<CR>
     vnoremap   <C-p>       :Files<CR>
     inoremap   <C-p>       <ESC>:Files<CR>
-    nnoremap   <leader>o   :Files<CR>
-    vnoremap   <leader>o   :Files<CR>
-    inoremap   <leader>o   <ESC>:Files<CR>
 else
     nnoremap   <S-F3>      :find<space>
     vnoremap   <S-F3>      :find<space>
@@ -1542,9 +1685,6 @@ else
     nnoremap   <C-p>       :find<space>
     vnoremap   <C-p>       :find<space>
     inoremap   <C-p>       <ESC>:find<space>
-    nnoremap   <leader>o   :find<space>
-    vnoremap   <leader>o   :find<space>
-    inoremap   <leader>o   <ESC>:find<space>
 endif
 " Open Recent Files - C-S-F3
 " DEPRECATED
@@ -1953,7 +2093,7 @@ set completefuzzycollect=keyword
 
 " Sources for searching in completion mode
 " Only include current buffer and buffer in other windows only
-set complete=.,w,b,t
+set complete=.,w,b,k
 " Set window splits to be at bottom by default, used by preview window and
 " quckfix
 set splitbelow
@@ -2270,6 +2410,7 @@ endif
 let g:jedi#goto_stubs_command = ""
 let g:jedi#goto_command = "]t"
 let g:jedi#popup_select_first = 0
+let g:jedi#show_call_signatures = 1
 " }}}
 
 " LSP {{{2
@@ -2532,13 +2673,11 @@ if g:tdvim_dev_mode
         autocmd! CursorHold,CursorHoldI * call TDVimHighlightWordUnderCursor()
     augroup END
     
-    
-
-
-    " Create/Update tags file
-    " Set wildoptions+=tagfile
-    " Set wildoptions+=fuzzy
-    
+    " Set code complete
+    " Add omnicompletion for regular key words copletion
+    set complete+=o
+    set autocomplete
+    set autocompletedelay=100
 
     "
     " Keymaps for dev mode
