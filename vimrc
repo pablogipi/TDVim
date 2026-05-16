@@ -1357,11 +1357,9 @@ if empty(readdir(g:tdvim_install_path . '/pack\core\start\fzf'))
     colorscheme desert
     set background=dark
     command! TDVimUpdate call TDVimUpdate()
-    echomsg "First time running TDVim. You are now un a temp installation. please Execute :TDVimUpdate to finish installation"
-    sleep 3
-    echomsg "Execute :TDVimUpdate to finish installation and restart Vim"
-    "call TDVimUpdate()
-    "echomsg "Please re-start vim"
+    echomsg "First time running TDVim. You are now un a temp installation."
+    echomsg "Please execute :TDVimUpdate to finish installation and restart Vim"
+    echo "Please execute :TDVimUpdate to finish installation and restart Vim"
     finish
 endif
 
