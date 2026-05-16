@@ -1359,7 +1359,7 @@ if empty(readdir(g:tdvim_install_path . '/pack\core\start\fzf'))
     command! TDVimUpdate call TDVimUpdate()
     echomsg "First time running TDVim. You are now un a temp installation."
     echomsg "Please execute :TDVimUpdate to finish installation and restart Vim"
-    echo "Please execute :TDVimUpdate to finish installation and restart Vim"
+    messages
     finish
 endif
 
