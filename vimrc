@@ -1077,6 +1077,7 @@ function! s:TDVimUpdateAddToScratch(lines)
         setlocal filetype=text
         setlocal nonumber
         setlocal norelativenumber
+        only
 
         " Map q and Esc to close the buffer
         nnoremap <buffer> <silent> q :bdelete!<CR>
@@ -1252,13 +1253,17 @@ function! s:TDVimFinishInstall ()
         colorscheme desert
         set background=dark
         command! TDVimUpdate call TDVimUpdate()
-        echomsg "First time running TDVim. You are now un a temp installation."        
+        echomsg "First time running TDVim. You are now in a temp installation."        
         if has('dialog_con') || has('dialog_gui') || has('gui_running')
             let l:ret = confirm("Proceed installing all packages and finish installation?")
+        else
+            echomsg "Proceed installing all packages and finish installation"
         endif
         call TDVimUpdate()        
         if has('dialog_con') || has('dialog_gui') || has('gui_running')
-            let l:ret = confirm("Please restart Vim")
+            let l:ret = confirm("TDVim installation finished! Please restart Vim")
+        else
+            echomsg "TDVim installation finished! Please restart Vim"
         endif
         qall!        
     endif
