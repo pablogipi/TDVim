@@ -1252,11 +1252,15 @@ function! s:TDVimFinishInstall ()
         colorscheme desert
         set background=dark
         command! TDVimUpdate call TDVimUpdate()
-        echomsg "First time running TDVim. You are now un a temp installation."
-        confirm("Proceed installing all packages and finish installation?")
-        call TDVimUpdate()
-        confirm("Please restart Vim")
-        return
+        echomsg "First time running TDVim. You are now un a temp installation."        
+        if has('dialog_con') || has('dialog_gui') || has('gui_running')
+            let l:ret = confirm("Proceed installing all packages and finish installation?")
+        endif
+        call TDVimUpdate()        
+        if has('dialog_con') || has('dialog_gui') || has('gui_running')
+            let l:ret = confirm("Please restart Vim")
+        endif
+        qall!        
     endif
 endfunction
 "}}}
