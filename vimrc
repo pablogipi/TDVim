@@ -1232,6 +1232,8 @@ function! TDVimUpdate(  )
     if l:is_first_install
         call s:TDVimUpdateAddToScratch(["Installation finished, please restart Vim"])
         echomsg "Installation finished, please restart Vim"
+        " TODO: wait here for user to press a key and close vim
+        " TODO: scratch buffer to show TDVim Update should get lall the space, do a CTRL-W-O
     endif
     execute "cd " . l:curloc
     let &more = save_more
@@ -1240,6 +1242,25 @@ function! TDVimUpdate(  )
 
 endfunction
 " }}}
+
+
+" TDVimFinishIntall {{{2
+" Setup temp environment for to finish installation and call TDVimUpdate()
+function! s:TDVimFinishIntall (lines)
+    if empty(readdir(g:tdvim_install_path . '/pack\core\start\fzf'))
+        " Minimal UI setup for isntallation
+        colorscheme desert
+        set background=dark
+        command! TDVimUpdate call TDVimUpdate()
+        echomsg "First time running TDVim. You are now un a temp installation."
+        confirm("Proceed installing all packages and finish installation?")
+        call TDVimUpdate()
+        confirm("Please restart Vim")
+        return
+    endif
+endfunction
+
+
 " Functions }}}
 
 "
@@ -1354,12 +1375,7 @@ let g:tdvim_install_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 " Check if this is the first install
 if empty(readdir(g:tdvim_install_path . '/pack\core\start\fzf'))
     " Minimal UI setup for isntallation
-    colorscheme desert
-    set background=dark
-    command! TDVimUpdate call TDVimUpdate()
-    echomsg "First time running TDVim. You are now un a temp installation."
-    echomsg "Please execute :TDVimUpdate to finish installation and restart Vim"
-    messages
+    autocmd VimEnter * call s:TDVimFinishIntall()
     finish
 endif
 
