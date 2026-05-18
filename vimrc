@@ -1154,18 +1154,18 @@ function! TDVimUpdate(  )
     echomsg "Starting updating TDVim installed at " . g:tdvim_install_path
     call s:TDVimUpdateAddToScratch(["Starting updating TDVim installed at " . g:tdvim_install_path])
 
-    "echomsg "Running git pull to update vim install repo"
-    "let l:output = system("git pull")
-    "let l:exit_code = v:shell_error
-    "if l:exit_code != 0
-    "    echoerr "Local changes detected. Please commit or stash them first."
-    "    let l:status = system("git status")
-    "    echo l:status
-    "    return
-    "endif
+    echomsg "Running git pull to update vim install repo"
+    let l:output = system("git pull")
+    let l:exit_code = v:shell_error
+    if l:exit_code != 0
+        echoerr "Local changes detected. Please commit or stash them first."
+        let l:status = system("git status")
+        echo l:status
+        finish
+    endif
 
     " Load submodules
-    call s:TDVimUpdateAddToScratch(["Load submodules (plugins)"])
+    call s:TDVimUpdateAddToScratch(["Load submodules (plugins). This can take a while ..."])
     let l:output = systemlist("git submodule update --init --recursive")
     let l:exit_code = v:shell_error
     if l:exit_code != 0
