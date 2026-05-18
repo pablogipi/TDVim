@@ -1162,7 +1162,7 @@ function! TDVimUpdate(  )
 
     " Check if this is the first install
     let l:is_first_install = 0
-    if empty(readdir(g:tdvim_install_path . '/pack\core\start\fzf'))
+    if empty(readdir(g:tdvim_install_path . '/pack/core/start/fzf'))
         let l:is_first_install = 1
         echomsg "Updating TDVim for the first time, finish installation and checks"
         call s:TDVimUpdateAddToScratch([ "Updating TDVim for the first time, finish installation and checks"])
