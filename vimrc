@@ -1248,7 +1248,7 @@ endfunction
 " TDVimFinishInstall {{{2
 " Setup temp environment for to finish installation and call TDVimUpdate()
 function! s:TDVimFinishInstall ()
-    if empty(readdir(g:tdvim_install_path . '/pack\core\start\fzf'))
+    if empty(readdir(g:tdvim_install_path . '/pack/core/start/fzf'))
         " Minimal UI setup for isntallation
         colorscheme desert
         set background=dark
@@ -1383,7 +1383,7 @@ endif
 let g:tdvim_install_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 " Check if this is the first install
-if empty(readdir(g:tdvim_install_path . '/pack\core\start\fzf'))
+if empty(readdir(g:tdvim_install_path . '/pack/core/start/fzf'))
     " Minimal UI setup for isntallation
     autocmd VimEnter * call s:TDVimFinishInstall()
     finish
