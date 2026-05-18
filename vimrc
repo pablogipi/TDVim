@@ -1123,13 +1123,13 @@ endfunction
 function! TDVimUpdate(  )
     " Check if we can access github (check connection)
     " Try pinging github.com (1 packet, 5 second timeout)
-    " NOTE: disable ping test for connectivity, having issues in linux
     "let l:result = system('ping -n 1 -w 5 github.com 2>/dev/null')
     "if v:shell_error != 0
         ""Connectivity Errors
         "echoerr("Can't connect to github, please check connectivity")
         "finish
     "endif
+
     if  executable('curl')
         if system('curl -s -o /dev/null -w "%{http_code}" --max-time 3 https://google.com') == "301"
             echomsg "Internet connection checked ..."
@@ -1144,228 +1144,13 @@ function! TDVimUpdate(  )
             "Connectivity Errors
             echoerr("Can't connect to github, please check connectivity")
             finish
+        else
+            echomsg "Internet connection checked ..."
         endif
     else
-        echo  "Not checking internet connection"
+        echo
     endif
 
-    " Move to TDVim install
-    let l:curloc = getcwd()
-    execute "cd " . g:tdvim_install_path
-
-    if !s:has_git
-        echoerr("Can't find git installed in this system, please install git before updating TDVim")
-        finish
-    endif
-
-    " Check if this is the first install
-    let l:is_first_install = 0
-    if empty(readdir(g:tdvim_install_path . '/pack\core\start\fzf'))
-        let l:is_first_install = 1
-        echomsg "Updating TDVim for the first time, finish installation and checks"
-        call s:TDVimUpdateAddToScratch([ "Updating TDVim for the first time, finish installation and checks"])
-        if !executable('ruff')
-            echomsg "TDVim for python works  better in companion with ruff, please consider installing it"
-            call s:TDVimUpdateAddToScratch([ "Updating TDVim for the first time, finish installation and checks"])
-        else
-            call s:TDVimUpdateAddToScratch([ "Ruff for python found"])
-        endif
-    endif
-
-    echomsg "Starting updating TDVim installed at " . g:tdvim_install_path
-    call s:TDVimUpdateAddToScratch(["Starting updating TDVim installed at " . g:tdvim_install_path])
-
-    "echomsg "Running git pull to update vim install repo"
-    "let l:output = system("git pull")
-    "let l:exit_code = v:shell_error
-    "if l:exit_code != 0
-    "    echoerr "Local changes detected. Please commit or stash them first."
-    "    let l:status = system("git status")
-    "    echo l:status
-    "    return
-    "endif
-
-    " Load submodules
-    call s:TDVimUpdateAddToScratch(["Load submodules (plugins)"])
-    let l:output = systemlist("git submodule update --init --recursive")
-    let l:exit_code = v:shell_error
-    if l:exit_code != 0
-        echoerr "Error loading git submodules"
-        return
-    else
-        call s:TDVimUpdateAddToScratch(l:output)
-    endif
-    " Update submodules
-    let status_output = system("git submodule status --recursive")
-    let submodules = []
-    for line in split(status_output, '\n')
-        " Format: <status> <hash> <path> (optional branch)
-        let parts = split(line)
-        if len(parts) >= 3
-            call add(submodules, parts[1])  " parts[1] is the path
-        endif
-    endfor
-    "echo  submodules
-    " Switch each submodule to default branch
-    let save_more = &more
-    set nomore
-    "echomsg "Found " . len(submodules) . " plugins packages"
-    call s:TDVimUpdateAddToScratch(["Found " . len(submodules) . " plugins packages"])
-    let l:submodule_counter = 0
-    for submodule in submodules
-        " Get default branch using git
-        "echomsg "Checking submodule: " . submodule
-        let l:submodule_counter += 1
-        call s:TDVimUpdateAddToScratch(["[" . submodule_counter . "/" . len(submodules) . "] Checking submodule: " . submodule])
-        execute "cd " . g:tdvim_install_path
-        execute "cd " . submodule
-        " TODO Check if cuirrent repo is HEAD detached and then do th switch to
-        " default branch
-        let git_show = systemlist("git remote show origin")
-        let line = matchstr(git_show, 'HEAD branch:.*')
-        let default_branch = trim(substitute(line, 'HEAD branch: \(\S\+\)', '\1', ''))
-
-        if default_branch == ''
-            " Try common branch names
-            for branch in ['main', 'master', 'develop']
-                let check = system("cd " . submodule . " && git show-ref --verify --quiet refs/heads/" . branch . " && echo exists")
-                if strlen(check) > 0
-                    let default_branch = branch
-                    break
-                endif
-            endfor
-        endif
-
-        if default_branch != ''
-            "echo "Switching " . submodule . " to " . default_branch
-            "let git_checkout = systemlist("git checkout " . default_branch)
-            "echomsg join(git_checkout, "\n")
-            "call s:TDVimUpdateAddToScratch(git_checkout)
-            call s:TDVimUpdateCheckoutIfNeeded( submodule, default_branch)
-        endif
-        " Do git pull to update
-        let git_pull = systemlist("git pull")
-        call s:TDVimUpdateAddToScratch(git_pull)
-    endfor
-    call s:TDVimUpdateAddToScratch(["Update Help Tags"])
-    helptags ALL
-    call s:TDVimUpdateAddToScratch(["TDVim updated !!"])
-    echomsg "TDVim updated !!"
-    if l:is_first_install
-        call s:TDVimUpdateAddToScratch(["Installation finished, please restart Vim"])
-        echomsg "Installation finished, please restart Vim"
-        " TODO: wait here for user to press a key and close vim
-        " TODO: scratch buffer to show TDVim Update should get lall the space, do a CTRL-W-O
-    endif
-    execute "cd " . l:curloc
-    let &more = save_more
-
-
-
-endfunction
-" }}}
-
-
-" TDVimFinishInstall {{{2
-" Setup temp environment for to finish installation and call TDVimUpdate()
-function! s:TDVimFinishInstall ()
-    if empty(readdir(g:tdvim_install_path . '/pack/core/start/fzf'))
-        " Minimal UI setup for isntallation
-        colorscheme desert
-        set background=dark
-        command! TDVimUpdate call TDVimUpdate()
-        echomsg "First time running TDVim. You are now in a temp installation."        
-        if has('dialog_con') || has('dialog_gui') || has('gui_running')
-            let l:ret = confirm("Proceed installing all packages and finish installation?")
-        else
-            echomsg "Proceed installing all packages and finish installation"
-        endif
-        call TDVimUpdate()        
-        if has('dialog_con') || has('dialog_gui') || has('gui_running')
-            let l:ret = confirm("TDVim installation finished! Please restart Vim")
-        else
-            echomsg "TDVim installation finished! Please restart Vim"
-        endif
-        qall!        
-    endif
-endfunction
-"}}}
-
-
-" Functions }}}
-
-"
-" Init settings {{{
-"
-" When started as "evim", evim.vim will already have done these settings.
-if v:progname =~? "evim"
-    finish
-endif
-
-
-" Use Vim settings, rather then Vi settings (much better!).
-" This must be first, because it changes other options as a side effect.
-set nocompatible
-" Allow backspacing over everything in insert mode
-set backspace=indent,eol,start
-
-" Backup and swap files
-" Do not keep a backup file for VMS
-if has("vms")
-    set nobackup
-else
-    set backup                               " keep a backup file
-endif
-let vimbackuppath = $HOME . '/.vim/tmp'
-if has('win32') || has('win64')
-    "Windows
-    let vimbackuppath = $HOME . '/vimfiles/tmp'
-endif
-let &backupdir = vimbackuppath . '//,.'
-let &directory = vimbackuppath . '//,.'
-silent call mkdir (vimbackuppath , 'p')
-
-" Set viminfo. Mainly set history limits
-" File history: 25
-" Maximum lines per registry: 100
-" Maximum sze of a register: 10KB
-" Disable hlsearch
-set viminfo='25,<100,s10,h
-if s:GetOS() == 3
-    "Windows
-    set viminfo+=rA:
-    set viminfo+=rB:
-endif
-
-
-" Check terminals colors, if is not a 256 color terminal make a warning
-if !has('gui_running') && &t_Co < 256
-  silent echomsg "Current terminal doesn't support 256 colors. Some colors and the status line won't look correctly"
-else
-  " Gives Vim access to a broader range of colours
-  set termguicolors
-endif
-
-
-" Always run mswin at the end
-" Load more conventional editors options, MSWin mode:
-source $VIMRUNTIME/mswin.vim
-" Fix mswin, it enters in select mode rather than visual.
-set selectmode=""
-" Auto change directory
-set autochdir
-" Use OS clipboard:
-set clipboard^=unnamed,unnamedplus
-
-" Set default file format to UNIX with support for DOS:
-set fileformats=unix,dos
-set fileformat=unix
-
-" Detect some commands availability in the system {{{2
-
-" Detect FZF
-let s:has_fzf = 0
-if  
     " Move to TDVim install
     let l:curloc = getcwd()
     execute "cd " . g:tdvim_install_path
