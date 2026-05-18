@@ -1123,41 +1123,18 @@ endfunction
 function! TDVimUpdate(  )
     " Check if we can access github (check connection)
     " Try pinging github.com (1 packet, 5 second timeout)
-    "let l:result = system('ping -n 1 -w 5 github.com 2>/dev/null')
-    "if v:shell_error != 0
-        ""Connectivity Errors
-        "echoerr("Can't connect to github, please check connectivity")
-        "finish
-    "endif
-
-    if  executable('curl')
-        if system('curl -s -o /dev/null -w "%{http_code}" --max-time 3 https://google.com') == "301"
-            echomsg "Internet connection checked ..."
-        else
-            "Connectivity Errors
-            echoerr("Can't connect to github, please check connectivity")
-            finish
-        endif
-    elseif executable('ping')
-        let l:result = system('ping -n 1 -w 5 github.com 2>/dev/null')
-        if v:shell_error != 0
-            "Connectivity Errors
-            echoerr("Can't connect to github, please check connectivity")
-            finish
-        else
-            echomsg "Internet connection checked ..."
-        endif
-    else
-        echo
+    let l:result = system('ping -n 1 -w 5 github.com 2>/dev/null')
+    if v:shell_error != 0
+        "Connectivity Errors
+        echoerr("Can't connect to github, please check connectivity")
+        return
     endif
-
-    " Move to TDVim install
     let l:curloc = getcwd()
     execute "cd " . g:tdvim_install_path
 
     if !s:has_git
         echoerr("Can't find git installed in this system, please install git before updating TDVim")
-        finish
+        return
     endif
 
     " Check if this is the first install
@@ -1271,7 +1248,7 @@ endfunction
 " TDVimFinishInstall {{{2
 " Setup temp environment for to finish installation and call TDVimUpdate()
 function! s:TDVimFinishInstall ()
-    if empty(readdir(g:tdvim_install_path . '/pack/core/start/fzf'))
+    if empty(readdir(g:tdvim_install_path . '/pack\core\start\fzf'))
         " Minimal UI setup for isntallation
         colorscheme desert
         set background=dark
@@ -2425,7 +2402,7 @@ let g:lightline.colorscheme = "PaperColor"
 if s:has_fd
     let $FZF_DEFAULT_COMMAND = 'fd'
 elseif s:has_rg
-    let $FZF_DEFAULT_COMMAND = 'rg --files'
+    let $FZF_DEFAULT_COMMAND = "rg --files -g '!tags'"
 endif
 " Layout
 " Open using split at bottom. Faster than floating window
@@ -2469,11 +2446,16 @@ if !s:has_bash
     endif
 endif
 
+" Override Rg command to do search to unwanted files, like tags or under .git.
+" Deepseel courtesy:
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case --glob '!tags' --glob '!.git/' ".fzf#shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:50%', '?'), <bang>0)
+
 " }}}
 
 " Jedi {{{2
 let g:jedi#goto_stubs_command = ""
 let g:jedi#goto_command = "]t"
+let g:jedi#usages_command = "]T"
 let g:jedi#popup_select_first = 0
 let g:jedi#show_call_signatures = 1
 " }}}
@@ -2612,8 +2594,12 @@ if  executable('ruff')
     " Fixers
     let g:ale_fixers = { "python": ["ruff", "trim_whitespace", "ruff_format"] }
     " Options
+    " DEPRECATED: not good to have import sorted automatically
     " Sort imports
-    let g:ale_python_ruff_options = '--extend-select I'
+    "let g:ale_python_ruff_options = '--extend-select I'
+    " Detect but dont remove unused imports
+    " Rule F401 from flakes detect not used imports
+    let g:ale_python_ruff_options = '--unfixable F401'
 endif
 "let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
@@ -2727,20 +2713,26 @@ if g:tdvim_dev_mode
     " Enable Autowrite:
     set autowriteall
     " Autosave:
+    " Pattern for all file formats for autosave
     let s:autoPattern = "*.{c,h,[ch]pp,[acjt]s,inl,cg,cgfx,fx,py,bat,cmd,jam,vim,yml,yaml,vsprops,erb,rb,html,htm},SCons*,[mM]akefile,*vimrc"
-    execute "autocmd FocusLost"     s:autoPattern   "silent! wall"
-    execute "autocmd CursorHold " s:autoPattern " silent! update"
+    " Pattern where we have removed certain patterns for some file formats that
+    " are setup later, for instance py
+    let s:autoPattern_excluded = "*.{c,h,[ch]pp,[acjt]s,inl,cg,cgfx,fx,bat,cmd,jam,vim,yml,yaml,vsprops,erb,rb,html,htm},SCons*,[mM]akefile,*vimrc"
+    augroup TDVimAutoSave
+        execute "autocmd FocusLost"     s:autoPattern   "silent! wall"
+        execute "autocmd CursorHold " s:autoPattern_excluded " silent! update"
+    augroup END
     " Enable Vista get nearest method name:
     autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
     " Highlight word under cursor
-    augroup MatchWord
+    augroup TDVimMatchWord
         autocmd!
         autocmd! CursorHold,CursorHoldI * call TDVimHighlightWordUnderCursor()
     augroup END
     
     " Set code complete
     " Add omnicompletion for regular key words copletion
-    set complete+=o
+    "set complete+=o
     set autocomplete
     set autocompletedelay=100
 
@@ -2807,8 +2799,13 @@ if g:tdvim_dev_mode
     " Python
     " Run ALEFix on Python buffer save
     if exists(':ALEFix') == 2
-        autocmd FileType python let b:ale_fix_on_save = 1
-        autocmd FileWritePre *.py silent! execute ':ALEFix'
+        augroup TDVimPython
+            autocmd FileType python let b:ale_fix_on_save = 1
+            "autocmd FileWritePre *.py silent! execute ':ALEFix'
+            autocmd CursorHold *.py silent! if &modified | ALEFix | endif | update
+
+            autocmd FileType python iabbrev dbg print(f"DEBUG:")<Left><Left>
+        augroup END
     endif
 
     " DWM keymaps
