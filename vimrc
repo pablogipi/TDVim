@@ -1123,12 +1123,12 @@ endfunction
 function! TDVimUpdate(  )
     " Check if we can access github (check connection)
     " Try pinging github.com (1 packet, 5 second timeout)
-    let l:result = system('ping -n 1 -w 5 github.com 2>/dev/null')
-    if v:shell_error != 0
-        "Connectivity Errors
-        echoerr("Can't connect to github, please check connectivity")
-        return
-    endif
+    "let l:result = system('ping -n 1 -w 5 github.com 2>/dev/null')
+    "if v:shell_error != 0
+        ""Connectivity Errors
+        "echoerr("Can't connect to github, please check connectivity")
+        "return
+    "endif
     let l:curloc = getcwd()
     execute "cd " . g:tdvim_install_path
 
