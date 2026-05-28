@@ -67,9 +67,6 @@
 [submodule "vim_packages/pack/dev/opt/vista"]
 	path = pack/dev/opt/vista
 	url = https://github.com/liuchengxu/vista.vim.git
-[submodule "vim_packages/pack/dev/opt/jedi-vim"]
-	path = pack/dev/opt/jedi-vim
-	url = https://github.com/davidhalter/jedi-vim.git
 [submodule "vim_packages/pack/dev/opt/vim-pythonsense"]
 	path = pack/dev/opt/vim-pythonsense
 	url = https://github.com/jeetsukumaran/vim-pythonsense
