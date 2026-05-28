@@ -51,7 +51,7 @@ if g:tdvim_dev_mode
     packadd scratch.vim
     packadd vista
     packadd ale
-    packadd jedi-vim
+    "packadd jedi-vim
     packadd vim-pythonsense
     packadd vim-python-match
     packadd dwm.vim
