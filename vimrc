@@ -1120,6 +1120,86 @@ function! s:TDVimUpdateCheckoutIfNeeded(submodule, branch)
     endif
 endfunction
 
+" Install/Update jedi-vim
+function! s:TDVimUpdateJediVim()
+    let l:curloc = getcwd()
+    call s:TDVimUpdateAddToScratch([ "Install/Update jedi-vim"])
+    " Create plugin folder if needed:
+    let pluginpath = g:tdvim_install_path . '/pack/dev/opt/jedi-vim'
+    if isdirectory(pluginpath)
+        " Assume is installed and proceed to update
+        execute "cd " . pluginpath
+        let l:curbranch = trim(system("git branch --show-current"))
+        let default_branches = ["master", "main", "develop"]
+        if index(default_branches, l:curbranch) != -1
+            let l:git_pull = systemlist("git pull --recurse-submodules")
+            if v:shell_error != 0
+                echoerr "Error updating jedi-vim (git pull --recurse-submodules). Please check state od the repo at " . pluginpath
+                echoerr "If the repo is in a nunsable state you can just remove is completely and run TDVimUpdate, tha twill install it again"
+                call s:TDVimUpdateAddToScratch(["Error updating jedi-vim (git pull --recurse-submodules). Please check state od the repo at ",
+                    "If the repo is in a nunsable state you can just remove is completely and run TDVimUpdate, tha twill install it again" ])
+                return v:false
+            else
+                call s:TDVimUpdateAddToScratch(l:git_pull)
+            endif
+        elseif len(l:curbranch) > 0
+            call s:TDVimUpdateAddToScratch([ "jedi-vim repo is using a custom branch (" . l:curbranch . "). Assume is a custom install and don't update"])
+        else
+            call s:TDVimUpdateAddToScratch([ "jedi-vim repo is in a detached state. Looks like the repo is not correctly installed. You can remove the repo folder and run TDVimUpdate to install it again."])
+        endif
+    else
+        " Install jedi-vim
+        echomsg "Need to install jedi"
+        execute "cd " . g:tdvim_install_path . '/pack/dev/opt'
+        let l:git_clone = systemlist("git clone https://github.com/davidhalter/jedi-vim.git")
+        if v:shell_error != 0
+            echoerr "Error cloning jedi-vim from https://github.com/davidhalter/jedi-vim.git"
+            return v:false
+        else
+            call s:TDVimUpdateAddToScratch(l:git_clone)
+        endif
+        execute "cd jedi-vim"
+        let l:output = systemlist("git submodule update --init --recursive")
+        " Check if we are running python 3.6 or lower
+        if has('python3') && trim(execute("py3 print(sys.version_info.major == 3 and sys.version_info.minor <= 6)")) == 'True'
+            call s:TDVimUpdateAddToScratch([ "Detected Python 3.6 or lower in the system. Proceed to install compatible jedi-vim tag (0.11.0)"])
+            echomsg "Detected Python 3.6 or lower in the system. Proceed to install compatible jedi-vom branch"
+            let l:output = systemlist("git fetch --all --tags")
+            let l:output = systemlist("git checkout 0.11.0 -b v0.11.0")
+            call s:TDVimUpdateAddToScratch(l:output)
+            let l:output = systemlist("git submodule update --init --recursive")
+        endif
+        call s:TDVimUpdateAddToScratch([ "jedi-vim installed"])
+    endif
+    execute "cd " . l:curloc
+    return v:true
+endfunction
+
+" Check and install myvimrc if needed
+function! s:TDVimUpdateMyvimrc()
+    if !filereadable($HOME . "/myvimrc") && !filereadable($HOME . "/.myvimrc") && !filereadable($HOME . "/_myvimrc")
+        echomsg "myvimrc doesn't exists, create it"
+        call s:TDVimUpdateAddToScratch([ "myvimrc doesn't exists, create it"])
+        let l:myvimrc = '.myvimrc'
+        if has('win32') || has('win64')
+            let l:myvimrc = '_myvimrc'
+        endif
+        let l:src = g:tdvim_install_path . "/myvimrc"
+        let l:dest = $HOME . "/" . l:myvimrc
+        if has('win32') || has('win64')
+            let l:src = substitute( l:src, "/", "\\", "")
+            let l:dest = substitute( l:dest, "/", "\\", "")
+            call system('copy /Y ' . shellescape(l:src) . ' ' . shellescape(l:dest))
+        else
+            call system('cp -b ' . shellescape(l:src) . ' ' . shellescape(l:dest))
+        endif
+        echomsg "myvimrc created at " . l:dest
+        call s:TDVimUpdateAddToScratch(["myvimrc created at " . l:dest])
+    endif
+
+endfunction
+
+
 function! TDVimUpdate(  )
     " Check if we can access github (check connection)
     " Try pinging github.com (1 packet, 5 second timeout)
@@ -1226,15 +1306,22 @@ function! TDVimUpdate(  )
         let git_pull = systemlist("git pull")
         call s:TDVimUpdateAddToScratch(git_pull)
     endfor
+    " Install special plugins
+    call s:TDVimUpdateAddToScratch(["Start installing/updating special plugins"])
+    call s:TDVimUpdateJediVim()
+
+    " Finish installation/update
     call s:TDVimUpdateAddToScratch(["Update Help Tags"])
     helptags ALL
     call s:TDVimUpdateAddToScratch(["TDVim updated !!"])
     echomsg "TDVim updated !!"
     if l:is_first_install
+        " TODO: check if myvimrc exists, if not then copy a template and inform
+        " the user about it
+        call s:TDVimUpdateMyvimrc()
         call s:TDVimUpdateAddToScratch(["Installation finished, please restart Vim"])
         echomsg "Installation finished, please restart Vim"
         " TODO: wait here for user to press a key and close vim
-        " TODO: scratch buffer to show TDVim Update should get lall the space, do a CTRL-W-O
     endif
     execute "cd " . l:curloc
     let &more = save_more
