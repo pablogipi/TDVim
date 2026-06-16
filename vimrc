@@ -1152,7 +1152,8 @@ function! s:TDVimUpdateJediVim()
         echomsg "Need to install jedi"
         execute "cd " . g:tdvim_install_path . '/pack/dev/opt'
         "let l:git_clone = systemlist("git clone https://github.com/davidhalter/jedi-vim.git")
-        let l:git_clone = systemlist("git clone https://github.com/pablogipi/jedi-vim.git")
+        " For the time been use my branch with complete fixed
+        let l:git_clone = systemlist("git clone -b  support_new_complete_o_flag https://github.com/pablogipi/jedi-vim.git")
         if v:shell_error != 0
             echoerr "Error cloning jedi-vim from https://github.com/pablogipi/jedi-vim.git"
             return v:false
@@ -1160,8 +1161,6 @@ function! s:TDVimUpdateJediVim()
             call s:TDVimUpdateAddToScratch(l:git_clone)
         endif
         execute "cd jedi-vim"
-        " For the time been use my branch with complete fixed
-        let l:git_branch = systemlist("git switch support_new_complete_o_flag")
         let l:output = systemlist("git submodule update --init --recursive")
         " Check if we are running python 3.6 or lower
         if has('python3') && trim(execute("py3 print(sys.version_info.major == 3 and sys.version_info.minor <= 6)")) == 'True'
