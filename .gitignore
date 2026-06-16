@@ -21,6 +21,7 @@ tmp/
 .netrwhist
 sessions
 .tdvim
+jedi-vim
 
 # Compiled and cached python
 .pyc

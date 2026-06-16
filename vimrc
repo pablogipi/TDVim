@@ -51,7 +51,7 @@ if g:tdvim_dev_mode
     packadd scratch.vim
     packadd vista
     packadd ale
-    "packadd jedi-vim
+    packadd jedi-vim
     packadd vim-pythonsense
     packadd vim-python-match
     packadd dwm.vim
@@ -1151,13 +1151,16 @@ function! s:TDVimUpdateJediVim()
         " Install jedi-vim
         echomsg "Need to install jedi"
         execute "cd " . g:tdvim_install_path . '/pack/dev/opt'
-        let l:git_clone = systemlist("git clone https://github.com/davidhalter/jedi-vim.git")
+        "let l:git_clone = systemlist("git clone https://github.com/davidhalter/jedi-vim.git")
+        let l:git_clone = systemlist("git clone https://github.com/pablogipi/jedi-vim.git")
         if v:shell_error != 0
-            echoerr "Error cloning jedi-vim from https://github.com/davidhalter/jedi-vim.git"
+            echoerr "Error cloning jedi-vim from https://github.com/pablogipi/jedi-vim.git"
             return v:false
         else
             call s:TDVimUpdateAddToScratch(l:git_clone)
         endif
+        " For the time been use my branch with complete fixed
+        let l:git_branch = systemlist("git switch support_new_complete_o_flag")
         execute "cd jedi-vim"
         let l:output = systemlist("git submodule update --init --recursive")
         " Check if we are running python 3.6 or lower
@@ -2819,7 +2822,7 @@ if g:tdvim_dev_mode
     
     " Set code complete
     " Add omnicompletion for regular key words copletion
-    "set complete+=o
+    set complete+=o
     set autocomplete
     set autocompletedelay=100
 
@@ -2884,16 +2887,15 @@ if g:tdvim_dev_mode
 
     " Configs for different file types
     " Python
-    " Run ALEFix on Python buffer save
-    if exists(':ALEFix') == 2
-        augroup TDVimPython
-            autocmd FileType python let b:ale_fix_on_save = 1
+    augroup TDVimPython
+        " Run ALEFix on Python buffer save
+        if exists(':ALEFix') == 2
+            "autocmd FileType python let b:ale_fix_on_save = 1
             "autocmd FileWritePre *.py silent! execute ':ALEFix'
-            autocmd CursorHold *.py silent! if &modified | ALEFix | endif | update
-
-            autocmd FileType python iabbrev dbg print(f"DEBUG:")<Left><Left>
-        augroup END
-    endif
+            "autocmd CursorHold *.py silent! if &modified | ALEFix | endif | update
+        endif
+        autocmd FileType python iabbrev dbg print(f"DEBUG:")<Left><Left>
+    augroup END
 
     " DWM keymaps
     if exists("g:dwm_version")
