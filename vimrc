@@ -675,6 +675,15 @@ function! TDVimLightlineFilename() abort
 endfunction
 " }}}
 
+" Override just the filename in the palette
+function! s:TDVimLightlineOverrideStyle()
+  let l:palette = lightline#palette()
+  call add(l:palette.normal.left[1], 'bold')
+  call add(l:palette.inactive.left[0], 'bold')
+
+  call lightline#colorscheme()
+endfunction
+
 " LightlineInactiveMode {{{3
 " Return PREVIEW string or nothing, used in lightline for inactive windows
 function! TDVimLightlineInactiveMode() abort
@@ -1166,6 +1175,7 @@ function! s:TDVimUpdateJediVim()
         if has('python3') && trim(execute("py3 print(sys.version_info.major == 3 and sys.version_info.minor <= 6)")) == 'True'
             call s:TDVimUpdateAddToScratch([ "Detected Python 3.6 or lower in the system. Proceed to install compatible jedi-vim tag (0.11.0)"])
             echomsg "Detected Python 3.6 or lower in the system. Proceed to install compatible jedi-vom branch"
+            let l:output = systemlist("git switch master")
             let l:output = systemlist("git fetch --all --tags")
             let l:output = systemlist("git checkout 0.11.0 -b v0.11.0")
             call s:TDVimUpdateAddToScratch(l:output)
@@ -2247,6 +2257,7 @@ if has("autocmd")
     augroup tdvimMisc
         " Highlight type for extra white spaces at the end of a line
         "autocmd ColorScheme * highlight ExtraWhitespace ctermbg=lightred guibg=lightred
+        autocmd ColorScheme * call s:TDVimLightlineOverrideStyle()
         "autocmd Syntax python,cpp,c,sh,csh,vim highlight ExtraWhitespace ctermbg=lightred guibg=lightred
         autocmd Syntax * syntax match myTodo /\v<(TODO|FIXME|DEBUG|DEBUG|WARN|WARNING|ERROR|NOTE|DEPRECATED):?/hs=s containedin=.*Comment
     augroup END
