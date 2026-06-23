@@ -1263,6 +1263,7 @@ function! TDVimUpdate(  )
     let l:output = systemlist("git submodule update --init --recursive")
     let l:exit_code = v:shell_error
     if l:exit_code != 0
+        call s:TDVimUpdateAddToScratch(l:output)
         echoerr "Error loading git submodules"
         return
     else
