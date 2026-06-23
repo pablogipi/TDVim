@@ -1260,7 +1260,7 @@ function! TDVimUpdate(  )
 
     " Load submodules
     call s:TDVimUpdateAddToScratch(["Load submodules (plugins). This can take a while ..."])
-    let l:output = systemlist("git submodule update --init --recursive")
+    let l:output = systemlist("git submodule update --init --recursive 2>&1")
     let l:exit_code = v:shell_error
     if l:exit_code != 0
         call s:TDVimUpdateAddToScratch(l:output)
