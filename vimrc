@@ -675,9 +675,11 @@ function! TDVimLightlineFilename() abort
 endfunction
 " }}}
 
-" Override just the filename in the palette
+" Override styles in certain sections in lightline.
+" This is called in a ColorScheme event
 function! s:TDVimLightlineOverrideStyle()
   let l:palette = lightline#palette()
+  " Left section with filename and modifications
   call add(l:palette.normal.left[1], 'bold')
   call add(l:palette.inactive.left[0], 'bold')
 
@@ -2835,6 +2837,9 @@ if g:tdvim_dev_mode
     set complete+=o
     set autocomplete
     set autocompletedelay=100
+
+    " Buffer switch
+    set switchbuf=uselast
 
     "
     " Keymaps for dev mode
