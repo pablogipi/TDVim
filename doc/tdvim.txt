@@ -22,7 +22,11 @@ Table Of Contents~
 Intro                                  *tdvim-intro*
 
 Install:
-    git clone --recurse-submodules -b vim-packages https://github.com/pablogipi/TDVim.git
+Run this command from your HOME folder:
+    UNIX:
+        git clone -b vim-packages https://github.com/pablogipi/TDVim.git .vim
+    Windows:
+        git clone -b vim-packages https://github.com/pablogipi/TDVim.git vimfiles
 
 Update:
 From vim run this command:

@@ -2687,6 +2687,10 @@ let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 " For example:
 let g:vista_fzf_preview = ['right:50%']
 
+" When using FZF to jump to a symbol, if there are several windows for the same
+" buffer jump to latest used window instead of the first window for the buffer
+let g:vista_fzf_jump_to_last_used_win = 1
+
 " Ensure you have installed some decent font to show these pretty symbols, then you can enable icon for the kind.
 let g:vista#renderer#enable_icon = 1
 
