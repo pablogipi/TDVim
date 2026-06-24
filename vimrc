@@ -1122,7 +1122,7 @@ function! s:TDVimUpdateCheckoutIfNeeded(submodule, branch)
     else
         call system("git checkout " . a:branch)
         if v:shell_error == 0
-            call s:TDVimUpdateAddToScratch(["Switching from " . current_branch . " to " . a:branch])
+            call s:TDVimUpdateAddToScratch(["Switching  to branch: " . a:branch])
             return 1
         else
             echoerr "Error switching to branch: " . a:branch . " in repo: " . a:submodule
@@ -1130,6 +1130,56 @@ function! s:TDVimUpdateCheckoutIfNeeded(submodule, branch)
         endif
     endif
 endfunction
+
+function! s:TDVimFixSubmoduleDetachedHead(submodule)
+    " Check if HEAD is detached
+    let symbolic_ref = system('git symbolic-ref HEAD 2>&1')
+    if v:shell_error == 0
+        " Not detached - already on a branch
+        "let current_branch = substitute(symbolic_ref, 'refs/heads/', '', '')
+        "echo a:submodule_path . " already on branch: " . current_branch
+        return
+    endif
+    " Get the branch name from .gitmodules or remote
+    let branch = system('git log -1 --format=%d HEAD')
+    let branch = matchstr(branch, 'origin/\zs[^,)]\+')
+    
+    if !empty(branch)
+        " Check if we need to create local branch
+        let local_exists = system('git show-ref --verify --quiet refs/heads/' . branch)
+        if v:shell_error != 0
+            call system('git switch -c ' . branch . ' origin/' . branch)
+        else
+            call system('git switch ' . branch)
+        endif
+        call s:TDVimUpdateAddToScratch(["Submodule " . a:submodule . " switched to branch " . branch])
+    else
+        call s:TDVimUpdateAddToScratch(["Submodule " . a:submodule . " is on detached on default branch, proceed to move to default branch"])
+        " TODO Check if current repo is HEAD detached and then do th switch to
+        " default branch
+        let git_show = systemlist("git remote show origin")
+        let line = matchstr(git_show, 'HEAD branch:.*')
+        let default_branch = trim(substitute(line, 'HEAD branch: \(\S\+\)', '\1', ''))
+
+        if default_branch == ''
+            " Try common branch names
+            for branch in ['main', 'master', 'develop']
+                let check = system("cd " . a:submodule . " && git show-ref --verify --quiet refs/heads/" . branch . " && echo exists")
+                if strlen(check) > 0
+                    let default_branch = branch
+                    break
+                endif
+            endfor
+        endif
+
+        if default_branch != ''
+            call s:TDVimUpdateCheckoutIfNeeded( a:submodule, default_branch)
+        endif
+
+    endif
+    
+endfunction
+
 
 " Install/Update jedi-vim
 function! s:TDVimUpdateJediVim()
@@ -1248,15 +1298,15 @@ function! TDVimUpdate(  )
     echomsg "Starting updating TDVim installed at " . g:tdvim_install_path
     call s:TDVimUpdateAddToScratch(["Starting updating TDVim installed at " . g:tdvim_install_path])
 
-    echomsg "Running git pull to update vim install repo"
-    let l:output = system("git pull")
-    let l:exit_code = v:shell_error
-    if l:exit_code != 0
-        echoerr "Local changes detected. Please commit or stash them first."
-        let l:status = system("git status")
-        echo l:status
-        finish
-    endif
+    "echomsg "Running git pull to update vim install repo"
+    "let l:output = system("git pull")
+    "let l:exit_code = v:shell_error
+    "if l:exit_code != 0
+        "echoerr "Local changes detected. Please commit or stash them first."
+        "let l:status = system("git status")
+        "echo l:status
+        "finish
+    "endif
 
     " Load submodules
     call s:TDVimUpdateAddToScratch(["Load submodules (plugins). This can take a while ..."])
@@ -1302,30 +1352,7 @@ function! TDVimUpdate(  )
         call s:TDVimUpdateAddToScratch(["[" . submodule_counter . "/" . len(submodules) . "] Checking submodule: " . submodule])
         execute "cd " . g:tdvim_install_path
         execute "cd " . submodule
-        " TODO Check if cuirrent repo is HEAD detached and then do th switch to
-        " default branch
-        let git_show = systemlist("git remote show origin")
-        let line = matchstr(git_show, 'HEAD branch:.*')
-        let default_branch = trim(substitute(line, 'HEAD branch: \(\S\+\)', '\1', ''))
-
-        if default_branch == ''
-            " Try common branch names
-            for branch in ['main', 'master', 'develop']
-                let check = system("cd " . submodule . " && git show-ref --verify --quiet refs/heads/" . branch . " && echo exists")
-                if strlen(check) > 0
-                    let default_branch = branch
-                    break
-                endif
-            endfor
-        endif
-
-        if default_branch != ''
-            "echo "Switching " . submodule . " to " . default_branch
-            "let git_checkout = systemlist("git checkout " . default_branch)
-            "echomsg join(git_checkout, "\n")
-            "call s:TDVimUpdateAddToScratch(git_checkout)
-            call s:TDVimUpdateCheckoutIfNeeded( submodule, default_branch)
-        endif
+        call s:TDVimFixSubmoduleDetachedHead(submodule)
         " Do git pull to update
         let git_pull = systemlist("git pull")
         call s:TDVimUpdateAddToScratch(git_pull)
