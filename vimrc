@@ -722,7 +722,7 @@ function! TDVimLightlineReadonly()
     if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal" || &filetype == "scratch"
         return ''
     else
-      if  exists('g:GuiLoaded') || has('gui_running')
+      if g:tdvim_dev_mode
         return &readonly ? '' : ''
       else
         return &readonly ? 'RO' : ''
@@ -734,8 +734,7 @@ function! TDVimLightlineModified()
     if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal" || &filetype == "scratch"
         return ''
     else
-      if  exists('g:GuiLoaded') || has('gui_running')
-        " return &modified ? '✗' : '✓'
+      if g:tdvim_dev_mode
         return &modified ? '✎' : '✓'
       else
         return &modified ? 'x' : 'o'
@@ -772,7 +771,7 @@ function! TDVimLightlineGit()
   elseif winwidth(0) < 100
       return ''
   elseif exists('w:currentgitbranch')
-    if  exists('g:GuiLoaded') || has('gui_running')
+    if g:tdvim_dev_mode
       return w:currentgitbranch !=# '' ? ''.w:currentgitbranch : ''
     else
       return w:currentgitbranch !=# '' ? '|/'.w:currentgitbranch : ''
@@ -841,40 +840,23 @@ endfunction
 function! s:SetFancyUI()
     " fancy UI using UTF and fancy icons
 
-    if  exists('g:GuiLoaded') || has('gui_running')
-        if g:tdvim_dev_mode && s:has_git
-            let g:lightline.active = {
-                        \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon', 'githunksummary' ], [ 'extrainfo', 'tagsgen' ] ],
-                        \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ], [ 'git' ] ]
-                        \   }
-        else
-            let g:lightline.active = {
-                        \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
-                        \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ] ]
-                        \   }
-        endif
-
+    if g:tdvim_dev_mode && s:has_git
+        let g:lightline.active = {
+                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon', 'githunksummary' ], [ 'extrainfo', 'tagsgen' ] ],
+                    \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ], [ 'git' ] ]
+                    \   }
         let g:lightline.component.lineinfo = '▤ %3l:%-2v'
         let g:lightline.separator = { 'left': '', 'right': '' }
         let g:lightline.subseparator = { 'left': '', 'right': '' }    
         let g:lightline#bufferline#unicode_symbols = 1
         let g:lightline#bufferline#enable_devicons = 1
     else
+        let g:lightline.active = {
+                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
+                    \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ] ]
+                    \   }
         let g:lightline.component.lineinfo = '%3l:%-2v'
     endif
-
-    " if exists('g:loaded_lightline') && exists('g:lightline')
-
-    " if has_key( g:lightline, 'component' )
-    " let g:lightline.component.lineinfo = '▤ %3l:%-2v'
-    " else
-    " let g:lightline.component = {}
-    " let g:lightline.component.lineinfo = '▤ %3l:%-2v'
-    " endif
-    " :au! CursorHold * ++nested call TDVimUpdateCurrentGitBranch()
-    " let g:lightline.separator = { 'left': '', 'right': '' }
-    " let g:lightline.subseparator = { 'left': '', 'right': '' }    
-    " endif
     if exists('g:loaded_lightline_buffer')
         "let g:lightline_buffer_logo = "\u233e"
         let g:lightline_buffer_logo                     = "》"
@@ -1135,14 +1117,10 @@ function! s:TDVimFixSubmoduleDetachedHead(submodule)
     " Check if HEAD is detached
     let symbolic_ref = system('git symbolic-ref HEAD 2>&1')
     if v:shell_error == 0
-        " Not detached - already on a branch
-        "let current_branch = substitute(symbolic_ref, 'refs/heads/', '', '')
-        "echo a:submodule_path . " already on branch: " . current_branch
         return
     endif
-    " Get the branch name from .gitmodules or remote
-    let branch = system('git log -1 --format=%d HEAD')
-    let branch = matchstr(branch, 'origin/\zs[^,)]\+')
+    " Get the branch name from .gitmodules
+    let branch = trim(system("git config -f ../../../../.gitmodules submodule." . a:submodule .".branch"))
     
     if !empty(branch)
         " Check if we need to create local branch
@@ -1155,12 +1133,10 @@ function! s:TDVimFixSubmoduleDetachedHead(submodule)
         call s:TDVimUpdateAddToScratch(["Submodule " . a:submodule . " switched to branch " . branch])
     else
         call s:TDVimUpdateAddToScratch(["Submodule " . a:submodule . " is on detached on default branch, proceed to move to default branch"])
-        " TODO Check if current repo is HEAD detached and then do th switch to
         " default branch
         let git_show = systemlist("git remote show origin")
         let line = matchstr(git_show, 'HEAD branch:.*')
         let default_branch = trim(substitute(line, 'HEAD branch: \(\S\+\)', '\1', ''))
-
         if default_branch == ''
             " Try common branch names
             for branch in ['main', 'master', 'develop']
@@ -1895,6 +1871,14 @@ nnoremap   <C-F10>    :confirm qa<CR>
 xnoremap   <C-F10>    :confirm qa<CR>
 inoremap   <C-F10>    <ESC>:confirm qa<CR>
 tnoremap   <C-F10>    <C-W>:confirm qa<CR>
+" In UNIX map Ctrl-z to suspend
+if s:GetOS() == 1
+    nnoremap   <C-z>    :suspend<CR>
+    xnoremap   <C-z>    :suspend<CR>
+    inoremap   <C-z>    <ESC>:suspend<CR>
+    tnoremap   <C-z>    <C-W>:suspend<CR>
+endif
+
 "}}}
 
 " Edit {{{2
