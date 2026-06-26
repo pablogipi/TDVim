@@ -1461,6 +1461,10 @@ set clipboard^=unnamed,unnamedplus
 set fileformats=unix,dos
 set fileformat=unix
 
+" Set update time for several events, like CursorHold
+set updatetime=500
+
+
 " Detect some commands availability in the system {{{2
 
 " Detect FZF
@@ -1527,6 +1531,22 @@ let &viewoptions='cursor,folds,slash,unix'
 set ttyfast
 " set term gui colors (most terminals support this)
 set termguicolors
+" Cursor shape:
+" Check if terminal supports cursor styling
+if &term =~ "xterm\\|xterm-256color\\|rxvt\\|screen\\|tmux"
+    " Insert mode: vertical line + magenta color
+    let &t_SI = "\<Esc>[6 q\<Esc>]12;magenta\x7"
+    " Normal mode: solid block + cyan color  
+    let &t_EI = "\<Esc>[2 q\<Esc>]12;cyan\x7"
+    " Set initial cursor to block + cyan when Vim starts
+    silent !echo -ne "\033[2 q\033]12;cyan\007"
+    "Remove delay when changing cursor shape
+    set ttimeoutlen=1 
+    " Reset to default when Vim exits
+    autocmd VimLeave * silent !echo -ne "\033[2 q\033]112\007"
+endif
+"let &t_SI = "\e[5 q"  " Insert mode: blinking bar
+"let &t_EI = "\e[2 q"  " Normal mode: steady block
 
 " Terminal settings }}}
 
@@ -1765,7 +1785,7 @@ if has("gui_running")
     endif
 
     " Better updatetime for GUI
-    set updatetime=1000
+    set updatetime=500
 
 
 endif
@@ -2867,8 +2887,8 @@ if g:tdvim_dev_mode
     " Set code complete
     " Add omnicompletion for regular key words copletion
     set complete+=o
-    set autocomplete
-    set autocompletedelay=100
+    "set autocomplete
+    set autocompletedelay=300
 
     " Buffer switch
     set switchbuf=uselast
@@ -2940,7 +2960,9 @@ if g:tdvim_dev_mode
             "autocmd FileType python let b:ale_fix_on_save = 1
             "autocmd FileWritePre *.py silent! execute ':ALEFix'
             "autocmd CursorHold *.py silent! if &modified | ALEFix | endif | update
+            autocmd CursorHold *.py silent! update
         endif
+        "autocmd FileType python iabbrev dbg print(f"DEBUG:", file=sys.stderr)<Left><Left>
         autocmd FileType python iabbrev dbg print(f"DEBUG:")<Left><Left>
     augroup END
 
