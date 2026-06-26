@@ -1202,10 +1202,17 @@ function! s:TDVimUpdateJediVim()
         " Check if we are running python 3.6 or lower
         if has('python3') && trim(execute("py3 print(sys.version_info.major == 3 and sys.version_info.minor <= 6)")) == 'True'
             call s:TDVimUpdateAddToScratch([ "Detected Python 3.6 or lower in the system. Proceed to install compatible jedi-vim tag (0.11.0)"])
-            echomsg "Detected Python 3.6 or lower in the system. Proceed to install compatible jedi-vom branch"
-            let l:output = systemlist("git switch master")
-            let l:output = systemlist("git fetch --all --tags")
-            let l:output = systemlist("git checkout 0.11.0 -b v0.11.0")
+            echomsg "Detected Python 3.6 or lower in the system. Proceed to install compatible jedi-vim branch"
+            "let l:output = systemlist("git switch master")
+            "let l:output = systemlist("git fetch --all --tags")
+            "let l:output = systemlist("git checkout 0.11.0 -b v0.11.0")
+            let l:output = systemlist("git switch v0.11.0")
+            call s:TDVimUpdateAddToScratch(l:output)
+            let l:output = systemlist("git submodule update --init --recursive")
+        elseif has('python3') && trim(execute("py3 print(sys.version_info.major == 3 and sys.version_info.minor <= 9)")) == 'True'
+            call s:TDVimUpdateAddToScratch([ "Detected Python 3.9 or lower in the system. Proceed to install compatible jedi-vim tag (0.11.2)"])
+            echomsg "Detected Python 3.9 or lower in the system. Proceed to install compatible jedi-vim branch"
+            let l:output = systemlist("git switch v0.11.2")
             call s:TDVimUpdateAddToScratch(l:output)
             let l:output = systemlist("git submodule update --init --recursive")
         endif
