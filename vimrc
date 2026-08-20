@@ -57,6 +57,7 @@ if g:tdvim_dev_mode
     packadd dwm.vim
     packadd vim-fugitive
     packadd vim-flog
+    packadd vim-black
 endif
 
 " }}}
