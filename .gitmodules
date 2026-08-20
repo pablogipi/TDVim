@@ -32,7 +32,7 @@
 	path = pack/core/start/vim-easy-align
 	url = git@github.com:junegunn/vim-easy-align.git
 [submodule "vim_packages/pack/dev/start/vindent"]
-	path = pack/dev/start/vindent
+	path = pack/dev/opt/vindent
 	url = git@github.com:jessekelighine/vindent.vim.git
 [submodule "vim_packages/pack/dev/start/nerdcommenter"]
 	path = pack/dev/start/nerdcommenter

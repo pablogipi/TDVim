@@ -683,6 +683,7 @@ function! s:TDVimLightlineOverrideStyle()
   " Left section with filename and modifications
   call add(l:palette.normal.left[1], 'bold')
   call add(l:palette.inactive.left[0], 'bold')
+  call add(l:palette.inactive.left[1], 'bold')
 
   call lightline#colorscheme()
 endfunction
@@ -1809,7 +1810,7 @@ command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --python-kinds=-iv --f
 " Jump to existing terminal and restore or create a new terminal
 command! TDVimOpenTerminal call TDVimCreateOrJumpToTerminal()
 " Run grep, allow user to mpdify initial pattern and then open quickfix window wit results
-command! -nargs=+ TDvimGrep execute 'silent grep! <args>' | copen
+command! -nargs=+ TDvimGrep execute 'silent grep! <args>' | copen | redraw!
 " Close current buffer in an ordered way
 command! TDvimCloseBuffer :bn|:bd#
 " Update TDVim
@@ -2768,8 +2769,8 @@ if  executable('ruff')
     " Rule F401 from flakes detect not used imports
     let g:ale_python_ruff_options = '--unfixable F401'
 endif
-"let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
+let g:ale_set_loclist = 1
+"let g:ale_set_quickfix = 1
 " }}}
 
 " DWM {{{2
@@ -2865,6 +2866,7 @@ if g:tdvim_dev_mode
     "autocmd VimEnter * nested call TDVimRestoreSess() | echomsg "Session restore from: " . g:tdvim_proj_config
     " Load project setup on Enter
     autocmd VimEnter * nested exe 'source ' . s:tdvim_proj_config
+    autocmd SessionLoadPost * call DWM_Focus()
     " Session commands
     command! TDVimSaveSession call TDVimSaveSess()
     command! TDVimRestoreSession call TDVimRestoreSess()
@@ -3020,6 +3022,13 @@ else
 endif
 
 "}}}
+
+" Post install plugins {{{
+" These are plugins, packages, that needs to be loaded after all out setups are
+" ready
+packadd vindent
+
+" }}}
 
 " TDVim version
 let $TDVIMVERSION="0.5.1"

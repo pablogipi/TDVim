@@ -72,7 +72,9 @@ Editing                             *tdvim-editing*
 - Go to next jump position:                ]j
 - Go to previous change position:          [d
 - Go to next change position:              ]d
+- Go to next change position:              ]d
 - Diff non saved file with latest version: <Ctrl-F4>
+
 
 ==================================================
 Window Management                   *tdvim-windows*
@@ -139,8 +141,6 @@ Commands                                 *tdvim-commands*
 Development                     *tdvim-development*
 
 - Moving Around:
-    - Move to prev or next indented line:       <[l> , <]l>
-    - Move to prev or next level indented line: <[L> , <]L>
     - Grep current word:                        <F4>
     - Grep in project:                          <Shift-F4>
     - Go to previous change position:           [d
@@ -153,6 +153,19 @@ Development                     *tdvim-development*
     - Go to next end of function:               ][
     - Go to previous start of function:         []
     - Go to previous end of function:           [[
+    - Jump to prev block of same indent:        [=
+    - Jump to next block of same indent:        ]=
+    - Jump to prev line with more indent:       [+
+    - Jump to next line with more indent:       ]+
+    - Jump to prev line with less indent:       [-
+    - Jump to next line with less indent:       ]-
+    - Jump to prev line with different indent:  [;
+    - Jump to next line with different indent:  ];
+    - Jump to start of the current block scope: [p
+    - Jump to end of the current block scope:   ]p
+    - Select current block:                     ii
+    - Select current block + one extra line  at beginning: ai
+    - Select current block + two extra lines at beginning and end: aI
     - Python:
       - Class text object:                      c
         - Function text object:                 f
@@ -162,6 +175,7 @@ Development                     *tdvim-development*
         - Match loop oppsite:                   g%
         - Prev and Next Matched                 [%, ]%
         - In python it detects match for if,while,for,try, functions, etc ...
+      - Black formatter                         :Black
 
 - Comments:
     - Toggle Comment:                           <F5>, <leader>ct
