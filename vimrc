@@ -1126,6 +1126,58 @@ function! s:TDVimUpdateCheckoutIfNeeded(submodule, branch)
     endif
 endfunction
 
+" Get current submodule, needs to be located in the folder
+" Returns name of best candidate branch or empty string.
+" It works with detached repos.
+function! s:TDVimGetSubmoduleBranch()
+    " Check if we're in a git repo
+    let l:is_git = system('git rev-parse --git-dir 2>/dev/null')
+    if l:is_git == ''
+        " Not in git repo
+        return ''
+    endif
+    
+    " Check if we're already on a branch (not detached)
+    let l:current_branch = systemlist('git branch --show-current')
+    if !empty(l:current_branch) && l:current_branch[0] != ''
+        return l:current_branch[0]
+    endif
+    
+    " Get remote branches containing HEAD
+    let l:branches_raw = systemlist('git branch -r --contains HEAD')
+    
+    if empty(l:branches_raw)
+        " No remote branch contains this commit
+        return ''
+    endif
+    
+    " Clean up branch names (remove 'origin/' prefix and whitespace)
+    let l:branches = map(
+        \ l:branches_raw,
+        \ {_, val -> substitute(val, '^[[:space:]]*origin/', '', '') }
+    \ )
+    let l:branches = map(
+        \ l:branches,
+        \ {_, val -> substitute(val, '^[[:space:]]*', '', '') }
+    \ )
+    let l:branches = map(
+        \ l:branches,
+        \ {_, val -> substitute(val, '[[:space:]]*$', '', '') }
+    \ )
+    
+    " Prefer main or master
+    let l:target = l:branches[0]
+    for preferred in ['main', 'master']
+        if index(l:branches, preferred) >= 0
+            let l:target = preferred
+            break
+        endif
+    endfor
+    
+    return l:target
+endfunction
+
+
 function! s:TDVimFixSubmoduleDetachedHead(submodule)
     " Check if HEAD is detached
     let symbolic_ref = system('git symbolic-ref HEAD 2>&1')
@@ -1133,18 +1185,9 @@ function! s:TDVimFixSubmoduleDetachedHead(submodule)
         return
     endif
     " Get the branch name from .gitmodules
-    let branch = trim(system("git config -f ../../../../.gitmodules submodule." . a:submodule .".branch"))
-    
-    if !empty(branch)
-        " Check if we need to create local branch
-        let local_exists = system('git show-ref --verify --quiet refs/heads/' . branch)
-        if v:shell_error != 0
-            call system('git switch -c ' . branch . ' origin/' . branch)
-        else
-            call system('git switch ' . branch)
-        endif
-        call s:TDVimUpdateAddToScratch(["Submodule " . a:submodule . " switched to branch " . branch])
-    else
+    let default_branch = s:TDVimGetSubmoduleBranch()
+
+    if empty(default_branch)
         call s:TDVimUpdateAddToScratch(["Submodule " . a:submodule . " is on detached on default branch, proceed to move to default branch"])
         " default branch
         let git_show = systemlist("git remote show origin")
@@ -1160,11 +1203,10 @@ function! s:TDVimFixSubmoduleDetachedHead(submodule)
                 endif
             endfor
         endif
+    endif
 
-        if default_branch != ''
-            call s:TDVimUpdateCheckoutIfNeeded( a:submodule, default_branch)
-        endif
-
+    if default_branch != ''
+        call s:TDVimUpdateCheckoutIfNeeded( a:submodule, default_branch)
     endif
     
 endfunction
@@ -1201,7 +1243,6 @@ function! s:TDVimUpdateJediVim()
         " Install jedi-vim
         echomsg "Need to install jedi"
         execute "cd " . g:tdvim_install_path . '/pack/dev/opt'
-        "let l:git_clone = systemlist("git clone https://github.com/davidhalter/jedi-vim.git")
         " For the time been use my branch with complete fixed
         let l:git_clone = systemlist("git clone -b  support_new_complete_o_flag https://github.com/pablogipi/jedi-vim.git")
         if v:shell_error != 0
@@ -1216,9 +1257,6 @@ function! s:TDVimUpdateJediVim()
         if has('python3') && trim(execute("py3 print(sys.version_info.major == 3 and sys.version_info.minor <= 6)")) == 'True'
             call s:TDVimUpdateAddToScratch([ "Detected Python 3.6 or lower in the system. Proceed to install compatible jedi-vim tag (0.11.0)"])
             echomsg "Detected Python 3.6 or lower in the system. Proceed to install compatible jedi-vim branch"
-            "let l:output = systemlist("git switch master")
-            "let l:output = systemlist("git fetch --all --tags")
-            "let l:output = systemlist("git checkout 0.11.0 -b v0.11.0")
             let l:output = systemlist("git switch v0.11.0")
             call s:TDVimUpdateAddToScratch(l:output)
             let l:output = systemlist("git submodule update --init --recursive")
@@ -1269,6 +1307,7 @@ function! TDVimUpdate(  )
         "echoerr("Can't connect to github, please check connectivity")
         "return
     "endif
+
     let l:curloc = getcwd()
     execute "cd " . g:tdvim_install_path
 
