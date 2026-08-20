@@ -67,6 +67,7 @@
 [submodule "vim_packages/pack/dev/opt/vista"]
 	path = pack/dev/opt/vista
 	url = git@github.com:pablogipi/vista.vim.git
+	branch = finder_in_place_jump
 [submodule "vim_packages/pack/dev/opt/vim-pythonsense"]
 	path = pack/dev/opt/vim-pythonsense
 	url = https://github.com/jeetsukumaran/vim-pythonsense
@@ -85,5 +86,3 @@
 [submodule "pack/dev/opt/vim-flog"]
 	path = pack/dev/opt/vim-flog
 	url = https://github.com/rbong/vim-flog
-[submodule "pack/dev/opt/vista"]
-	branch = finder_in_place_jump
