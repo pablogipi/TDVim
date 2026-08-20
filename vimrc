@@ -980,14 +980,25 @@ endfunction
 " Show TDVim help window
 function! TDVimShowQuickHelp(  )
     :helpclose
-    ":botright h tdvim
     :botright h tdvim.txt
 
-    " Help buffer local maps
-    map <silent> <buffer> <Esc> :bdelete<CR>
-    map <silent> <buffer> q :bdelete<CR>
+endfunction
+" }}}
 
-    ":silent file! TDVim Help
+" SetupHelpBuffer {{{2
+" Setup help buffers
+function! s:TDVimSetupHelpBuffer(  )
+    "In all help buffers use Enter to jump to tag and b to jump back
+    map <silent> <buffer> <Enter> ]t
+    map <silent> <buffer> b ]j
+    " Esc and q to close a help buffer
+    if g:tdvim_dev_mode
+        map <silent> <buffer> <Esc> :call TDVimCloseWindowDevMode() <CR>
+        map <silent> <buffer> q :call TDVimCloseWindowDevMode() <CR>
+    else
+        map <silent> <buffer> <Esc> :bdelete<CR>
+        map <silent> <buffer> q :bdelete<CR>
+    endif
 endfunction
 " }}}
 
@@ -2385,7 +2396,7 @@ if has("autocmd")
         autocmd! BufRead,BufNewFile *.usda set filetype=usda
         autocmd! BufNewFile,BufRead *.hjson setlocal filetype=hjson
         " Close help buffer using Esc or q
-        autocmd! FileType help map <silent> <buffer> <Esc> :bdelete<CR> | map <silent> <buffer> q :bdelete<CR>
+        autocmd! FileType help call s:TDVimSetupHelpBuffer()
     augroup END
     " SessionLoadPost
     "augroup tdvimSessionLoadPost
