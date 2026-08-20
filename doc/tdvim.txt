@@ -89,6 +89,7 @@ Window Management                   *tdvim-windows*
     - Close Preview window:                   <leader>qp
     - Close Quickfix window:                  <leader>qq
     - Close Location window:                  <leader>ql
+    - Close Help window:                      q, Esc
     - Jump to Preview window:                 <leader>jp
     - Jump to Quickfix window:                <leader>jq
     - Jump to Location window:                <leader>jl

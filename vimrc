@@ -2083,14 +2083,14 @@ nnoremap  <silent> <leader>qw         :call TDVimClosePreviousWindow()<CR>
 vnoremap  <silent> <leader>qw         <Esc>:call TDVimClosePreviousWindow()<CR> 
 
 " Jump to QuickFix Window - <leader>jq
-nnoremap  <silent> <leader>jq         :call JumpToWindowsByType( "quickfix" )<CR> 
-xnoremap  <silent> <leader>jq         <ESC>:call JumpToWindowsByType( "quickfix" )<CR> 
+nnoremap  <silent> <leader>jq         :call TDVimJumpToWindowsByType( "quickfix" )<CR> 
+xnoremap  <silent> <leader>jq         <ESC>:call TDVimJumpToWindowsByType( "quickfix" )<CR> 
 " Jump to Location Window - <leader>jl
-nnoremap  <silent> <leader>jl         :call JumpToWindowsByType( "location" )<CR> 
-xnoremap  <silent> <leader>jl         <ESC>:call JumpToWindowsByType( "location" )<CR> 
+nnoremap  <silent> <leader>jl         :call TDVimJumpToWindowsByType( "location" )<CR> 
+xnoremap  <silent> <leader>jl         <ESC>:call TDVimJumpToWindowsByType( "location" )<CR> 
 " Jump to Preview Window - <leader>jl
-nnoremap  <silent> <leader>jp         :call #JumpToWindowsByType( "preview" )<CR> 
-xnoremap  <silent> <leader>jp         <ESC>:call JumpToWindowsByType( "preview" )<CR> 
+nnoremap  <silent> <leader>jp         :call TDVimJumpToWindowsByType( "preview" )<CR> 
+xnoremap  <silent> <leader>jp         <ESC>:call TDVimJumpToWindowsByType( "preview" )<CR> 
 
 " Jump to Location List Window {{{3
 nnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow :call utils#JumpToWindowsByType( "location" )<CR>
@@ -2262,8 +2262,7 @@ endif
 " Completion {{{
 " Completion options
 set noshowmode
-"set shortmess+=c
-set shortmess=aTt
+set shortmess=atT
 set noinfercase
 set belloff+=ctrlg " If Vim beeps during completion
 set belloff+=cursor " If Vim beeps during scrolling
@@ -2317,8 +2316,8 @@ if has("autocmd")
         else
             autocmd VimEnter * echomsg "TDVim " . $TDVIMVERSION . " loaded"
         endif
-	autocmd VimEnter * call s:SetFancyUI()
-	autocmd VimEnter * call TDVimCheckHelp()
+        autocmd VimEnter * call s:SetFancyUI()
+        autocmd VimEnter * call TDVimCheckHelp()
     augroup END
     " AfterBufferRead
     augroup tdvimAftertBufferRead
@@ -2368,12 +2367,12 @@ if has("autocmd")
         autocmd WinLeave * call s:LeavePreviewWindowSetup()
     augroup END
     " BufAdd
-    "augroup tdvimBufAdd
+    augroup tdvimBufAdd
         " Setup quickfix and preview windows keymaps
         "autocmd BufAdd  * if &buftype == 'quickfix' | echo 'winenter' | endif
         "autocmd BufAdd  * echomsg "Adding buffer " . &buftype
-        "autocmd BufAdd qf call utils#SetupAuxBuffer()
-    "augroup END
+        autocmd BufAdd qf call utils#SetupAuxBuffer()
+    augroup END
      "FileTypes
      "
     augroup tdvimFileTypes
@@ -2385,6 +2384,8 @@ if has("autocmd")
         autocmd! BufRead,BufNewFile *.usd set filetype=usd
         autocmd! BufRead,BufNewFile *.usda set filetype=usda
         autocmd! BufNewFile,BufRead *.hjson setlocal filetype=hjson
+        " Close help buffer using Esc or q
+        autocmd! FileType help map <silent> <buffer> <Esc> :bdelete<CR> | map <silent> <buffer> q :bdelete<CR>
     augroup END
     " SessionLoadPost
     "augroup tdvimSessionLoadPost
@@ -2797,18 +2798,13 @@ if g:tdvim_dev_mode
                 else
                     let gitpath = trim(gitpath)
                 endif
-                "echomsg gitpath
                 let relpath = eval("trim(system('realpath " . gitpath . "'))")
                 let winpath =eval("trim(system('cygpath -w " . relpath . "'))") 
                 let s:root = winpath
-                "echomsg relpath
-                "echomsg winpath
             endif
             let g:tdvim_proj_root = trim(s:root)
-            "echomsg "Project root: " . g:tdvim_proj_root
             let g:tdvim_proj_name = fnamemodify( g:tdvim_proj_root, ':t' )
             let g:tdvim_proj_root_config = g:tdvim_proj_root . '/.tdvim'
-            "echomsg "Project config folder: " . g:tdvim_proj_root_config
             let s:has_tdvim_root = 0
             let s:has_tdvim_proj_config = 0
             if !isdirectory(g:tdvim_proj_root_config)
@@ -2887,7 +2883,7 @@ if g:tdvim_dev_mode
     " Set code complete
     " Add omnicompletion for regular key words copletion
     set complete+=o
-    "set autocomplete
+    set autocomplete
     set autocompletedelay=300
 
     " Buffer switch
@@ -2971,12 +2967,10 @@ if g:tdvim_dev_mode
         " Use Alt-[right|left] to navigate windows clockwise or counter clockwise windows
         nnoremap    <M-right>    <C-W>w
         nnoremap    <M-left>     <C-W>W 
-        " Use Ctrl-TAB to rotate windows clockwise
-        nunmap      <C-TAB>
-        nnoremap    <C-TAB>     :call DWM_Rotate(1)<CR>
-        " Use Shift-TAB or Ctrl-Space to swap focus between previous and current
+        " Use Shift-TAB to rotate windows clockwise
         nunmap      <S-TAB>
-        nnoremap    <S-TAB>     :call DWM_Focus()<CR>
+        nnoremap    <S-TAB>     :call DWM_Rotate(1)<CR>
+        " Use Ctrl-Space to swap focus between previous and current
         nunmap      <C-Space>
         nnoremap    <C-Space>     :call DWM_Focus()<CR>
     endif
