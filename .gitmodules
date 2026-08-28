@@ -9,34 +9,34 @@
 	url = https://github.com/dense-analysis/ale.git
 [submodule "vim_packages/pack/core/start/vim-unimpaired"]
 	path = pack/core/start/vim-unimpaired
-	url = git@github.com:tpope/vim-unimpaired.git
+	url = https://github.com/tpope/vim-unimpaired.git
 [submodule "vim_packages/pack/core/start/vim-surround"]
 	path = pack/core/start/vim-surround
-	url = git@github.com:tpope/vim-surround.git
+	url = https://github.com/tpope/vim-surround.git
 [submodule "vim_packages/pack/core/start/vim-vinegar"]
 	path = pack/core/start/vim-vinegar
-	url = git@github.com:tpope/vim-vinegar.git
+	url = https://github.com/tpope/vim-vinegar.git
 [submodule "vim_packages/pack/core/start/delimitMate"]
 	path = pack/core/start/delimitMate
-	url = git@github.com:Raimondi/delimitMate.git
+	url = https://github.com/Raimondi/delimitMate.git
 [submodule "vim_packages/pack/core/start/lightline"]
 	path = pack/core/start/lightline
-	url = git@github.com:itchyny/lightline.vim.git
+	url = https://github.com/itchyny/lightline.vim.git
 [submodule "vim_packages/pack/core/start/lightline-bufferline"]
 	path = pack/core/start/lightline-bufferline
-	url = git@github.com:mengelbrecht/lightline-bufferline.git
+	url = https://github.com/mengelbrecht/lightline-bufferline.git
 [submodule "vim_packages/pack/dev/start/vim-gitbranch"]
 	path = pack/dev/start/vim-gitbranch
-	url = git@github.com:itchyny/vim-gitbranch.git
+	url = https://github.com/itchyny/vim-gitbranch.git
 [submodule "vim_packages/pack/core/start/vim-easy-align"]
 	path = pack/core/start/vim-easy-align
-	url = git@github.com:junegunn/vim-easy-align.git
+	url = https://github.com/junegunn/vim-easy-align.git
 [submodule "vim_packages/pack/dev/start/vindent"]
 	path = pack/dev/opt/vindent
-	url = git@github.com:jessekelighine/vindent.vim.git
+	url = https://github.com/jessekelighine/vindent.vim.git
 [submodule "vim_packages/pack/dev/start/nerdcommenter"]
 	path = pack/dev/start/nerdcommenter
-	url = git@github.com:preservim/nerdcommenter.git
+	url = https://github.com/preservim/nerdcommenter.git
 [submodule "vim_packages/pack/core/start/vim-devicons"]
 	path = pack/core/start/vim-devicons
 	url = https://github.com/ryanoasis/vim-devicons.git
@@ -66,7 +66,7 @@
 	url = https://github.com/mtth/scratch.vim.git
 [submodule "vim_packages/pack/dev/opt/vista"]
 	path = pack/dev/opt/vista
-	url = git@github.com:pablogipi/vista.vim.git
+	url = https://github.com/pablogipi/vista.vim.git
 	branch = finder_in_place_jump
 [submodule "vim_packages/pack/dev/opt/vim-pythonsense"]
 	path = pack/dev/opt/vim-pythonsense
@@ -76,7 +76,7 @@
 	url = https://github.com/okcompute/vim-python-match
 [submodule "vim_packages/pack/dev/opt/dwm.vim"]
 	path = pack/dev/opt/dwm.vim
-	url = git@github.com:pablogipi/dwm.vim.git
+	url = https://github.com/pablogipi/dwm.vim.git
 [submodule "pack/core/start/bufexplorer"]
 	path = pack/core/start/bufexplorer
 	url = https://github.com/jlanzarotta/bufexplorer
