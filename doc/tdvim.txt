@@ -72,7 +72,6 @@ Editing                             *tdvim-editing*
 - Go to next jump position:                ]j
 - Go to previous change position:          [d
 - Go to next change position:              ]d
-- Go to next change position:              ]d
 - Diff non saved file with latest version: <Ctrl-F4>
 
 
@@ -331,6 +330,8 @@ Unimpaired                         *tdvim-unimpaired*
 *[l* :        Jump to previous line with same indentation
 *]L* :        Jump to next line with less indentation
 *[L* :        Jump to previous line with less indentation
+*[`* :        Jump to previous local mark 
+*]`* :        Jump to next local mark 
 
 OPTION TOGGLING                                 *unimpaired-toggling*
 

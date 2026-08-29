@@ -2818,6 +2818,17 @@ let g:dwm_map_keys = 0
 
 " }}}
 
+
+" Markology {{{2
+let g:markology_include="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.'`^[]{}()\""
+let g:markology_ignore_type="hpmq"
+let g:markology_textlower="\t>"
+let g:markology_textupper="\t>"
+let g:markology_textother="\t"
+let g:markology_hlline_lower=1
+let g:markology_hlline_upper=1
+" }}}
+
 " Setup Plugins }}}
 
 " Project Mode (Devmode) {{{

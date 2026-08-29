@@ -86,3 +86,6 @@
 [submodule "pack/dev/opt/vim-flog"]
 	path = pack/dev/opt/vim-flog
 	url = https://github.com/rbong/vim-flog
+[submodule "pack/core/start/vim-markology"]
+	path = pack/core/start/vim-markology
+	url = https://github.com/jeetsukumaran/vim-markology.git
