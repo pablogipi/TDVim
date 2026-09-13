@@ -2799,7 +2799,8 @@ if  executable('ruff')
     " Linters
     let g:ale_linters = { "python": ["ruff"] }
     " Fixers
-    let g:ale_fixers = { "python": ["ruff", "trim_whitespace", "ruff_format"] }
+    "let g:ale_fixers = { "python": ["ruff", "trim_whitespace", "ruff_format"] }
+    let g:ale_fixers = { "python": ["trim_whitespace", "ruff_format"] }
     " Options
     " DEPRECATED: not good to have import sorted automatically
     " Sort imports
