@@ -889,6 +889,8 @@ fu! TDVimSaveSess()
     endif
     let sessionfile = g:tdvim_proj_root_config . '/session.vim'
     call TDVimCloseAllBuffersByType( 'nerdtree', 1)
+    " Close preview window
+    pclose!
     execute 'mksession! ' . sessionfile 
     echomsg "Session saved in: " . sessionfile
 endfunction
@@ -1057,6 +1059,38 @@ function! TDVimGitDiff ()
     endif
 endfunction
 " }}}
+
+" TDVimRuffFormatExpr {{{2
+" Format expression to run Ruff formatter in a selection of lines.
+" Courtesy of deepseek.
+function! TDVimRuffFormatExpr() abort
+    let l1 = v:lnum
+    let l2 = v:lnum + v:count - 1
+    let win_view = winsaveview()
+    
+    " Construct the Ruff command with the --range flag
+    " The range format is start_line:start_col-end_line:end_col
+    " Using 0 for columns tells Ruff to figure out the full logical line
+    let range_arg = printf('--range=%d:1-%d:100', l1, l2)
+    
+    let cmd = 'ruff format --quiet --stdin-filename ' . shellescape(expand('%')) . ' ' . range_arg . ' -'
+    echom "Running command: " . cmd
+    
+    " Execute the formatter on the selected lines
+    silent execute printf('%d,%d!%s', l1, l2, cmd)
+    
+    " Undo if Ruff reports an error
+    if v:shell_error != 0
+        silent! undo
+        echoerr "Ruff format failed (exit code: " . v:shell_error . ")"
+    endif
+    
+    call winrestview(win_view)
+    return 0
+endfunction
+" }}}
+" TODO: add this to vim for python: setlocal formatexpr=RuffFormatExpr()
+" TODO: install old Black pluginm, the new one I installed is not working.
 
 " TDVimUpdate {{{2
 " Update TDVim. This can install and/or update the current TDVim install
@@ -2789,6 +2823,7 @@ let g:vindent_jumps            = 1    " make vindent motion count as a |jump-mot
 
 " Black {{{2
 let g:black_use_virtualenv = 0
+let g:black_virtualenv = 0
 " }}}
 
 " ALE {{{2
@@ -3023,8 +3058,15 @@ if g:tdvim_dev_mode
             "autocmd CursorHold *.py silent! if &modified | ALEFix | endif | update
             autocmd CursorHold *.py silent! update
         endif
-        "autocmd FileType python iabbrev dbg print(f"DEBUG:", file=sys.stderr)<Left><Left>
+        autocmd FileType python setlocal formatexpr=TDVimRuffFormatExpr() 
         autocmd FileType python iabbrev dbg print(f"DEBUG:")<Left><Left>
+        " Use = to trigger formatting
+        autocmd FileType python xnoremap <buffer> = gq
+        autocmd FileType python nnoremap <buffer> == gqq
+        autocmd FileType python nnoremap <buffer> =ip gqip 
+        autocmd FileType python nnoremap <buffer> =if gqif 
+        autocmd FileType python nnoremap <buffer> =% gq%
+        autocmd FileType python nnoremap <buffer> =G gqG
     augroup END
 
     " DWM keymaps
