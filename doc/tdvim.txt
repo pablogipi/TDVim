@@ -174,7 +174,6 @@ Development                     *tdvim-development*
         - Match loop oppsite:                   g%
         - Prev and Next Matched                 [%, ]%
         - In python it detects match for if,while,for,try, functions, etc ...
-      - Black formatter                         :Black
 
 - Comments:
     - Toggle Comment:                           <F5>, <leader>ct
@@ -186,7 +185,6 @@ Development                     *tdvim-development*
     - Build Buffer Tags:                        <F11>
     - Tags Explorer:                            <Shift-F8>
     - Browse functions:                         <F6>, <leader>fu
-    - Echo current function:                    <Shift-F6>
     - Tags Finder:                              <Ctrl-Shift-F6>
     - Show current word tag in Preview Window:  <Ctrl-F6>
     - Search symbol in Gtags:                   <Ctrl-Shift-F6>
@@ -201,6 +199,11 @@ Development                     *tdvim-development*
 - Autocomplete:
     - Autocomplete:                             <TAB>
     - OmniComplete:                             <Ctrl-x> <Ctrl-o> , <Ctrl-Space>
+- Code format and/or fixer
+    - Default Formatter using ALE:              <Shift-F6>
+    - Python                         
+      - Black formatter                         :Black
+      - Ruff formatter                          :gq
 - Snippets:
     - Expand Snippet:                           <Ctrl-Tab>
     - Show available snippets:                  <Ctrl-B>
