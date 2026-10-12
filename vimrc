@@ -3061,12 +3061,12 @@ if g:tdvim_dev_mode
         autocmd FileType python setlocal formatexpr=TDVimRuffFormatExpr() 
         autocmd FileType python iabbrev dbg print(f"DEBUG:")<Left><Left>
         " Use = to trigger formatting
-        autocmd FileType python xnoremap <buffer> = gq
-        autocmd FileType python nnoremap <buffer> == gqq
-        autocmd FileType python nnoremap <buffer> =ip gqip 
-        autocmd FileType python nnoremap <buffer> =if gqif 
-        autocmd FileType python nnoremap <buffer> =% gq%
-        autocmd FileType python nnoremap <buffer> =G gqG
+        "autocmd FileType python xnoremap <buffer> = gq
+        "autocmd FileType python nnoremap <buffer> == gqq
+        "autocmd FileType python nnoremap <buffer> =ip gqip 
+        "autocmd FileType python nnoremap <buffer> =if gqif 
+        "autocmd FileType python nnoremap <buffer> =% gq%
+        "autocmd FileType python nnoremap <buffer> =G gqG
     augroup END
 
     " DWM keymaps
