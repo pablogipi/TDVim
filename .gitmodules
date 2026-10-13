@@ -89,3 +89,6 @@
 [submodule "pack/core/start/vim-markology"]
 	path = pack/core/start/vim-markology
 	url = https://github.com/jeetsukumaran/vim-markology.git
+[submodule "pack/core/start/vim-floaterm"]
+	path = pack/core/start/vim-floaterm
+	url = https://github.com/voldikss/vim-floaterm.git
