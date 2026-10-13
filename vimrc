@@ -38,7 +38,6 @@ if s:DetectDevMode()
 endif
 " }}}
 
-
 " Load Packages {{{
 
 " Load all default packages
@@ -61,7 +60,6 @@ if g:tdvim_dev_mode
 endif
 
 " }}}
-
 
 " Functions {{{
 
@@ -159,7 +157,6 @@ endfunction
 " Setups done:
 " Set q and <Esc> as keymaps to close the window
 function! s:SetupAuxBuffer( )
-     "echomsg "Calling setup for qickfix buffer"
     " Aux buffers local maps
     " Close window with Esc or q
     map <silent> <buffer> <Esc> :bdelete <bar> wincmd p<CR>
@@ -248,7 +245,7 @@ function! TDVimCloseAllWindowsByType( buffertype )
       " Close window if its buftype is same as buffertype argument.  If not help, go to next window.
       if getbufvar(nbuf, '&buftype') ==# a:buffertype
           " Correct saved window number if younger window will be closed.
-          if sel_winnr > nbuf
+          if sel_winnr > nwin
               let sel_winnr = sel_winnr - 1
           endif
           execute nwin.'wincmd w'
@@ -264,7 +261,7 @@ function! TDVimCloseAllWindowsByType( buffertype )
   endwhile
   " Revert selected window.
   "execute save_winnr.'wincmd w' , silent!
-  silent! sel_winnr.'wincmd w'
+  silent! execute sel_winnr . 'wincmd w'
 endfunction
 " }}}
 
@@ -365,7 +362,6 @@ function! TDVimJumpToWindowsByType ( buffertype )
           if "location" ==# a:buffertype && wininfo['quickfix'] && wininfo['loclist']
               let cond1 = 1
           endif
-          "echomsg "Type: " . a:buffertype . " ,Condition: " . cond1
       endif
       if "qf" ==# a:buffertype
           " Get current window info
@@ -373,22 +369,12 @@ function! TDVimJumpToWindowsByType ( buffertype )
           let cond2 = wininfo['quickfix'] && !wininfo['loclist']
       endif
       if cond1 || cond2 || cond3
-          "echomsg "Correct!, jump to window " . nwin
           " Correct saved window number if younger window will be closed.
           if save_winnr > nbuf
               let save_winnr = save_winnr - 1
           endif
           execute nwin.'wincmd w'
           break
-      "elseif cond3
-          "" For preview window
-          "let buffervars = getbufvar(nbuf, '&')
-          "echo Vars:
-          "echo buffervars
-          "let cond = getwinvar(nwin, '&previewwindow')
-          "echo "Window condition: " . cond
-          "pclose
-          "break
       else
           let nwin = nwin + 1
       endif
@@ -406,7 +392,7 @@ endfunction
 function! s:OnlyReadSetup()
     if &ro
         " Only work on read only buffers
-        nmap q :cq<CR>
+        nnoremap <buffer> <silent> <nowait> q :bdelete <bar> wincmd p<CR>
         return
     endif
 endfunction
@@ -419,7 +405,6 @@ endfunction
 " Usage: call this using a BufWinEnter autocommand
 function! s:PreviewWindowSetup()
     if &previewwindow			" if we really are at the preview window
-        "echomsg "In Preview window!!"
         if &filetype == ""
             " Tags preview
             set filetype=passwd 
@@ -497,6 +482,7 @@ endfunction
 " CreateOrJumpToTerminal {{{2
 " Try to jump to an existing terminal, if succesful then restore window size
 " If not then create a new terminal
+" DEPRECATED: now using Floaterm
 function! TDVimCreateOrJumpToTerminal ( )
   call TDVimJumpToWindowsByType("terminal")
   if &buftype == "terminal"
@@ -532,7 +518,7 @@ function! TDVimCloseWindowDevMode()
     elseif  &buftype == 'quickfix' && exists('b:qflisttype') && b:qflisttype == 'location'
         lclose
     elseif g:tdvim_dev_mode
-        exec DWM_Close()
+        call DWM_Close()
     else
         wincmd q
     endif
@@ -549,13 +535,29 @@ function! s:SetupNERDTreeBuffer(  )
         echoerr "We are NOT in a NERDtree buffer!!!: " . curbuf
         return
     endif
-    "echomsg "We are in a NERDtree buffer!!!"
     nmap <buffer> -        :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
     nmap <buffer> <silent> <Esc> :call nerdtree#ui_glue#invokeKeyMap("q")<CR>
     " Remove buffer from buffers list
     setlocal nobuflisted
 endfunction
 
+" }}}
+
+" RestoreNERDTreeHijack {{{2
+" Switch NERDTree's directory takeover back on after startup, so `-` and
+" :edit {dir} open NERDTree. Same as NERDTree's own setup, minus the
+" startup hook that fails on `vim .` (E194).
+function! s:TDVimRestoreNERDTreeHijack() abort
+    if !get(g:, 'NERDTreeHijackNetrw', 0)
+        return
+    endif
+    " Stop netrw from handling directories again
+    silent! autocmd! FileExplorer
+    augroup NERDTreeHijackNetrw
+        autocmd!
+        autocmd BufEnter * call nerdtree#checkForBrowse(expand('<amatch>'))
+    augroup END
+endfunction
 " }}}
 
 " CleanupNERDTreeBuffer {{{2
@@ -761,10 +763,14 @@ function! TDVimLightlineDeviconsFiletype()
 endfunction
 
 function! TDVimLightlineDeviconsFileformat()
-  if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal" || &filetype == "scratch"
-      return ''
-  endif
-  return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+    if &filetype == "help" || &previewwindow || &filetype == "ctrlp" || &filetype == "qf" || &filetype == "tagbar" || &filetype == "nerdtree" || &buftype ==# "terminal" || &filetype == "scratch"
+        return ''
+    endif
+    if winwidth(0) <= 70
+        return ''
+    endif
+    " Fall back to the plain format name when vim-devicons isn't loaded
+    return exists('*WebDevIconsGetFileFormatSymbol') ? &fileformat . ' ' . WebDevIconsGetFileFormatSymbol() : &fileformat
 endfunction
 
 function! TDVimLightlineGit()
@@ -841,42 +847,43 @@ endfunction
 " Set fancy unicode symbols for UI. Mostly lightline.
 function! s:SetFancyUI()
     " fancy UI using UTF and fancy icons
-
-    if g:tdvim_dev_mode && s:has_git
-        let g:lightline.active = {
-                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon', 'githunksummary' ], [ 'extrainfo', 'tagsgen' ] ],
-                    \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ], [ 'git' ] ]
-                    \   }
-        let g:lightline.component.lineinfo = '▤ %3l:%-2v'
-        let g:lightline.separator = { 'left': '', 'right': '' }
-        let g:lightline.subseparator = { 'left': '', 'right': '' }    
-        let g:lightline#bufferline#unicode_symbols = 1
-        let g:lightline#bufferline#enable_devicons = 1
-    else
-        let g:lightline.active = {
-                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
-                    \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ] ]
-                    \   }
-        let g:lightline.component.lineinfo = '%3l:%-2v'
+    if exists('g:loaded_lightline') && exists('g:lightline')
+        if g:tdvim_dev_mode && s:has_git
+            let g:lightline.active = {
+                        \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon', 'githunksummary' ], [ 'extrainfo' ] ],
+                        \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ], [ 'git' ] ]
+                        \   }
+            let g:lightline.component.lineinfo = '▤ %3l:%-2v'
+            let g:lightline.separator = { 'left': '', 'right': '' }
+            let g:lightline.subseparator = { 'left': '', 'right': '' }    
+            let g:lightline#bufferline#unicode_symbols = 1
+            let g:lightline#bufferline#enable_devicons = 1
+        else
+            let g:lightline.active = {
+                        \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo' ] ],
+                        \ 'right': [ [ 'lineinfo' ], [ 'fileformat', 'percent' ] ]
+                        \   }
+            let g:lightline.component.lineinfo = '%3l:%-2v'
+        endif
+        if exists('g:loaded_lightline_buffer')
+            "let g:lightline_buffer_logo = "\u233e"
+            let g:lightline_buffer_logo                     = "》"
+            let g:lightline_buffer_readonly_icon            = ''
+            let g:lightline_buffer_modified_icon            = '✗'
+            let g:lightline_buffer_git_icon                 = ' '
+            let g:lightline_buffer_ellipsis_icon            = '..'
+            let g:lightline_buffer_expand_left_icon         = "\u25c4"
+            let g:lightline_buffer_expand_right_icon        = "\u25ba"
+            let g:lightline_buffer_active_buffer_left_icon  = '▌'
+            let g:lightline_buffer_active_buffer_right_icon = '▐'
+            "let g:lightline_buffer_separator_icon = "\u25b9"
+            let g:lightline_buffer_separator_icon           = "╱"
+        endif
+        " Force lightline update
+        call lightline#disable()
+        call lightline#enable()
+        call lightline#bufferline#reload()
     endif
-    if exists('g:loaded_lightline_buffer')
-        "let g:lightline_buffer_logo = "\u233e"
-        let g:lightline_buffer_logo                     = "》"
-        let g:lightline_buffer_readonly_icon            = ''
-        let g:lightline_buffer_modified_icon            = '✗'
-        let g:lightline_buffer_git_icon                 = ' '
-        let g:lightline_buffer_ellipsis_icon            = '..'
-        let g:lightline_buffer_expand_left_icon         = "\u25c4"
-        let g:lightline_buffer_expand_right_icon        = "\u25ba"
-        let g:lightline_buffer_active_buffer_left_icon  = '▌'
-        let g:lightline_buffer_active_buffer_right_icon = '▐'
-        "let g:lightline_buffer_separator_icon = "\u25b9"
-        let g:lightline_buffer_separator_icon           = "╱"
-    endif
-    " Force lightline update
-    call lightline#disable()
-    call lightline#enable()
-    call lightline#bufferline#reload()
 endfunction
 "}}}
 
@@ -914,25 +921,27 @@ fu! TDVimRestoreSess()
         " them on load
         " Also remove any buffer not relative to our current project
         for nbuf in range(1, bufnr('$'))
-            let to_delete = 0
-            "echomsg "Buffer number: " . nbuf
-            let buffer_name = bufname( nbuf )
+            if !bufexists(nbuf)
+                continue
+            endif
+            let buffer_name = bufname(nbuf)
             let buffer_path = expand('#' . nbuf . ':p')
-            echomsg "Buffer: " . buffer_path
-            if bufexists(nbuf) && !buflisted(nbuf)
-                continue  " Skip unlisted buffers (optional)
+            let to_delete = 0
+            " Check NERDTree and directory buffers first: NERDTree marks its
+            " buffers unlisted, so the unlisted skip below would miss them
+            if buffer_name =~# '^NERD_tree' || getbufvar(nbuf, '&filetype') ==# 'nerdtree'
+                let to_delete = 1
             elseif isdirectory(buffer_name)
                 let to_delete = 1
-            "elseif match(buffer_name, "NERD_tree") == 0
-            elseif buffer_name =~ "^NERD_tree"
-                let to_delete = 1
+            elseif !buflisted(nbuf)
+                continue
             elseif ConvertWindowsToPosixPath(buffer_path) !~ ConvertWindowsToPosixPath(g:tdvim_proj_root)
                 let to_delete = 1
                 echomsg "Buffer " . buffer_path . " doesn't match project root: " . g:tdvim_proj_root
             endif
-            if to_delete == 1
-                echomsg("Buffer deleted: " . buffer_name)
-                exe "silent! bdelete! " . nbuf
+            if to_delete
+                echomsg "Buffer deleted: " . buffer_name
+                execute 'silent! bwipeout! ' . nbuf
             endif
         endfor
     else
@@ -958,8 +967,8 @@ func! s:TDVimLSPMappings()
     nnoremap <silent> <buffer> \        :LspPeekDefinition<CR>
     nnoremap <silent> <buffer> <C-F6>   :LspDocumentDiagnostics<CR>
     nnoremap <silent> <buffer> <S-F6>   :LspReferences<CR>
-    nnoremap <silent> <buffer> <]s>     :lnext<CR>
-    nnoremap <silent> <buffer> <[s>     :lprev<CR>
+    nnoremap <silent> <buffer> ]s       :lnext<CR>
+    nnoremap <silent> <buffer> [s       :lprev<CR>
 endfunc
 " }}}
 
@@ -1374,7 +1383,8 @@ function! TDVimUpdate(  )
         echoerr "Local changes detected. Please commit or stash them first."
         let l:status = system("git status")
         echo l:status
-        finish
+        execute "cd " . l:curloc
+        return
     endif
 
     " Load submodules
@@ -1451,7 +1461,6 @@ function! TDVimUpdate(  )
 endfunction
 " }}}
 
-
 " TDVimFinishInstall {{{2
 " Setup temp environment for to finish installation and call TDVimUpdate()
 function! s:TDVimFinishInstall ()
@@ -1477,10 +1486,96 @@ function! s:TDVimFinishInstall ()
 endfunction
 "}}}
 
+" Floaterm {{{2
+function! s:FloatermColors() abort
+    " Terminal body uses the same background as the editor
+    highlight! link Floaterm Normal
+    " Frame takes its colour from the colorscheme's own accent groups
+    highlight! link FloatermBorder Function
+    " Dim the frame when the terminal isn't focused
+    highlight! link FloatermNC Comment
+endfunction
+
+" Integrate lazygit
+function! s:TDVimLazygit() abort
+    " Kill a hidden lazygit instead of re-showing it, so the UI never goes stale
+    silent! FloatermKill lazygit
+    FloatermNew --name=LazyGit --title=lazygit --autoclose=always --width=0.9 --height=0.9 --cwd=<root> lazygit
+endfunction
+
+" }}}
+
+" DevModeStartup {{{2
+
+" Dev-mode startup work, run from a timer just after the first screen draw.
+" Plugins started here (gitgutter, Vista) run shell commands, which leave a
+" blank screen if they run during VimEnter.
+" With a saved session, restore it; without one, start with NERDTree on the
+" project root.
+function! s:TDVimDevModeStartup(timer) abort
+    let l:has_session = exists('g:tdvim_proj_root_config')
+                \ && filereadable(g:tdvim_proj_root_config . '/session.vim')
+    if l:has_session
+        silent! call TDVimRestoreSess()
+        silent echomsg "Project session restored"
+    endif
+    " Switch NERDTree's directory takeover back on now that startup is done
+    call s:TDVimRestoreNERDTreeHijack()
+    if !l:has_session && exists(':NERDTree') == 2
+        execute 'NERDTree ' . fnameescape(get(g:, 'tdvim_proj_root', getcwd()))
+    endif
+    " Start Vista's nearest-function tracking for the status line
+    silent! call vista#RunForNearestMethodOrFunction()
+endfunction
+
+" ProjectLock {{{3
+" Lock file in .tdvim so the same project isn't opened twice (for example
+" while another Vim is suspended with Ctrl-Z). It holds the owner's PID.
+function! s:TDVimLockFile() abort
+    return g:tdvim_proj_root_config . '/lock'
+endfunction
+
+" PID stored in the lock file, or 0
+function! s:TDVimLockPid() abort
+    let l:lock = s:TDVimLockFile()
+    return filereadable(l:lock) ? str2nr(get(readfile(l:lock, '', 1), 0, '0')) : 0
+endfunction
+
+" 1 if a process with this PID is running
+function! s:TDVimPidRunning(pid) abort
+    if a:pid <= 0
+        return 0
+    endif
+    if has('win32') || has('win64')
+        return system('tasklist /FI "PID eq ' . a:pid . '" /NH') =~# '\<' . a:pid . '\>'
+    endif
+    call system('kill -0 ' . a:pid . ' 2>/dev/null')
+    return v:shell_error == 0
+endfunction
+
+" Take the lock. Returns 0 if another running Vim already holds it.
+" A lock whose PID isn't running is stale (crash, kill) and is taken over.
+function! s:TDVimTakeLock() abort
+    let l:pid = s:TDVimLockPid()
+    if l:pid != 0 && l:pid != getpid() && s:TDVimPidRunning(l:pid)
+        return 0
+    endif
+    call writefile([getpid()], s:TDVimLockFile())
+    return 1
+endfunction
+
+" Remove the lock, but only if this Vim owns it
+function! s:TDVimReleaseLock() abort
+    if s:TDVimLockPid() == getpid()
+        call delete(s:TDVimLockFile())
+    endif
+endfunction
+" }}}
+
+" }}}
 
 " Functions }}}
 
-"
 " Init settings {{{
 "
 " When started as "evim", evim.vim will already have done these settings.
@@ -1602,7 +1697,6 @@ endif
 
 " Init Setting }}}
 
-"
 " Sessions {{{
 " Options for what to save in the sessions file:
 let &sessionoptions='buffers,curdir,folds,resize,winsize'
@@ -1625,14 +1719,12 @@ if &term =~ "xterm\\|xterm-256color\\|rxvt\\|screen\\|tmux"
     " Normal mode: solid block + cyan color  
     let &t_EI = "\<Esc>[2 q\<Esc>]12;cyan\x7"
     " Set initial cursor to block + cyan when Vim starts
-    silent !echo -ne "\033[2 q\033]12;cyan\007"
+    let &t_ti .= "\<Esc>[2 q\<Esc>]12;cyan\x7"
     "Remove delay when changing cursor shape
     set ttimeoutlen=1 
     " Reset to default when Vim exits
-    autocmd VimLeave * silent !echo -ne "\033[2 q\033]112\007"
+    let &t_te .= "\<Esc>[0 q\<Esc>]112\x7"
 endif
-"let &t_SI = "\e[5 q"  " Insert mode: blinking bar
-"let &t_EI = "\e[2 q"  " Normal mode: steady block
 
 " Terminal settings }}}
 
@@ -1691,17 +1783,18 @@ endif
 " }}}
 
 " Syntax highlighting {{{2
+" " Don't load Lua/Python/Perl/Ruby syntax inside Vim scripts
+let g:vimsyn_embed = ''
+" Limit how far vim.vim searches back to sync syntax. With many closed
+" fold markers this was ~3x slower on the first screen draw
+let g:vimsyn_minlines = 20
+let g:vimsyn_maxlines = 60
 " Switch syntax highlighting on, when the terminal has colors
 if &t_Co > 2 || has("gui_running")
     syntax on
 endif
 
-" Highlight certain keywords, extend TODO, FIXME and XXX
-" myTodo is defined in autcommands
-hi def link myTodo			Todo
-
 set nocursorcolumn
-" set nocursorline
 set norelativenumber
 "syntax sync minlines=256
 " }}}
@@ -1753,8 +1846,6 @@ set foldlevelstart=-1
 let &foldnestmax=3
 " }}}
 
-" Tabs label format:
-"set guitablabel=%{utils#GuiTabLabel()}
 " Always show tabs
 set showtabline=2
 
@@ -1881,7 +1972,10 @@ endif
 " Create Tags file in current location
 command! TDVimMakeTags !ctags -R  --sort=1 --c++-kinds=+p --python-kinds=-iv --fields=+iaSl --extras=+q --exclude='.git' --exclude='.svn' --exclude='*.so' --exclude='__pycache__' --exclude='*.pyc'  
 " Jump to existing terminal and restore or create a new terminal
+" DEPRECATED: now using Floaterm
 command! TDVimOpenTerminal call TDVimCreateOrJumpToTerminal()
+" Lazygit in Floaterm
+command! LZ call s:TDVimLazygit()
 " Run grep, allow user to mpdify initial pattern and then open quickfix window wit results
 command! -nargs=+ TDvimGrep execute 'silent grep! <args>' | copen | redraw!
 " Close current buffer in an ordered way
@@ -1928,7 +2022,7 @@ if s:has_fzf
 else
     nnoremap  <S-F1>             :h <C-r><C-w><CR> 
     xnoremap  <S-F1>             :h <C-r><C-w><CR> 
-    inoremap  <S-F1>             <C-O>:h <C-r><Cew><CR> 
+    inoremap  <S-F1>             <C-O>:h <C-r><C-w><CR> 
 endif
 
 " Quick TDvim Help. Cheat sheet
@@ -1975,15 +2069,15 @@ nnoremap   <leader>w    :w<CR>
 " Save All - <leader>wa
 nnoremap   <leader>wa   :wa<CR>
 " Save All  and Quit
-nnoremap   <F10>      :xa<CR>
-xnoremap   <F10>      :xa<CR>
-inoremap   <F10>      <ESC>:xa<CR>
-tnoremap   <F10>      <C-W>:xa<CR>
+nnoremap   <F10>      :FloatermKill!<CR>:xa<CR>
+xnoremap   <F10>      :FloatermKill!<CR>::xa<CR>
+inoremap   <F10>      <ESC>:FloatermKill!<CR>:xa<CR>
+tnoremap   <F10>      <C-W>:FloatermKill!<CR>:xa<CR>
 " Close And Quit
-nnoremap   <C-F10>    :confirm qa<CR>
-xnoremap   <C-F10>    :confirm qa<CR>
-inoremap   <C-F10>    <ESC>:confirm qa<CR>
-tnoremap   <C-F10>    <C-W>:confirm qa<CR>
+nnoremap   <C-F10>    :FloatermKill!<CR>:confirm qa<CR>
+xnoremap   <C-F10>    :FloatermKill!<CR>:confirm qa<CR>
+inoremap   <C-F10>    <ESC>:FloatermKill!<CR>:confirm qa<CR>
+tnoremap   <C-F10>    <C-W>:FloatermKill!<CR>:confirm qa<CR>
 " In UNIX map Ctrl-z to suspend
 if s:GetOS() == 1
     nnoremap   <C-z>    :suspend<CR>
@@ -2029,13 +2123,13 @@ vnoremap # :<C-u>call <SID>VSetSearch()<CR>?<CR>
 " xnoremap  <F4>      :silent lgrep <C-R><C-W><CR>:lopen<CR>
 if s:has_fzf &&  s:has_rg
     nnoremap  <F4>          :Rg <C-R><C-W><CR>
-    inoremap  <F4>          :<C-O>Rg  <C-R><C-W><CR>
+    inoremap  <F4>          <C-O>:Rg  <C-R><C-W><CR>
     xnoremap  <F4>          :Rg  <C-R><C-W><CR>
     nnoremap  <leader>g     :Rg <C-R><C-W><CR>
     xnoremap  <leader>g     :Rg  <C-R><C-W><CR>
 else
     nnoremap  <F4>          :TDvimGrep <C-R><C-W>
-    inoremap  <F4>          :<C-O>TDvimGrep  <C-R><C-W>
+    inoremap  <F4>          <C-O>:TDvimGrep  <C-R><C-W>
     xnoremap  <F4>          :TDvimGrep  <C-R><C-W>
     nnoremap  <leader>g     :TDvimGrep <C-R><C-W>
     xnoremap  <leader>g     :TDvimGrep  <C-R><C-W>
@@ -2044,21 +2138,21 @@ endif
 " Grep/Search in project - S-F4
 if s:has_fzf &&  s:has_rg
     nnoremap  <S-F4>          :Rg<CR>
-    inoremap  <S-F4>          :<C-O>Rg<CR>
+    inoremap  <S-F4>          <C-O>:Rg<CR>
     xnoremap  <S-F4>          :Rg<CR>
 else
-    nnoremap  <F4>          :TDvimGrep 
-    inoremap  <F4>          :<C-O>TDvimGrep  
-    xnoremap  <F4>          :TDvimGrep  
+    nnoremap  <S-F4>          :TDvimGrep 
+    inoremap  <S-F4>          <C-O>:TDvimGrep  
+    xnoremap  <S-F4>          :TDvimGrep  
 endif
 
 " Grep In project sending results to Quickfix
 nnoremap  <C-F4>          :TDvimGrep <C-R><C-W>
-inoremap  <C-F4>          :<C-O>TDvimGrep  <C-R><C-W>
+inoremap  <C-F4>          <C-O>:TDvimGrep  <C-R><C-W>
 xnoremap  <C-F4>          :TDvimGrep  <C-R><C-W>
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
-nmap <silent> <leader>a <Plug(LiveEasyAlign)>
+nmap <silent> <leader>a <Plug>(LiveEasyAlign)
 vmap <silent> <Enter>   <Plug>(LiveEasyAlign)
 xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
@@ -2072,10 +2166,8 @@ nmap ga <Plug>(EasyAlign)
 " Navigation {{{2
 
 " Navigate buffers - []b
-nnoremap  <silent> <S-l>=   :bnext<CR> 
-nnoremap  <silent> <S-h>=   :bprevious<CR> 
-nnoremap  <silent> <[b>=    :bnext<CR> 
-nnoremap  <silent> <]b>=    :bprevious<CR> 
+nnoremap  <silent> ]b      :bnext<CR>
+nnoremap  <silent> [b      :bprevious<CR>
 
 " Switch to Previous buffer - Ctrl-F3, TAB
 nnoremap  <silent> <C-F3>   :e #<CR>
@@ -2126,8 +2218,8 @@ endif
 
 " Navigate Jumps
 " Default mapped to []d
-nmap <silent> [j    <C-O>
-nmap <silent> ]j    <C-I> 
+nnoremap <silent> [j    <C-O>
+nnoremap <silent> ]j    <C-I>
 if s:has_fzf
     nnoremap   <S-F7>   :Jumps<cr>
     vnoremap   <S-F7>   :Jumps<cr>
@@ -2178,23 +2270,6 @@ xnoremap  <silent> <leader>jl         <ESC>:call TDVimJumpToWindowsByType( "loca
 nnoremap  <silent> <leader>jp         :call TDVimJumpToWindowsByType( "preview" )<CR> 
 xnoremap  <silent> <leader>jp         <ESC>:call TDVimJumpToWindowsByType( "preview" )<CR> 
 
-" Jump to Location List Window {{{3
-nnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow :call utils#JumpToWindowsByType( "location" )<CR>
-vnoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow <Esc>:call utils#JumpToWindowsByType( "location" )<CR>
-inoremap <unique> <silent> <Plug>TdvimJumpToLocationWindow <Esc>:call utils#JumpToWindowsByType( "location" )<CR>
-
-nmap <silent> <leader>jl <Plug>TdvimJumpToLocationWindow 
-vmap <silent> <leader>jl <Plug>TdvimJumpToLocationWindow
-" }}}
-
-" Jump to Preview Window {{{3
-nnoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow :call utils#JumpToWindowsByType( "preview" )<CR>
-vnoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow <Esc>:call utils#JumpToWindowsByType( "preview" )<CR>
-inoremap <unique> <silent> <Plug>TdvimJumpToPreviewWindow <Esc>:call utils#JumpToWindowsByType( "preview" )<CR>
-
-nmap <silent> <leader>jp <Plug>TdvimJumpToPreviewWindow 
-vmap <silent> <leader>jp <Plug>TdvimJumpToPreviewWindow
-" }}}
 
 " Jump to right/left most window. This can jump to explorer or symbols window {{{
 nnoremap  <silent> <leader><S-Left>         99<C-w>h
@@ -2249,10 +2324,10 @@ nnoremap  <silent> <C-Up>     :resize +2<CR>
 nnoremap  <silent> <C-Down>   :resize -2<CR> 
 nnoremap  <silent> <C-Left>   :vertical resize -2<CR> 
 nnoremap  <silent> <C-Right>  :vertical resize +2<CR> 
-tnoremap  <silent> <C-Up>     :resize +2<CR> 
-tnoremap  <silent> <C-Down>   :resize -2<CR> 
-tnoremap  <silent> <C-Left>   :vertical resize -2<CR> 
-tnoremap  <silent> <C-Right>  :vertical resize +2<CR> 
+tnoremap  <silent> <C-Up>     <C-w>:resize +2<CR> 
+tnoremap  <silent> <C-Down>   <C-w>:resize -2<CR> 
+tnoremap  <silent> <C-Left>   <C-w>:vertical resize -2<CR> 
+tnoremap  <silent> <C-Right>  <C-w>:vertical resize +2<CR> 
 
 " Reset windows sizes - <leader>=
 nnoremap  <silent> <leader>=   <C-w>= 
@@ -2321,17 +2396,25 @@ nmap <leader>d i<C-R>=strftime("%A, %d %b %Y %r")<CR><Esc>
 inoremap   <TAB>    <C-R>=TDVimTabAutocompleteWrapper("forward")<CR>
 inoremap   <S-TAB>  <C-R>=TDVimTabAutocompleteWrapper("backward")<CR>
 
+" Lazygit
+nnoremap <silent> <leader>lz :LZ<CR>
+
 
 " }}}
 
 " Terminal {{{2
 " Termnal keymaps
-" nnoremap <F11>       :wincmd b \| botright terminal<CR>
 " Open terminal at bottom
-nnoremap <F11>       :TDVimOpenTerminal<CR>
-nnoremap <leader>t  :TDVimOpenTerminal<CR>
+" DEPRECATED
+" nnoremap <F11>       :wincmd b \| botright terminal<CR>
+"nnoremap <F11>       :TDVimOpenTerminal<CR>
 " Minimize terminal window and jump to previous window
-tnoremap <F11>       <C-W>1_<C-W>W
+"tnoremap <F11>       <C-W>1_<C-W>W
+" Floaterm
+nnoremap   <silent>   <F11>   :FloatermToggle terminal<CR>
+tnoremap <F2>               <C-w>:
+nnoremap <leader>t :FloatermToggle terminal<CR> 
+tnoremap   <silent>   <F11>   <C-\><C-n>:FloatermToggle terminal<CR>
 " }}}
 
 
@@ -2348,7 +2431,7 @@ endif
 " Completion {{{
 " Completion options
 set noshowmode
-set shortmess=atT
+set shortmess=atTF
 set noinfercase
 set belloff+=ctrlg " If Vim beeps during completion
 set belloff+=cursor " If Vim beeps during scrolling
@@ -2361,7 +2444,7 @@ set completeopt+=noinsert
 set completeopt+=noselect
 set completeopt+=fuzzy
 
-set completepopup=height:10,width:60,highlight:InfoPopu
+set completepopup=height:10,width:60,highlight:InfoPopup
 
 " This will be deprecated but is still needed to get a proper fuzzy search for
 " keywords
@@ -2394,7 +2477,12 @@ if has("autocmd")
         "autocmd ColorScheme * highlight ExtraWhitespace ctermbg=lightred guibg=lightred
         autocmd ColorScheme * call s:TDVimLightlineOverrideStyle()
         "autocmd Syntax python,cpp,c,sh,csh,vim highlight ExtraWhitespace ctermbg=lightred guibg=lightred
-        autocmd Syntax * syntax match myTodo /\v<(TODO|FIXME|DEBUG|DEBUG|WARN|WARNING|ERROR|NOTE|DEPRECATED):?/hs=s containedin=.*Comment
+        "" Extra TODO-style words in comments, added to each syntax's own Todo group
+        autocmd Syntax * if hlexists(expand('<amatch>') . 'Todo') |
+                    \   execute 'syntax keyword ' . expand('<amatch>') . 'Todo contained TODO FIXME XXX DEBUG WARN WARNING ERROR NOTE DEPRECATED' |
+                    \ endif
+        "autocmd Syntax * syntax match myTodo /\v<(TODO|FIXME|DEBUG|DEBUG|WARN|WARNING|ERROR|NOTE|DEPRECATED):?/hs=s containedin=.*Comment
+        autocmd Syntax * syntax match myTodo /\v<(TODO|FIXME|DEBUG|WARN|WARNING|ERROR|NOTE|DEPRECATED):?/ containedin=.*Comment
     augroup END
     augroup tdvimEnter
         if g:tdvim_dev_mode
@@ -2432,8 +2520,6 @@ if has("autocmd")
     augroup tdvimBufEnter
         " Set local path to path of current file
         autocmd BufEnter * call s:SetLocalPath()
-        " Call TDVim Project
-        "autocmd BufEnter * call utils#ProjectSettings(expand("<afile>:p:h"), 0)
         " Setup only read buffer
         autocmd BufEnter * call s:OnlyReadSetup()
     augroup END
@@ -2455,9 +2541,7 @@ if has("autocmd")
     " BufAdd
     augroup tdvimBufAdd
         " Setup quickfix and preview windows keymaps
-        "autocmd BufAdd  * if &buftype == 'quickfix' | echo 'winenter' | endif
-        "autocmd BufAdd  * echomsg "Adding buffer " . &buftype
-        autocmd BufAdd qf call utils#SetupAuxBuffer()
+        autocmd BufAdd qf call s:SetupAuxBuffer()
     augroup END
      "FileTypes
      "
@@ -2485,6 +2569,13 @@ if has("autocmd")
         autocmd! CursorHold * ++nested call TDVimUpdateDevIconFileType()
         "autocmd! CursorHold leaderf ++nested normal <C-I>
     augroup END
+    " Floaterm
+    augroup tdvimFloaterm
+        autocmd!
+        autocmd ColorScheme * call s:FloatermColors()
+        autocmd FileType floaterm tnoremap <buffer> <nowait> <Space> <Space>
+    augroup END
+    
 
 else
     set autoindent		" always set autoindenting on
@@ -2504,9 +2595,11 @@ endif " has("autocmd")
 "let g:NERDTreeDisablePatternMatchHighlight = 1
 
 let g:NERDTreeFileExtensionHighlightFullName = 1
+
 " let g:NERDTreeExactMatchHighlightFullName = 1
 " let g:NERDTreePatternMatchHighlightFullName = 1
 " let g:NERDTreeLimitedSyntax = 1
+
 let NERDTreeIgnore=['\.swo$', '\.swp$','\.pyc$', '\.o$','\~$']
 let NERDTreeAutoDeleteBuffer = 1
 
@@ -2530,6 +2623,13 @@ let g:NERDMenuMode = 0 " Disable menu
 
 "}}}
 
+" Devicons {{{2
+" Tell devicons the OS up front so it doesn't run `uname` / `lsb_release`
+" during the first status line draw (that left a blank screen at startup)
+let g:WebDevIconsOS = (has('mac') || has('macunix')) ? 'Darwin' : 'Linux'
+let g:DevIconsEnableDistro = 0
+" }}}
+
 "Lightline {{{2
 " use lightline-buffer in lightline
 let g:lightline = {
@@ -2549,7 +2649,6 @@ let g:lightline = {
           \ 'modifiedicon': 'TDVimLightlineModified',
           \ 'readonly': 'TDVimLightlineReadonly',
           \ 'extrainfo': 'TDVimLightlineExtraInfo',
-          \ 'tagsgen': 'utils#LightlineGutentags',
           \ 'git': 'TDVimLightlineGit',
           \ 'githunksummary': 'TDVimGitHunksummary',
           \ },
@@ -2560,39 +2659,28 @@ let g:lightline = {
   \       },
   \'subseparator' : { 'left': '|', 'right': '|' },
   \ }
-                "\ 'lineinfo': '%{utils#LightlineLineInfo()}',
-          "\ 'lineinfo': '%{TDVimLightlineLineInfo()}',
-  " \ 'tabline': {
-  "         \ 'left': [ [ 'sessioninfo' ], [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
-  "         \ 'right': [ [ 'close' ], ],
-  "         \ },
-          " \ 'sessioninfo': 'utils#SessionName',
 
 if has ('gui_running')
-    "let g:lightline.active = {
-                "\ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
-                "\ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git' ] ]
-                \   }
     if s:has_git
         let g:lightline.active = {
-                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon', 'githunksummary' ], [ 'extrainfo', 'tagsgen' ] ],
+                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon', 'githunksummary' ], [ 'extrainfo' ] ],
                     \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git' ] ]
                     \   }
     else
         let g:lightline.active = {
-                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
-                    \ 'right': [ [ 'lineinfo' ], [ 'percent' ] 
+                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filetypeicon', 'filename', 'modifiedicon' ], [ 'extrainfo' ] ],
+                    \ 'right': [ [ 'lineinfo' ], [ 'percent' ] ]
                     \   }
     endif
 else
     if s:has_git
         let g:lightline.active = {
-                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modifiedicon', 'githunksummary' ], [ 'extrainfo', 'tagsgen' ] ],
+                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modifiedicon', 'githunksummary' ], [ 'extrainfo' ] ],
                     \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'git', 'filetype' ] ]
                     \   }
     else
         let g:lightline.active = {
-                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modifiedicon' ], [ 'extrainfo', 'tagsgen' ] ],
+                    \ 'left': [ [ 'mode', 'paste' ], [ 'readonly', 'filename', 'modifiedicon' ], [ 'extrainfo' ] ],
                     \ 'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'filetype' ] ]
                     \   }
     endif
@@ -2854,7 +2942,6 @@ let g:dwm_map_keys = 0
 
 " }}}
 
-
 " Markology {{{2
 let g:markology_include="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.'`^[]{}()\""
 let g:markology_ignore_type="hpmq"
@@ -2863,6 +2950,17 @@ let g:markology_textupper="\t>"
 let g:markology_textother="\t"
 let g:markology_hlline_lower=1
 let g:markology_hlline_upper=1
+" }}}
+
+" Floaterm {{{2
+let g:floaterm_borderchars = '─│─│╭╮╯╰'
+let g:floaterm_title       = ' Terminal $1/$2 '
+let g:floaterm_titleposition = 'center'
+let g:floaterm_width = 0.8
+let g:floaterm_height = 0.9
+call s:FloatermColors()
+" }}}
+
 " }}}
 
 " Setup Plugins }}}
@@ -2917,6 +3015,15 @@ if g:tdvim_dev_mode
                 autocmd VimEnter * nested  echomsg "Opening project " . g:tdvim_proj_name
             endif
             if s:has_tdvim_root
+                " Refuse to open a project that's already open in another Vim
+                if !s:TDVimTakeLock()
+                    echohl ErrorMsg
+                    echomsg "Project " . g:tdvim_proj_name . " is already open in another Vim (PID "
+                                \ . s:TDVimLockPid() . "). Use fg to return to it."
+                    echohl None
+                    cquit
+                endif
+                autocmd VimLeave * call s:TDVimReleaseLock()
                 let s:tdvim_proj_config = g:tdvim_proj_root_config . "/project.vim"
                 if !filereadable(expand(s:tdvim_proj_config))
                     echomsg "Create project.vim"
@@ -2948,14 +3055,17 @@ if g:tdvim_dev_mode
     " on enter
     " To debug session loading dont use silent! con calling the functions
     autocmd VimLeave * call TDVimSaveSess()
-    autocmd VimEnter * nested silent! call TDVimRestoreSess() | echomsg "Project session restored"
-    "autocmd VimEnter * nested call TDVimRestoreSess() | echomsg "Session restore from: " . g:tdvim_proj_config
-    " Load project setup on Enter
-    autocmd VimEnter * nested exe 'source ' . s:tdvim_proj_config
     autocmd SessionLoadPost * call DWM_Focus()
     " Session commands
     command! TDVimSaveSession call TDVimSaveSess()
     command! TDVimRestoreSession call TDVimRestoreSess()
+    " Replace the startup directory buffer with an empty one, so the first
+    " screen is blank instead of a netrw listing
+    autocmd VimEnter * if isdirectory(expand('%')) | enew | silent! bwipeout # | endif
+    " Pause NERDTree's directory takeover during startup (it fails on the
+    " startup directory); restore the session and the rest after the first draw
+    silent! autocmd! NERDTreeHijackNetrw
+    autocmd VimEnter * call timer_start(0, function('s:TDVimDevModeStartup'))
     " FZF Commands
     command! -bang ProjectFiles call fzf#vim#files(g:tdvim_proj_root, fzf#vim#with_preview(), <bang>0)
     " Disable autochdir:
@@ -2972,8 +3082,6 @@ if g:tdvim_dev_mode
         execute "autocmd FocusLost"     s:autoPattern   "silent! wall"
         execute "autocmd CursorHold " s:autoPattern_excluded " silent! update"
     augroup END
-    " Enable Vista get nearest method name:
-    autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
     " Highlight word under cursor
     augroup TDVimMatchWord
         autocmd!
@@ -2992,24 +3100,16 @@ if g:tdvim_dev_mode
     "
     " Keymaps for dev mode
     " Close Window - <leader>q
-    silent! nunmap      <leader>q 
-    silent! vunmap      <leader>q 
     nnoremap  <silent> <leader>q          :call TDVimCloseWindowDevMode() <CR>
     vnoremap  <silent> <leader>q          :call TDVimCloseWindowDevMode() <CR>
     " NERDTree using VCS mode (open in root project)
     " NErdtTree
-    nunmap <F8>
-    xunmap <F8>
-    iunmap <F8>
     nnoremap  <silent> <F8>       :NERDTreeToggleVCS<cr> 
     inoremap  <silent> <F8>       <C-O>:NERDTreeToggleVCS<cr> 
     xnoremap  <silent> <F8>       <ESC>:NERDTreeToggleVCS<cr> 
     " Open Files in current location - S-F3, <leader>o
     " Remap S-F3 if using FZF to use ProjectFiles command instead of Files
     if s:has_fzf
-        nunmap <S-F3>
-        vunmap <S-F3>
-        iunmap <S-F3>
         nnoremap   <S-F3>   :ProjectFiles<CR>
         vnoremap   <S-F3>   :ProjectFiles<CR>
         inoremap   <S-F3>   <ESC>:ProjectFiles<CR>
@@ -3019,7 +3119,7 @@ if g:tdvim_dev_mode
     nmap ]h <Plug>(GitGutterNextHunk)
     nmap [h <Plug>(GitGutterPrevHunk)
     " - Diff  with index
-    nnoremap   <F9>   :call TDVimGitDiffToggle() <CR>
+    nnoremap   <F9>   :call TDVimGitDiff()<CR>
     " - Fold Hunks
     nnoremap   <C-F9>   :GitGutterFold<CR>
     " - Show hunks in QuickFix
@@ -3027,8 +3127,6 @@ if g:tdvim_dev_mode
     nnoremap   <S-F9>   :TDVimGitHunks<CR>
     " Symbols keymaps. In dev mode use Vista instead of FzfFunky or simple ctags
     if s:has_fzf
-        nunmap <F6>
-        xunmap <F6>
         nnoremap   <F6>   :Vista finder<CR>
         xnoremap   <F6>   :Vista finder<CR>
     endif
@@ -3041,10 +3139,6 @@ if g:tdvim_dev_mode
 
     " ALE Fixer and formatter
     if exists("g:ale_enabled")
-        " Check if F6 is mapped and unmap it
-        if maparg('<S-F6>') != ''
-            execute 'unmap <S-F6>'
-        endif
         nnoremap   <S-F6>   :ALEFix<CR>
     endif
 
@@ -3075,10 +3169,8 @@ if g:tdvim_dev_mode
         nnoremap    <M-right>    <C-W>w
         nnoremap    <M-left>     <C-W>W 
         " Use Shift-TAB to rotate windows clockwise
-        nunmap      <S-TAB>
         nnoremap    <S-TAB>     :call DWM_Rotate(1)<CR>
         " Use Ctrl-Space to swap focus between previous and current
-        nunmap      <C-Space>
         nnoremap    <C-Space>     :call DWM_Focus()<CR>
     endif
 

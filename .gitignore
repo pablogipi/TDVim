@@ -20,8 +20,9 @@ spell/
 tmp/
 .netrwhist
 sessions
-.tdvim
+session.vim
 jedi-vim
+*.patch
 
 # Compiled and cached python
 .pyc

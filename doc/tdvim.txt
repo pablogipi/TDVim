@@ -271,7 +271,7 @@ Leader Key                           *tdvim-leader*
 - Split window:                           <leader>s
 - Split horizontal window:                <leader>sh
 - Move to last window in every direction: <leader><[Up|Down|Left|Right]>
-- MAximize Window:                        <leader><Space>
+- Maximize Window:                        <leader><Space>
 - Show/Hide Menu Bar:                     <leader>m
 - Explorer:                               <leader>e
 - Focus Current File in Explorer:         <leader>ef
