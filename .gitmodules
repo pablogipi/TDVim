@@ -25,9 +25,6 @@
 [submodule "vim_packages/pack/core/start/lightline-bufferline"]
 	path = pack/core/start/lightline-bufferline
 	url = https://github.com/mengelbrecht/lightline-bufferline.git
-[submodule "vim_packages/pack/dev/start/vim-gitbranch"]
-	path = pack/dev/start/vim-gitbranch
-	url = https://github.com/itchyny/vim-gitbranch.git
 [submodule "vim_packages/pack/core/start/vim-easy-align"]
 	path = pack/core/start/vim-easy-align
 	url = https://github.com/junegunn/vim-easy-align.git

@@ -587,11 +587,59 @@ endfunction
 " This way we can update curent branch only when the cursor stops.
 " The function will set the window variable: w:currentgitbranch .
 " Only update if g:tdvim_update_git_branch is set
+"function! TDVimUpdateCurrentGitBranch()
+  "if exists('*gitbranch#name')
+      "let w:currentgitbranch = gitbranch#name()
+  "endif
+"endfunction
+
+" TDVimGitHead {{{2
+" Return the path to the HEAD file for {path}, or '' if not in a repo.
+" Handles regular repos, submodules and worktrees (absolute or relative gitdir).
+function! TDVimGitHead(path) abort
+  let path = a:path
+  let prev = ''
+  while path !=# prev
+    let dot_git = path . '/.git'
+    let type = getftype(dot_git)
+    if type ==# 'dir'
+      return dot_git . '/HEAD'
+    elseif type ==# 'file'
+      let line = get(readfile(dot_git, '', 1), 0, '')
+      if line =~# '^gitdir: '
+        let gitdir = line[8:]
+        " Worktrees use absolute paths, submodules relative ones
+        if gitdir !~# '^\%(/\|\a:[\\/]\)'
+          let gitdir = path . '/' . gitdir
+        endif
+        return simplify(gitdir . '/HEAD')
+      endif
+    endif
+    let prev = path
+    let path = fnamemodify(path, ':h')
+  endwhile
+  return ''
+endfunction
+"}}}
+
+" UpdateCurrentGitBranch {{{2
+" Update current git branch from buffer in window.
+" The intention is to call this function from the CursorHold autocommand.
+" This way we can update curent branch only when the cursor stops.
+" The function will set the window variable: w:currentgitbranch .
 function! TDVimUpdateCurrentGitBranch()
-  if exists('*gitbranch#name')
-      let w:currentgitbranch = gitbranch#name()
+  let dir = empty(expand('%')) ? getcwd() : expand('%:p:h')
+  let head = TDVimGitHead(dir)
+  let w:currentgitbranch = ''
+  if !empty(head) && filereadable(head)
+    let line = get(readfile(head, '', 1), 0, '')
+    let w:currentgitbranch = line =~# '^ref: refs/heads/'
+          \ ? line[16:]
+          \ : line[:6]          " detached HEAD: short SHA
   endif
 endfunction
+
+
 "}}}
 
 " UpdateDevIconFileType {{{2
@@ -2411,10 +2459,13 @@ nnoremap <silent> <leader>lz :LZ<CR>
 " Minimize terminal window and jump to previous window
 "tnoremap <F11>       <C-W>1_<C-W>W
 " Floaterm
-nnoremap   <silent>   <F11>   :FloatermToggle terminal<CR>
+nnoremap   <silent>   <F11>   :FloatermToggle<CR>
 tnoremap <F2>               <C-w>:
-nnoremap <leader>t :FloatermToggle terminal<CR> 
-tnoremap   <silent>   <F11>   <C-\><C-n>:FloatermToggle terminal<CR>
+nnoremap <leader>t :FloatermToggle<CR> 
+tnoremap   <silent>   <F11>   <C-\><C-n>:FloatermToggle<CR>
+tnoremap   <silent>   <C-F11>   <C-\><C-n>:FloatermNext<CR>
+nnoremap   <silent>   <C-S-F11>   :FloatermNew<CR>
+tnoremap   <silent>   <C-S-F11>   <C-\><C-n>:FloatermNew<CR>
 " }}}
 
 
@@ -2574,8 +2625,8 @@ if has("autocmd")
         autocmd!
         autocmd ColorScheme * call s:FloatermColors()
         autocmd FileType floaterm tnoremap <buffer> <nowait> <Space> <Space>
+        autocmd User FloatermOpen call popup_setoptions(win_getid(), #{scrollbar: 1})
     augroup END
-    
 
 else
     set autoindent		" always set autoindenting on
@@ -3134,8 +3185,8 @@ if g:tdvim_dev_mode
     " Enable LSP Mappings for those filetypes for what we usually have a LS
     "autocmd FileType python call s:TDVimLSPMappings()
     "Scratch Pad
-    nnoremap   <S-F11>   :Scratch<CR>
-    nnoremap   <C-F11>   :ScratchPreview<CR>
+    "nnoremap   <S-F11>   :Scratch<CR>
+    nnoremap   <S-F11>   :ScratchPreview<CR>
 
     " ALE Fixer and formatter
     if exists("g:ale_enabled")
@@ -3154,13 +3205,6 @@ if g:tdvim_dev_mode
         endif
         autocmd FileType python setlocal formatexpr=TDVimRuffFormatExpr() 
         autocmd FileType python iabbrev dbg print(f"DEBUG:")<Left><Left>
-        " Use = to trigger formatting
-        "autocmd FileType python xnoremap <buffer> = gq
-        "autocmd FileType python nnoremap <buffer> == gqq
-        "autocmd FileType python nnoremap <buffer> =ip gqip 
-        "autocmd FileType python nnoremap <buffer> =if gqif 
-        "autocmd FileType python nnoremap <buffer> =% gq%
-        "autocmd FileType python nnoremap <buffer> =G gqG
     augroup END
 
     " DWM keymaps
