@@ -3009,6 +3009,7 @@ let g:floaterm_title       = ' Terminal $1/$2 '
 let g:floaterm_titleposition = 'center'
 let g:floaterm_width = 0.8
 let g:floaterm_height = 0.9
+let g:floaterm_giteditor = v:false
 call s:FloatermColors()
 " }}}
 
