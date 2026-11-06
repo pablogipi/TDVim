@@ -1622,6 +1622,38 @@ endfunction
 
 " }}}
 
+" TDVimConfirmSaveQuitAll {{{2
+" Ask for confirmation before quit
+function! s:YesNoEnterFilter(id, key) abort
+  if a:key ==# "\<CR>"
+    call popup_close(a:id, 1)
+    return 1
+  endif
+  return popup_filter_yesno(a:id, a:key)
+endfunction
+
+function! s:SaveQuitAllCallback(id, result) abort
+  if a:result == 1
+    xa
+  endif
+endfunction
+
+function! s:TDVimConfirmSaveQuitAll() abort
+  if has('popupwin')
+    call popup_dialog('Save all and quit Vim?  (Y/n)', #{
+          \ title: ' Quit ',
+          \ filter: function('s:YesNoEnterFilter'),
+          \ callback: function('s:SaveQuitAllCallback'),
+          \ padding: [1, 2, 1, 2],
+          \ border: [],
+          \ })
+  elseif confirm('Save all and quit Vim?', "&Yes\n&No", 1) == 1
+    xa
+  endif
+endfunction
+" }}}
+
+
 " Functions }}}
 
 " Init settings {{{
@@ -2117,10 +2149,10 @@ nnoremap   <leader>w    :w<CR>
 " Save All - <leader>wa
 nnoremap   <leader>wa   :wa<CR>
 " Save All  and Quit
-nnoremap   <F10>      :FloatermKill!<CR>:xa<CR>
-xnoremap   <F10>      :FloatermKill!<CR>::xa<CR>
-inoremap   <F10>      <ESC>:FloatermKill!<CR>:xa<CR>
-tnoremap   <F10>      <C-W>:FloatermKill!<CR>:xa<CR>
+nnoremap   <F10>      :FloatermKill!<CR>:call <SID>TDVimConfirmSaveQuitAll()<CR>
+xnoremap   <F10>      :FloatermKill!<CR>:call <SID>TDVimConfirmSaveQuitAll()<CR>
+inoremap   <F10>      <C-o>:FloatermKill!<CR>:call <SID>TDVimConfirmSaveQuitAll()<CR>
+tnoremap   <F10>      <C-W>:FloatermKill!<CR>:call <SID>TDVimConfirmSaveQuitAll()<CR>
 " Close And Quit
 nnoremap   <C-F10>    :FloatermKill!<CR>:confirm qa<CR>
 xnoremap   <C-F10>    :FloatermKill!<CR>:confirm qa<CR>

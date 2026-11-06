@@ -23,6 +23,7 @@ sessions
 session.vim
 jedi-vim
 *.patch
+lock
 
 # Compiled and cached python
 .pyc
